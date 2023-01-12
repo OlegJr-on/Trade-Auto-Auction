@@ -13,10 +13,11 @@
 
 🎯 Project description:
 
-    ❗ The solution have a three-layer architecture: the data access layer, business logic and presentation layer. 
+    ❗ The solution have a three-layer architecture: the data access layer, 
+      business logic and presentation layer. 
 
     ❗ Access to the functionality of the application services organized through the web API.
     
-    ❗ Store information about the subject area in the database, uses ORM - Hibernate, approach - DataBase First for access. 
-      Use PostgreSQL as a DBMS
+    ❗ Store information about the subject area in the database, uses ORM - Hibernate, 
+      approach - DataBase First for access. Use PostgreSQL as a DBMS
       
