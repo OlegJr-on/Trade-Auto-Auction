@@ -1,6 +1,7 @@
 package com.auction.auto_auction.entities;
 
 import com.auction.auto_auction.entities.enums.LotStatus;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,7 +9,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -16,6 +19,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Entity
 @Table(name = "lots")
+@JsonIgnoreProperties({"salesInfo"})
 public class Lot {
 
     @Id
@@ -42,4 +46,7 @@ public class Lot {
     @OneToOne
     @JoinColumn(name = "car_id",referencedColumnName = "id")
     private Car car;
+
+    @ManyToMany(mappedBy = "lots")
+    private List<SalesDepartment> salesInfo = new ArrayList<>();
 }
