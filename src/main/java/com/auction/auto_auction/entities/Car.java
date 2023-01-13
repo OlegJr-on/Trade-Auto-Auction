@@ -8,7 +8,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -50,4 +52,7 @@ public class Car {
 
     @Column(name = "oriented_price")
     private BigDecimal orientedPrice;
+
+    @OneToMany(mappedBy = "car",fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    private List<AutoPhoto> photos = new ArrayList<>();
 }
