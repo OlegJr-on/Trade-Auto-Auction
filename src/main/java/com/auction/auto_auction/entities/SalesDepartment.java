@@ -7,7 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -33,4 +35,12 @@ public class SalesDepartment {
 
     @Column(name = "time_left",nullable = false)
     private Date timeLeft;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "lots_sales",
+            joinColumns = @JoinColumn(name = "sale_id",referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "lot_id",referencedColumnName = "id")
+    )
+    private List<Lot> lots = new ArrayList<>();
 }
