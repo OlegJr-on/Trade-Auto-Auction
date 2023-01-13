@@ -25,4 +25,7 @@ public class Customer {
     @OneToOne
     @JoinColumn(name = "user_id",referencedColumnName = "id")
     private User user;
+
+    @OneToOne(mappedBy = "customer")
+    private BankAccount bankAccount;
 }
