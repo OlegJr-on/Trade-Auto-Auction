@@ -22,7 +22,7 @@ public class User {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private int id;
 
     @Column(name = "first_name",nullable = false)
     private String firstName;
@@ -46,4 +46,7 @@ public class User {
 
     @Column(name = "password",nullable = false,unique = true)
     private String password;
+
+    @ManyToMany(mappedBy = "users",fetch = FetchType.EAGER)
+    private List<Role> roles = new ArrayList<>();
 }
