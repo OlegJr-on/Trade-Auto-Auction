@@ -18,6 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "users")
+@JsonIgnoreProperties({"customer","roles"})
 public class User {
 
     @Id

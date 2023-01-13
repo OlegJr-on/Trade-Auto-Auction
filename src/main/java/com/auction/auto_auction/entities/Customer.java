@@ -1,5 +1,6 @@
 package com.auction.auto_auction.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,6 +13,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 @Table(name = "customers")
+@JsonIgnoreProperties({"bankAccount"})
 public class Customer {
 
     @Id
