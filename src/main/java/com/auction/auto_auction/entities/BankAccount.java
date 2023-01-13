@@ -24,4 +24,7 @@ public class BankAccount {
     @Column(name = "balance",nullable = false)
     private BigDecimal balance;
 
+    @OneToOne
+    @JoinColumn(name = "customer_id",referencedColumnName = "id")
+    private Customer customer;
 }
