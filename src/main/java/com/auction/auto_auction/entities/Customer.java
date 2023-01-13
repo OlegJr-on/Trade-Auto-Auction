@@ -22,4 +22,7 @@ public class Customer {
     @Column(name = "discount")
     private int discount;
 
+    @OneToOne
+    @JoinColumn(name = "user_id",referencedColumnName = "id")
+    private User user;
 }
