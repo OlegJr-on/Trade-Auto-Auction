@@ -21,4 +21,8 @@ public class AutoPhoto {
 
     @Column(name = "photo_src",nullable = false)
     private String photoSrc;
+
+    @ManyToOne
+    @JoinColumn(name = "car_id", referencedColumnName = "id")
+    private Car car;
 }
