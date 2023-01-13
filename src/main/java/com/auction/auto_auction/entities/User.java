@@ -1,5 +1,6 @@
 package com.auction.auto_auction.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -47,9 +48,14 @@ public class User {
     @Column(name = "password",nullable = false,unique = true)
     private String password;
 
-    @ManyToMany(mappedBy = "users",fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "users")
     private List<Role> roles = new ArrayList<>();
 
     @OneToOne(mappedBy = "user")
     private Customer customer;
+
+    public void setRoles(List<Role> roles){
+        this.roles = roles;
+        roles.forEach(role -> role.getUsers().add(this));
+    }
 }
