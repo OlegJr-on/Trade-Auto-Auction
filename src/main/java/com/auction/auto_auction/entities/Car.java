@@ -60,4 +60,9 @@ public class Car {
 
     @OneToOne(mappedBy = "car")
     private Lot lot;
+
+    public void setLot(Lot lot){
+        this.lot = lot;
+        lot.setCar(this);
+    }
 }
