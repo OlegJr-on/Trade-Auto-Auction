@@ -24,6 +24,7 @@ public class Lot {
     private int id;
 
     @Column(name = "lot_status",nullable = false)
+    @Enumerated(EnumType.STRING)
     private LotStatus lotStatus;
 
     @Column(name = "launch_price",nullable = false)
@@ -37,4 +38,8 @@ public class Lot {
 
     @Column(name = "end_trading",nullable = false)
     private Date endTrading;
+
+    @OneToOne
+    @JoinColumn(name = "car_id",referencedColumnName = "id")
+    private Car car;
 }
