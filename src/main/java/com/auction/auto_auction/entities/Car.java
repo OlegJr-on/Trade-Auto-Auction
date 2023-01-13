@@ -1,6 +1,7 @@
 package com.auction.auto_auction.entities;
 
 import com.auction.auto_auction.entities.enums.AutoState;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,6 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "cars")
+@JsonIgnoreProperties({"lot","photos"})
 public class Car {
 
     @Id
@@ -55,4 +57,7 @@ public class Car {
 
     @OneToMany(mappedBy = "car",fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     private List<AutoPhoto> photos = new ArrayList<>();
+
+    @OneToOne(mappedBy = "car")
+    private Lot lot;
 }
