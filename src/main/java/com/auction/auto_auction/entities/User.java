@@ -49,4 +49,7 @@ public class User {
 
     @ManyToMany(mappedBy = "users",fetch = FetchType.EAGER)
     private List<Role> roles = new ArrayList<>();
+
+    @OneToOne(mappedBy = "user")
+    private Customer customer;
 }
