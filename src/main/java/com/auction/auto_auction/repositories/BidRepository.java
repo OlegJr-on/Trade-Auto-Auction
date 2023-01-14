@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface BidRepository extends JpaRepository<Bid,Integer> {
     Optional<Bid> findByLotId(int lotId);
+    Optional<Bid> findByCustomerId(int customerId);
 }
