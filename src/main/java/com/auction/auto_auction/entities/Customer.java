@@ -7,13 +7,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "customers")
-@JsonIgnoreProperties({"bankAccount"})
+@JsonIgnoreProperties({"bankAccount","bids"})
 public class Customer {
 
     @Id
@@ -30,4 +33,7 @@ public class Customer {
 
     @OneToOne(mappedBy = "customer")
     private BankAccount bankAccount;
+
+    @OneToMany(mappedBy = "customer",fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    private List<Bid> bids = new ArrayList<>();
 }
