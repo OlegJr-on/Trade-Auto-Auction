@@ -19,7 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "lots")
-@JsonIgnoreProperties({"salesInfo"})
+@JsonIgnoreProperties({"salesInfo","bids"})
 public class Lot {
 
     @Id
@@ -49,4 +49,7 @@ public class Lot {
 
     @ManyToMany(mappedBy = "lots")
     private List<SalesDepartment> salesInfo = new ArrayList<>();
+
+    @OneToMany(mappedBy = "lot",fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    private List<Bid> bids = new ArrayList<>();
 }
