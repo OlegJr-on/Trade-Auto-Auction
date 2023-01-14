@@ -30,4 +30,9 @@ public class Bid {
 
     @Column(name = "bet",nullable = false)
     private BigDecimal bet;
+
+    @ManyToOne
+    @JoinColumn(name = "lot_id", referencedColumnName = "id")
+    private Lot lot;
+
 }
