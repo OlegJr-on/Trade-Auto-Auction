@@ -35,4 +35,7 @@ public class Bid {
     @JoinColumn(name = "lot_id", referencedColumnName = "id")
     private Lot lot;
 
+    @ManyToOne
+    @JoinColumn(name = "customer_id", referencedColumnName = "id")
+    private Customer customer;
 }
