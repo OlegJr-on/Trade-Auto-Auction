@@ -20,5 +20,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-
+    @OneToOne
+    @JoinColumn(name = "bid_id",referencedColumnName = "id")
+    private Bid bid;
 }
