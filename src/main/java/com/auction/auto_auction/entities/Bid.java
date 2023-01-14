@@ -1,5 +1,6 @@
 package com.auction.auto_auction.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,6 +16,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Entity
 @Table(name = "bids")
+@JsonIgnoreProperties({"order"})
 public class Bid {
 
     @Id
@@ -38,4 +40,7 @@ public class Bid {
     @ManyToOne
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
     private Customer customer;
+
+    @OneToOne(mappedBy = "bid")
+    private Order order;
 }
