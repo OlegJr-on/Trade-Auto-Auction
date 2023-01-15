@@ -27,4 +27,8 @@ public class OrdersDetails {
 
     @Column(name = "total_price",nullable = false)
     private BigDecimal totalPrice;
+
+    @ManyToOne
+    @JoinColumn(name = "order_id", referencedColumnName = "id")
+    private Order order;
 }
