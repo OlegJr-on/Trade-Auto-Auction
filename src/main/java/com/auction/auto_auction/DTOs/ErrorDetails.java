@@ -9,9 +9,13 @@ import java.util.Date;
 @Getter
 public class ErrorDetails {
     private Date timestamp;
+
     private String message;
+
     private String details;
+
     private HttpStatus statusCode;
+
 
     public ErrorDetails(Date timestamp, String message, String details, HttpStatus statusCode) {
         this.timestamp = timestamp;
