@@ -8,15 +8,25 @@ import org.springframework.stereotype.Component;
 public class UnitOfWorkImpl implements UnitOfWork{
 
     private final UserRepository userRepository;
+
     private final CustomerRepository customerRepository;
+
     private final RoleRepository roleRepository;
+
     private final BankAccountRepository bankAccountRepository;
+
     private final CarRepository carRepository;
+
     private final AutoPhotoRepository autoPhotoRepository;
+
     private final LotRepository lotRepository;
+
     private final SalesDepartmentRepository salesDepartmentRepository;
+
     private final BidRepository bidRepository;
+
     private final OrderRepository orderRepository;
+
     private final OrdersDetailsRepository ordersDetailsRepository;
 
     @Autowired
