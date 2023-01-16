@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BidRepository extends JpaRepository<Bid,Integer> {
+
     Optional<List<Bid>> findByLotId(int lotId);
+
     Optional<List<Customer>> findByCustomerId(int customerId);
 }
