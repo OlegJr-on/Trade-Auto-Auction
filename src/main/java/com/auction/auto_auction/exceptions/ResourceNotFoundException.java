@@ -7,9 +7,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @Getter
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class ResourceNotFoundException extends RuntimeException{
+
     private String sourceName;
+
     private String fieldName;
+
     private String fieldValue;
+
 
     public ResourceNotFoundException(String message, String sourceName, String fieldName, String fieldValue) {
         super(message);
