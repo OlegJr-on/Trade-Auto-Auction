@@ -1,53 +1,24 @@
-package com.auction.auto_auction.repositories.uow;
+package com.auction.auto_auction.repository.uow;
 
-import com.auction.auto_auction.repositories.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.auction.auto_auction.repository.*;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@AllArgsConstructor
 public class UnitOfWorkImpl implements UnitOfWork{
-
     private final UserRepository userRepository;
-
     private final CustomerRepository customerRepository;
-
     private final RoleRepository roleRepository;
-
     private final BankAccountRepository bankAccountRepository;
-
     private final CarRepository carRepository;
-
     private final AutoPhotoRepository autoPhotoRepository;
-
     private final LotRepository lotRepository;
-
     private final SalesDepartmentRepository salesDepartmentRepository;
-
     private final BidRepository bidRepository;
-
     private final OrderRepository orderRepository;
-
     private final OrdersDetailsRepository ordersDetailsRepository;
 
-    @Autowired
-    public UnitOfWorkImpl(UserRepository userRepository, CustomerRepository customerRepository,
-                          RoleRepository roleRepository, BankAccountRepository bankAccountRepository,
-                          CarRepository carRepository, AutoPhotoRepository autoPhotoRepository,
-                          LotRepository lotRepository, SalesDepartmentRepository salesDepartmentRepository,
-                          BidRepository bidRepository, OrderRepository orderRepository,
-                          OrdersDetailsRepository ordersDetailsRepository) {
-        this.userRepository = userRepository;
-        this.customerRepository = customerRepository;
-        this.roleRepository = roleRepository;
-        this.bankAccountRepository = bankAccountRepository;
-        this.carRepository = carRepository;
-        this.autoPhotoRepository = autoPhotoRepository;
-        this.lotRepository = lotRepository;
-        this.salesDepartmentRepository = salesDepartmentRepository;
-        this.bidRepository = bidRepository;
-        this.orderRepository = orderRepository;
-        this.ordersDetailsRepository = ordersDetailsRepository;
-    }
 
     @Override
     public AutoPhotoRepository getAutoPhotoRepository() {
