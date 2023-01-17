@@ -1,6 +1,6 @@
-package com.auction.auto_auction.entities;
+package com.auction.auto_auction.entity;
 
-import com.auction.auto_auction.entities.enums.LotStatus;
+import com.auction.auto_auction.entity.enums.LotStatus;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

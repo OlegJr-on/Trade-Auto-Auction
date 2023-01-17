@@ -1,4 +1,4 @@
-package com.auction.auto_auction.entities;
+package com.auction.auto_auction.entity;
 
 
 import jakarta.persistence.*;

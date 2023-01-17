@@ -1,6 +1,7 @@
-package com.auction.auto_auction.entities.enums;
+package com.auction.auto_auction.entity.enums;
 
 public enum LotStatus {
+
     NOT_ACTIVE("Not active"),
     SOLD_OUT("Sold out"),
     TRADING("Trading"),
