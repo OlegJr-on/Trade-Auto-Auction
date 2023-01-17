@@ -1,6 +1,6 @@
-package com.auction.auto_auction.repositories.uow;
+package com.auction.auto_auction.repository.uow;
 
-import com.auction.auto_auction.repositories.*;
+import com.auction.auto_auction.repository.*;
 
 
 public interface UnitOfWork {

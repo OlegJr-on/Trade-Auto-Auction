@@ -1,7 +1,7 @@
-package com.auction.auto_auction.repositories;
+package com.auction.auto_auction.repository;
 
-import com.auction.auto_auction.entities.Bid;
-import com.auction.auto_auction.entities.Customer;
+import com.auction.auto_auction.entity.Bid;
+import com.auction.auto_auction.entity.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
