@@ -1,6 +1,6 @@
-package com.auction.auto_auction.exceptions;
+package com.auction.auto_auction.exception;
 
-import com.auction.auto_auction.DTOs.ErrorDetails;
+import com.auction.auto_auction.dto.ErrorDetails;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
