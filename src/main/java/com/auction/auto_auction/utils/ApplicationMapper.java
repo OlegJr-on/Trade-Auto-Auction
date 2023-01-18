@@ -27,4 +27,23 @@ public class ApplicationMapper {
                 .build();
     }
 
+    public static CustomerDTO mapToCustomerDTO(User entity) {
+        return CustomerDTO
+                .builder()
+                .id(entity.getCustomer().getId())
+                .firstName(entity.getFirstName())
+                .lastName(entity.getLastName())
+                .birthDay(entity.getBirthDay())
+                .email(entity.getEmail())
+                .location(entity.getLocation())
+                .phoneNumber(entity.getPhoneNumber())
+                .discount(entity.getCustomer().getDiscount())
+                .balance(entity.getCustomer().getBankAccount().getBalance())
+                .roles(entity.getRoles()
+                        .stream()
+                        .map(Role::getRoleName)
+                        .collect(Collectors.toList()))
+                .build();
+    }
+
 }
