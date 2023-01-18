@@ -46,4 +46,17 @@ public class ApplicationMapper {
                 .build();
     }
 
+    public static User mapToUserEntity(CustomerDTO dto, Role defaultRole) {
+        return User
+                .builder()
+                .firstName(dto.getFirstName())
+                .lastName(dto.getLastName())
+                .phoneNumber(dto.getPhoneNumber())
+                .email(dto.getEmail())
+                .password(dto.getPassword())
+                .location(dto.getLocation())
+                .birthDay(dto.getBirthDay())
+                .roles(List.of(defaultRole))
+                .build();
+    }
 }
