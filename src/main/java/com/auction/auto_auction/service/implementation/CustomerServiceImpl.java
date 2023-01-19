@@ -8,14 +8,12 @@ import com.auction.auto_auction.entity.User;
 import com.auction.auto_auction.exception.ResourceNotFoundException;
 import com.auction.auto_auction.repository.uow.UnitOfWork;
 import com.auction.auto_auction.service.CustomerService;
+import com.auction.auto_auction.utils.ApplicationConstants;
 import com.auction.auto_auction.utils.ApplicationMapper;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
 @Service
@@ -86,8 +84,33 @@ public class CustomerServiceImpl implements CustomerService{
     }
 
     @Override
-    public void create(CustomerDTO user) {
+    public void create(CustomerDTO createdCustomer) {
 
+        if (createdCustomer == null) {
+            throw new NullPointerException("Customer don`t created, values is null");
+        }
+
+        // take the default role that will be set in new user entity
+        Role regUserRole = this.unitOfWork.getRoleRepository().findById(ApplicationConstants.DEFAULT_ROLE_ID)
+                .orElseThrow(() ->
+                        new NoSuchElementException("Something went wrong, customer role doesn't set"));
+
+        // map dto to entity and set taken role in entity
+        User userEntity = ApplicationMapper.mapToUserEntity(createdCustomer);
+        userEntity.setRoles(Collections.singletonList(regUserRole));
+
+        // set data to another components of customerDTO
+        Customer customerEntity = new Customer();
+        customerEntity.setUser(userEntity);
+
+        BankAccount bankAccEntity = new BankAccount();
+        bankAccEntity.setCustomer(customerEntity);
+        bankAccEntity.setBalance(BigDecimal.ZERO);
+
+        // save new data into data source
+        this.unitOfWork.getUserRepository().save(userEntity);
+        this.unitOfWork.getCustomerRepository().save(customerEntity);
+        this.unitOfWork.getBankAccountRepository().save(bankAccEntity);
     }
 
     @Override
