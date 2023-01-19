@@ -40,8 +40,13 @@ public class CustomerServiceImpl implements CustomerService{
     }
 
     @Override
-    public CustomerDTO findById(int id) {
-        return null;
+    public CustomerDTO findById(int customerId) {
+
+        Customer customerEntity = this.unitOfWork.getCustomerRepository().findById(customerId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Customer","id",String.valueOf(customerId)));
+
+        return ApplicationMapper.mapToCustomerDTO(customerEntity);
     }
 
     @Override
