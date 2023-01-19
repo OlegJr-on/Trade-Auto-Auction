@@ -55,4 +55,14 @@ public class CustomerController {
 
         return new ResponseEntity<>("Customer is updated!",HttpStatus.OK);
     }
+
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity<String> deleteCustomerById(@PathVariable("id") int customerId){
+
+        this.customerService.deleteById(customerId);
+
+        return new ResponseEntity<>(
+                                    String.format("Customer with id: %d is removed!",customerId),
+                                    HttpStatus.OK);
+    }
 }
