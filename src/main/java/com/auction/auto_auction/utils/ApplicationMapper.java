@@ -46,7 +46,7 @@ public class ApplicationMapper {
                 .build();
     }
 
-    public static User mapToUserEntity(CustomerDTO dto, Role defaultRole) {
+    public static User mapToUserEntity(CustomerDTO dto) {
         return User
                 .builder()
                 .firstName(dto.getFirstName())
@@ -56,7 +56,6 @@ public class ApplicationMapper {
                 .password(dto.getPassword())
                 .location(dto.getLocation())
                 .birthDay(dto.getBirthDay())
-                .roles(List.of(defaultRole))
                 .build();
     }
 }
