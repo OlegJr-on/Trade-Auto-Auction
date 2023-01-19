@@ -9,7 +9,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/customers")
+@RequestMapping("api-auction/customers")
 public class CustomerController {
 
     private final CustomerService customerService;
@@ -33,4 +33,6 @@ public class CustomerController {
 
         return ResponseEntity.ok(customer);
     }
+
+
 }
