@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -50,8 +51,17 @@ public class CustomerServiceImpl implements CustomerService{
     }
 
     @Override
-    public List<CustomerDTO> findByFirstName(String name) {
-        return null;
+    public List<CustomerDTO> findByFirstName(String firstName) {
+
+        Optional<List<User>> userEntities = this.unitOfWork.getUserRepository().findByFirstName(firstName);
+
+        if (userEntities.get().isEmpty()){
+            throw new ResourceNotFoundException("Customer","firstName",firstName);
+        }
+
+        return userEntities.get().stream()
+                                 .map(ApplicationMapper::mapToCustomerDTO)
+                                 .toList();
     }
 
     @Override
