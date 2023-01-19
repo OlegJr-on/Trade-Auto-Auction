@@ -141,7 +141,23 @@ public class CustomerServiceImpl implements CustomerService{
     }
 
     @Override
-    public void deleteById(int id) {
+    public void deleteById(int customerId) {
 
+        // search customer entity from data source by id
+        Customer customerEntity = this.unitOfWork.getCustomerRepository().findById(customerId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Customer","id",String.valueOf(customerId)));
+
+        // get related data with customer entity
+        User userEntity = customerEntity.getUser();
+        BankAccount bankAccEntity = customerEntity.getBankAccount();
+
+        // get all user roles and remove this user from them
+        userEntity.getRoles().forEach(role -> role.getUsers().remove(userEntity));
+
+        // delete data by ids
+        this.unitOfWork.getBankAccountRepository().deleteById(bankAccEntity.getId());
+        this.unitOfWork.getCustomerRepository().deleteById(customerEntity.getId());
+        this.unitOfWork.getUserRepository().deleteById(userEntity.getId());
     }
 }
