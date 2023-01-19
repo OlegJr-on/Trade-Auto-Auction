@@ -27,7 +27,16 @@ public class CustomerServiceImpl implements CustomerService{
 
     @Override
     public List<CustomerDTO> findAll() {
-        return null;
+
+        List<Customer> customersFromSource = this.unitOfWork.getCustomerRepository().findAll();
+
+        if (customersFromSource.isEmpty()){
+            throw new ResourceNotFoundException("Data source is empty");
+        }
+
+        return customersFromSource.stream()
+                                  .map(ApplicationMapper::mapToCustomerDTO)
+                                  .toList();
     }
 
     @Override
