@@ -18,11 +18,50 @@ import java.util.List;
 
 
 @Service
-public class CustomerServiceImpl {
+public class CustomerServiceImpl implements CustomerService{
     private final UnitOfWork unitOfWork;
 
     public CustomerServiceImpl(UnitOfWork unitOfWork) {
         this.unitOfWork = unitOfWork;
     }
 
+    @Override
+    public List<CustomerDTO> findAll() {
+        return null;
+    }
+
+    @Override
+    public CustomerDTO findById(int id) {
+        return null;
+    }
+
+    @Override
+    public List<CustomerDTO> findByFirstName(String name) {
+        return null;
+    }
+
+    @Override
+    public CustomerDTO findByFirstNameAndLastName(String firstName, String lastName) {
+        return null;
+    }
+
+    @Override
+    public CustomerDTO findByEmail(String email) {
+        return null;
+    }
+
+    @Override
+    public void create(CustomerDTO user) {
+
+    }
+
+    @Override
+    public void update(int id, CustomerDTO user) {
+
+    }
+
+    @Override
+    public void deleteById(int id) {
+
+    }
 }
