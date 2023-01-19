@@ -2,6 +2,9 @@ package com.auction.auto_auction.controller;
 
 import com.auction.auto_auction.dto.CustomerDTO;
 import com.auction.auto_auction.service.CustomerService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +21,7 @@ public class CustomerController {
         this.customerService = customerService;
     }
 
-    @GetMapping(produces = "application/json")
+    @GetMapping
     public ResponseEntity<List<CustomerDTO>> getAllCustomers(){
 
         List<CustomerDTO> customers = this.customerService.findAll();
@@ -26,7 +29,7 @@ public class CustomerController {
         return ResponseEntity.ok(customers);
     }
 
-    @GetMapping(path = "/{id}",produces = "application/json")
+    @GetMapping(path = "/{id}")
     public ResponseEntity<CustomerDTO> getCustomerById(@PathVariable("id") int customerId){
 
         CustomerDTO customer = this.customerService.findById(customerId);
@@ -34,5 +37,12 @@ public class CustomerController {
         return ResponseEntity.ok(customer);
     }
 
+    @PostMapping
+    public ResponseEntity<String> createCustomer(@Valid @NotNull @RequestBody CustomerDTO customerDTO) {
+
+        this.customerService.create(customerDTO);
+
+        return new ResponseEntity<>("Customer is created!", HttpStatus.CREATED);
+    }
 
 }
