@@ -25,4 +25,12 @@ public class CustomerController {
 
         return ResponseEntity.ok(customers);
     }
+
+    @GetMapping(path = "/{id}",produces = "application/json")
+    public ResponseEntity<CustomerDTO> getCustomerById(@PathVariable("id") int customerId){
+
+        CustomerDTO customer = this.customerService.findById(customerId);
+
+        return ResponseEntity.ok(customer);
+    }
 }
