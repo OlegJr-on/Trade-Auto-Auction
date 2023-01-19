@@ -66,7 +66,13 @@ public class CustomerServiceImpl implements CustomerService{
 
     @Override
     public CustomerDTO findByFirstNameAndLastName(String firstName, String lastName) {
-        return null;
+
+        User entity = this.unitOfWork.getUserRepository().findByFirstNameAndLastName(firstName,lastName)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Customer","firstName and lastName",
+                                                                String.format("%s %s",firstName,lastName)));
+
+        return ApplicationMapper.mapToCustomerDTO(entity);
     }
 
     @Override
