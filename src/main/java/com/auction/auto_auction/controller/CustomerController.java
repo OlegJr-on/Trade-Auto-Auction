@@ -45,4 +45,14 @@ public class CustomerController {
         return new ResponseEntity<>("Customer is created!", HttpStatus.CREATED);
     }
 
+    @PutMapping(path = "/{id}")
+    public ResponseEntity<String> updateCustomer(
+            @PathVariable("id") int customerId,
+            @Valid @NotNull @RequestBody CustomerDTO customerDTO
+    ){
+
+        this.customerService.update(customerId,customerDTO);
+
+        return new ResponseEntity<>("Customer is updated!",HttpStatus.OK);
+    }
 }
