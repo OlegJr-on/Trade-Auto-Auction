@@ -114,8 +114,30 @@ public class CustomerServiceImpl implements CustomerService{
     }
 
     @Override
-    public void update(int id, CustomerDTO user) {
+    public void update(int id, CustomerDTO updatedCustomer) {
 
+        if (updatedCustomer == null) {
+            throw new NullPointerException("Customer don`t updated, entered values is null");
+        }
+
+        // search customer entity by id from data source
+        Customer customerEntity = this.unitOfWork.getCustomerRepository().findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Customer","id",String.valueOf(id)));
+
+        //on received customer extract user entity that gonna updated
+        User userEntity = customerEntity.getUser();
+
+        //update info
+        userEntity.setFirstName(updatedCustomer.getFirstName());
+        userEntity.setLastName(updatedCustomer.getLastName());
+        userEntity.setLocation(updatedCustomer.getLocation());
+        userEntity.setPhoneNumber(updatedCustomer.getPhoneNumber());
+        userEntity.setBirthDay(updatedCustomer.getBirthDay());
+        userEntity.setEmail(updatedCustomer.getEmail());
+
+        // save changes
+        this.unitOfWork.getUserRepository().save(userEntity);
     }
 
     @Override
