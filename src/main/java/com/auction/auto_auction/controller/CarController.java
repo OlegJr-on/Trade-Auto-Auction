@@ -64,4 +64,12 @@ public class CarController {
 
         return ResponseEntity.ok(cars);
     }
+
+    @PostMapping
+    public ResponseEntity<String> createCar(@Valid @NotNull @RequestBody CarDTO carDTO) {
+
+        this.carService.create(carDTO);
+
+        return new ResponseEntity<>("Car is created!", HttpStatus.CREATED);
+    }
 }
