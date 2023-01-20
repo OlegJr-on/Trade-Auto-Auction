@@ -83,4 +83,14 @@ public class CarController {
 
         return new ResponseEntity<>("Car is updated!",HttpStatus.OK);
     }
+
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity<String> deleteCarById(@PathVariable("id") int carId){
+
+        this.carService.deleteById(carId);
+
+        return new ResponseEntity<>(
+                String.format("Car with id: %d is removed!",carId),
+                HttpStatus.OK);
+    }
 }
