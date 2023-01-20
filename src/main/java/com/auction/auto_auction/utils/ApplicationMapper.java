@@ -3,6 +3,7 @@ package com.auction.auto_auction.utils;
 import com.auction.auto_auction.dto.CarDTO;
 import com.auction.auto_auction.dto.CustomerDTO;
 import com.auction.auto_auction.entity.*;
+import com.auction.auto_auction.entity.enums.AutoState;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -75,6 +76,23 @@ public class ApplicationMapper {
                                     .stream()
                                     .map(AutoPhoto::getPhotoSrc)
                                     .toList())
+                .build();
+    }
+
+    public static Car mapToCarEntity(CarDTO dto){
+        return Car
+                .builder()
+                .mark(dto.getMark())
+                .model(dto.getModel())
+                .registryDate(dto.getRegistryDate())
+                .run(dto.getRun())
+                .weight(dto.getWeight())
+                .damage(dto.getDamage())
+                .state(AutoState.valueOf(dto.getAutoState()
+                                                        .replaceAll(" ", "_")
+                                                        .toUpperCase()))
+                .nominalValue(dto.getNominalValue())
+                .orientedPrice(dto.getOrientedPrice())
                 .build();
     }
 }
