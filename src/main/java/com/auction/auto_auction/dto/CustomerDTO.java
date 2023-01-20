@@ -29,6 +29,7 @@ public class CustomerDTO {
     private String lastName;
 
     @NotNull(message = "The date of birth is required")
+    @Past(message = "Date of birthday should be in the past")
     private Date birthDay;
 
     @NotNull(message = "The phone number is required")
@@ -51,7 +52,7 @@ public class CustomerDTO {
     @Builder.Default
     private List<String> roles = List.of("User");
 
-    @Min(value = 0)
+    @PositiveOrZero
     @Max(value = 100)
     @Builder.Default
     private int discount = 0;
