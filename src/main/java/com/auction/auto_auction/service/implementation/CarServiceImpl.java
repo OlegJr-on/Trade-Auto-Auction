@@ -3,6 +3,7 @@ package com.auction.auto_auction.service.implementation;
 import com.auction.auto_auction.dto.CarDTO;
 import com.auction.auto_auction.entity.Car;
 import com.auction.auto_auction.entity.Customer;
+import com.auction.auto_auction.entity.User;
 import com.auction.auto_auction.exception.ResourceNotFoundException;
 import com.auction.auto_auction.repository.uow.UnitOfWork;
 import com.auction.auto_auction.service.CarService;
@@ -10,6 +11,7 @@ import com.auction.auto_auction.utils.ApplicationMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CarServiceImpl implements CarService {
@@ -45,7 +47,16 @@ public class CarServiceImpl implements CarService {
 
     @Override
     public List<CarDTO> findByMark(String mark) {
-        return null;
+
+        Optional<List<Car>> carEntities = this.unitOfWork.getCarRepository().findByMark(mark);
+
+        if (carEntities.get().isEmpty()){
+            throw new ResourceNotFoundException("Car","mark",mark);
+        }
+
+        return carEntities.get().stream()
+                                .map(ApplicationMapper::mapToCarDTO)
+                                .toList();
     }
 
     @Override
