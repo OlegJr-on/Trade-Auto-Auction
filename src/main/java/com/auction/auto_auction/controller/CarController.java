@@ -23,4 +23,11 @@ public class CarController {
         this.carService = carService;
     }
 
+    @GetMapping
+    public ResponseEntity<List<CarDTO>> getAllCars() {
+
+        List<CarDTO> cars = this.carService.findAll();
+
+        return ResponseEntity.ok(cars);
+    }
 }
