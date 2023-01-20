@@ -25,4 +25,8 @@ public class AutoPhoto {
     @ManyToOne
     @JoinColumn(name = "car_id", referencedColumnName = "id")
     private Car car;
+
+    public AutoPhoto(String photoSrc) {
+        this.photoSrc = photoSrc;
+    }
 }
