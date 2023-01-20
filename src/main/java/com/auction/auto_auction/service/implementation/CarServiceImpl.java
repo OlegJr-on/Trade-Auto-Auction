@@ -1,8 +1,12 @@
 package com.auction.auto_auction.service.implementation;
 
 import com.auction.auto_auction.dto.CarDTO;
+import com.auction.auto_auction.entity.Car;
+import com.auction.auto_auction.entity.Customer;
+import com.auction.auto_auction.exception.ResourceNotFoundException;
 import com.auction.auto_auction.repository.uow.UnitOfWork;
 import com.auction.auto_auction.service.CarService;
+import com.auction.auto_auction.utils.ApplicationMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,7 +21,16 @@ public class CarServiceImpl implements CarService {
 
     @Override
     public List<CarDTO> findAll() {
-        return null;
+
+        List<Car> carsFromSource = this.unitOfWork.getCarRepository().findAll();
+
+        if (carsFromSource.isEmpty()){
+            throw new ResourceNotFoundException("Data source is empty");
+        }
+
+        return carsFromSource.stream()
+                             .map(ApplicationMapper::mapToCarDTO)
+                             .toList();
     }
 
     @Override
