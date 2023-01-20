@@ -72,4 +72,15 @@ public class CarController {
 
         return new ResponseEntity<>("Car is created!", HttpStatus.CREATED);
     }
+
+    @PutMapping(path = "/{id}")
+    public ResponseEntity<String> updateCar(
+            @PathVariable("id") int carId,
+            @Valid @NotNull @RequestBody CarDTO updatedCar
+    ){
+
+        this.carService.update(carId,updatedCar);
+
+        return new ResponseEntity<>("Car is updated!",HttpStatus.OK);
+    }
 }
