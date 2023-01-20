@@ -1,16 +1,18 @@
 package com.auction.auto_auction.service.implementation;
 
 import com.auction.auto_auction.dto.CarDTO;
-import com.auction.auto_auction.entity.Car;
-import com.auction.auto_auction.entity.Customer;
-import com.auction.auto_auction.entity.User;
+import com.auction.auto_auction.entity.*;
 import com.auction.auto_auction.exception.ResourceNotFoundException;
 import com.auction.auto_auction.repository.uow.UnitOfWork;
 import com.auction.auto_auction.service.CarService;
+import com.auction.auto_auction.utils.ApplicationConstants;
 import com.auction.auto_auction.utils.ApplicationMapper;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -74,7 +76,25 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public void create(CarDTO carDTO) {
+    public void create(CarDTO createdCar) {
+
+        if (createdCar == null) {
+            throw new NullPointerException("Car doesn`t created, values is null");
+        }
+
+        // map dto to entity
+        Car carEntity = ApplicationMapper.mapToCarEntity(createdCar);
+
+        // create relevant photos entities from given dto
+        List<AutoPhoto> photos = createdCar.getPhotosSrc().stream()
+                                                          .map(AutoPhoto::new)
+                                                          .toList();
+
+        // set photos into car entity and in setter act two-ways relation
+        carEntity.setPhotos(photos);
+
+        // save new data into data source
+        this.unitOfWork.getCarRepository().save(carEntity);
 
     }
 
