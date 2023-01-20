@@ -3,10 +3,7 @@ package com.auction.auto_auction.entity;
 import com.auction.auto_auction.entity.enums.AutoState;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -17,6 +14,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "cars")
 @JsonIgnoreProperties({"lot","photos"})
@@ -64,5 +62,10 @@ public class Car {
     public void setLot(Lot lot){
         this.lot = lot;
         lot.setCar(this);
+    }
+
+    public void setPhotos(List<AutoPhoto> photos){
+        this.photos = photos;
+        photos.forEach(photo -> photo.setCar(this));
     }
 }
