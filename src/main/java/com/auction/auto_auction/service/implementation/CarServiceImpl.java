@@ -35,7 +35,12 @@ public class CarServiceImpl implements CarService {
 
     @Override
     public CarDTO findById(int carId) {
-        return null;
+
+        Car carEntity = this.unitOfWork.getCarRepository().findById(carId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Car","id",String.valueOf(carId)));
+
+        return ApplicationMapper.mapToCarDTO(carEntity);
     }
 
     @Override
