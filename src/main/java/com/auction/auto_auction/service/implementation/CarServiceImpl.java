@@ -61,7 +61,16 @@ public class CarServiceImpl implements CarService {
 
     @Override
     public List<CarDTO> findByMarkAndModel(String mark, String model) {
-        return null;
+
+        Optional<List<Car>> carEntities = this.unitOfWork.getCarRepository().findByMarkAndModel(mark,model);
+
+        if (carEntities.get().isEmpty()){
+            throw new ResourceNotFoundException("Car","mark and model", String.format("%s %s",mark,model));
+        }
+
+        return carEntities.get().stream()
+                                .map(ApplicationMapper::mapToCarDTO)
+                                .toList();
     }
 
     @Override
