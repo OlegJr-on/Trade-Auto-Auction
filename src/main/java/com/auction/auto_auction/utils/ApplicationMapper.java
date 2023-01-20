@@ -1,9 +1,8 @@
 package com.auction.auto_auction.utils;
 
+import com.auction.auto_auction.dto.CarDTO;
 import com.auction.auto_auction.dto.CustomerDTO;
-import com.auction.auto_auction.entity.Customer;
-import com.auction.auto_auction.entity.Role;
-import com.auction.auto_auction.entity.User;
+import com.auction.auto_auction.entity.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -56,6 +55,26 @@ public class ApplicationMapper {
                 .password(dto.getPassword())
                 .location(dto.getLocation())
                 .birthDay(dto.getBirthDay())
+                .build();
+    }
+
+    public static CarDTO mapToCarDTO(Car entity) {
+        return CarDTO
+                .builder()
+                .id(entity.getId())
+                .mark(entity.getMark())
+                .model(entity.getModel())
+                .registryDate(entity.getRegistryDate())
+                .run(entity.getRun())
+                .weight(entity.getWeight())
+                .damage(entity.getDamage())
+                .autoState(entity.getState().label)
+                .nominalValue(entity.getNominalValue())
+                .orientedPrice(entity.getOrientedPrice())
+                .photosSrc(entity.getPhotos()
+                                    .stream()
+                                    .map(AutoPhoto::getPhotoSrc)
+                                    .toList())
                 .build();
     }
 }
