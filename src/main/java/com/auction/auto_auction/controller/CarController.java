@@ -38,4 +38,30 @@ public class CarController {
 
         return ResponseEntity.ok(car);
     }
+
+    @GetMapping(path = "/by")
+    public ResponseEntity<List<CarDTO>> getCarsByProperties(
+            @RequestParam(value = "mark",defaultValue = ApplicationConstants.EMPTY_STRING) String mark,
+            @RequestParam(value = "model",defaultValue = ApplicationConstants.EMPTY_STRING) String model
+    ){
+
+        List<CarDTO> cars = null;
+
+        // find only by mark
+        if (!mark.isEmpty() && model.isEmpty()){
+            cars = this.carService.findByMark(mark);
+        }
+
+        // find by mark and model
+        if (!mark.isEmpty() && !model.isEmpty()){
+            cars = this.carService.findByMarkAndModel(mark,model);
+        }
+
+        // if all properties entered wrong - throw exception
+        if (cars == null){
+            throw new NullPointerException("Entered data is incorrect");
+        }
+
+        return ResponseEntity.ok(cars);
+    }
 }
