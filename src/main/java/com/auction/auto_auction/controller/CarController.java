@@ -30,4 +30,12 @@ public class CarController {
 
         return ResponseEntity.ok(cars);
     }
+
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<CarDTO> getCarById(@PathVariable("id") int carId) {
+
+        CarDTO car = this.carService.findById(carId);
+
+        return ResponseEntity.ok(car);
+    }
 }
