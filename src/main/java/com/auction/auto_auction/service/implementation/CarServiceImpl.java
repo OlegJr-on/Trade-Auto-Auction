@@ -130,5 +130,18 @@ public class CarServiceImpl implements CarService {
     @Override
     public void deleteById(int carId) {
 
+        // search car entity from data source by id
+        Car carEntity = this.unitOfWork.getCarRepository().findById(carId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Car","id",String.valueOf(carId)));
+
+        // get related photos from car entity
+        List<AutoPhoto> photoEntities = carEntity.getPhotos();
+
+        // delete data by ids
+        photoEntities.forEach(photo ->
+                this.unitOfWork.getAutoPhotoRepository().deleteById(photo.getId()));
+
+        this.unitOfWork.getCarRepository().deleteById(carEntity.getId());
     }
 }
