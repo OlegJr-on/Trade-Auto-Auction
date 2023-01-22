@@ -114,9 +114,7 @@ public class CarServiceImpl implements CarService {
         carEntity.setRun(updatedCar.getRun());
         carEntity.setWeight(updatedCar.getWeight());
         carEntity.setDamage(updatedCar.getDamage());
-        carEntity.setState(AutoState.valueOf(updatedCar.getAutoState()
-                                                           .replaceAll(" ", "_")
-                                                           .toUpperCase()));
+        carEntity.setState(AutoState.transform(updatedCar.getAutoState()));
         carEntity.setNominalValue(updatedCar.getNominalValue());
 
         if (updatedCar.getOrientedPrice() != null){
