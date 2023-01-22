@@ -11,4 +11,9 @@ public enum AutoState {
     private AutoState(String label) {
         this.label = label;
     }
+
+    public static AutoState transform(String label){
+        return AutoState.valueOf(
+                label.replaceAll(" ", "_").toUpperCase());
+    }
 }
