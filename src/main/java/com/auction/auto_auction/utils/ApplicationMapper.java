@@ -88,9 +88,7 @@ public class ApplicationMapper {
                 .run(dto.getRun())
                 .weight(dto.getWeight())
                 .damage(dto.getDamage())
-                .state(AutoState.valueOf(dto.getAutoState()
-                                                        .replaceAll(" ", "_")
-                                                        .toUpperCase()))
+                .state(AutoState.transform(dto.getAutoState()))
                 .nominalValue(dto.getNominalValue())
                 .orientedPrice(dto.getOrientedPrice())
                 .build();
