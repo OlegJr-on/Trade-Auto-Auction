@@ -28,4 +28,12 @@ public class LotController {
 
         return ResponseEntity.ok(lots);
     }
+
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<LotDTO> getLotById(@PathVariable("id") int lotId) {
+
+        LotDTO lot = this.lotService.getById(lotId);
+
+        return ResponseEntity.ok(lot);
+    }
 }
