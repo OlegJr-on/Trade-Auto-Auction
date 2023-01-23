@@ -75,4 +75,15 @@ public class LotController {
 
         return new ResponseEntity<>("Lot is created!", HttpStatus.CREATED);
     }
+
+    @PostMapping("/car/{carId}")
+    public ResponseEntity<String> createLotByExistCar(
+            @PathVariable("carId") int carId,
+            @Valid @NotNull @RequestBody LotDTO justCreatedLot
+    ) {
+
+        this.lotService.createByExistCarId(carId,justCreatedLot);
+
+        return new ResponseEntity<>("Lot is created!", HttpStatus.CREATED);
+    }
 }
