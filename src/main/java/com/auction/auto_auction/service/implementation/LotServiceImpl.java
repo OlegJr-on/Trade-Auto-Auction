@@ -59,7 +59,18 @@ public class LotServiceImpl implements LotService{
 
     @Override
     public List<LotDTO> getByDatePeriod(LocalDateTime start, LocalDateTime end) {
-        return null;
+
+        Optional<List<Lot>> lotEntities = this.unitOfWork.getLotRepository()
+                .findByStartTradingBetween(start,end);
+
+        if (lotEntities.get().isEmpty()){
+            throw new ResourceNotFoundException(
+                    String.format("Not found lots in date: from %s to %s",start,end));
+        }
+
+        return lotEntities.get().stream()
+                                .map(ApplicationMapper::mapToLotDTO)
+                                .toList();
     }
 
     @Override
