@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +24,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ErrorDetails> handleResourceNotFoundException(ResourceNotFoundException exception,
                                                                         WebRequest webRequest){
         ErrorDetails errorDetails = new ErrorDetails(
-                new Date(),
+                LocalDateTime.now(),
                 exception.getMessage(),
                 webRequest.getDescription(false),
                 HttpStatus.NOT_FOUND);
@@ -34,7 +35,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ErrorDetails> handleGlobalException(Exception exception,
                                                               WebRequest webRequest){
         ErrorDetails errorDetails = new ErrorDetails(
-                new Date(),
+                LocalDateTime.now(),
                 exception.getMessage(),
                 webRequest.getDescription(false),
                 HttpStatus.INTERNAL_SERVER_ERROR);
