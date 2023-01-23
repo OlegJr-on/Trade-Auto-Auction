@@ -1,19 +1,17 @@
 package com.auction.auto_auction.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "sales_department")
 public class SalesDepartment {
@@ -30,10 +28,7 @@ public class SalesDepartment {
     private String salesName;
 
     @Column(name = "sales_date",nullable = false)
-    private Date salesDate;
-
-    @Column(name = "time_left",nullable = false)
-    private Date timeLeft;
+    private LocalDateTime salesDate;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
