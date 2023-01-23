@@ -189,5 +189,22 @@ public class LotServiceImpl implements LotService{
     @Override
     public void deleteById(int lotId) {
 
+        // search lot entity from data source by id
+        Lot lotEntity = this.unitOfWork.getLotRepository().findById(lotId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Lot","id",String.valueOf(lotId)));
+
+        // get related car entity from lot
+        Car carEntity = lotEntity.getCar();
+
+        // get related photos from car entity
+        List<AutoPhoto> photoEntities = carEntity.getPhotos();
+
+        // delete data by ids
+        photoEntities.forEach(photo ->
+                this.unitOfWork.getAutoPhotoRepository().deleteById(photo.getId()));
+
+        this.unitOfWork.getLotRepository().deleteById(lotEntity.getId());
+        this.unitOfWork.getCarRepository().deleteById(carEntity.getId());
     }
 }
