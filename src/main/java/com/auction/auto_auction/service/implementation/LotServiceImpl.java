@@ -22,7 +22,16 @@ public class LotServiceImpl implements LotService{
 
     @Override
     public List<LotDTO> getAll() {
-        return null;
+
+        List<Lot> lotsFromSource = this.unitOfWork.getLotRepository().findAll();
+
+        if (lotsFromSource.isEmpty()){
+            throw new ResourceNotFoundException("Data source is empty");
+        }
+
+        return lotsFromSource.stream()
+                             .map(ApplicationMapper::mapToLotDTO)
+                             .toList();
     }
 
     @Override
