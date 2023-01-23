@@ -8,8 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Data
@@ -32,7 +32,7 @@ public class CarDTO {
 
     @NotNull(message = "First registry date of car cannot be null")
     @Past(message = "First registry date of car should be earlier than nowadays")
-    private Date registryDate;
+    private LocalDate registryDate;
 
     @NotNull(message = "Run of car cannot be null")
     @PositiveOrZero(message = "Run of car cannot be less or equal than 0")

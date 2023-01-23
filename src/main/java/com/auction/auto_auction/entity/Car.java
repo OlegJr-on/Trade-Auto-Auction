@@ -6,8 +6,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -32,7 +32,7 @@ public class Car {
     private String model;
 
     @Column(name = "first_registry_date",nullable = false)
-    private Date registryDate;
+    private LocalDate registryDate;
 
     @Column(name = "run",nullable = false)
     private int run;
