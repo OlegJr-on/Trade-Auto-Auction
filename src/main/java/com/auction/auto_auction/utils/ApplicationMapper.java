@@ -5,6 +5,7 @@ import com.auction.auto_auction.dto.CustomerDTO;
 import com.auction.auto_auction.dto.LotDTO;
 import com.auction.auto_auction.entity.*;
 import com.auction.auto_auction.entity.enums.AutoState;
+import com.auction.auto_auction.entity.enums.LotStatus;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -105,6 +106,18 @@ public class ApplicationMapper {
                 .startTrading(entity.getStartTrading())
                 .endTrading(entity.getEndTrading())
                 .car(ApplicationMapper.mapToCarDTO(entity.getCar()))
+                .build();
+    }
+
+    public static Lot mapToLotEntity(LotDTO dto){
+        return Lot
+                .builder()
+                .lotStatus(LotStatus.transform(dto.getLotStatus()))
+                .launchPrice(dto.getLaunchPrice())
+                .minRate(dto.getMinRate())
+                .startTrading(dto.getStartTrading())
+                .endTrading(dto.getEndTrading())
+                .car(ApplicationMapper.mapToCarEntity(dto.getCar()))
                 .build();
     }
 }
