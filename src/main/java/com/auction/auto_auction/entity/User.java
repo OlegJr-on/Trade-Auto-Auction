@@ -5,8 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Builder
@@ -33,7 +33,7 @@ public class User {
     @Column(name = "birthday")
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date birthDay;
+    private LocalDate birthDay;
 
     @Column(name = "phone_number",nullable = false)
     private String phoneNumber;

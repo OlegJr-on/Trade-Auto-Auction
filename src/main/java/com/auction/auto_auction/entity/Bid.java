@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -25,7 +25,7 @@ public class Bid {
     private int id;
 
     @Column(name = "operation_date",nullable = false)
-    private Date operationDate;
+    private LocalDateTime operationDate;
 
     @Column(name = "is_active",nullable = false)
     private boolean isActive;

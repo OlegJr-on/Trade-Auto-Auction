@@ -6,8 +6,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -36,10 +36,10 @@ public class Lot {
     private BigDecimal minRate;
 
     @Column(name = "start_trading",nullable = false)
-    private Date startTrading;
+    private LocalDateTime startTrading;
 
     @Column(name = "end_trading",nullable = false)
-    private Date endTrading;
+    private LocalDateTime endTrading;
 
     @OneToOne
     @JoinColumn(name = "car_id",referencedColumnName = "id")

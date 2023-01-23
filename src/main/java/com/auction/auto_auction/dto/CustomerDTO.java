@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -30,7 +30,7 @@ public class CustomerDTO {
 
     @NotNull(message = "The date of birth is required")
     @Past(message = "Date of birthday should be in the past")
-    private Date birthDay;
+    private LocalDate birthDay;
 
     @NotNull(message = "The phone number is required")
     @Pattern(regexp = "^(\\d{3}[- .]?){2}\\d{4}$",message = "Phone number should be like 0447771111")

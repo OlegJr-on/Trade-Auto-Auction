@@ -10,8 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 
 @Data
@@ -35,11 +34,11 @@ public class LotDTO {
 
     @NotNull(message = "Start trading of lot cannot be null")
     @Future(message = "Start trading of lot should be later than just now")
-    private Date startTrading;
+    private LocalDateTime startTrading;
 
     @NotNull(message = "The end trading of lot cannot be null")
     @Future(message = "The end trading of lot should be later than just now")
-    private Date endTrading;
+    private LocalDateTime endTrading;
 
     private @Valid CarDTO car;
 }
