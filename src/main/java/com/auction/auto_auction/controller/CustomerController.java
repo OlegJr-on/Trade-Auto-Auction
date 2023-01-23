@@ -41,26 +41,26 @@ public class CustomerController {
 
     @GetMapping(path = "/by")
     public ResponseEntity<List<CustomerDTO>> getCustomerByProperties(
-            @RequestParam(value = "firstName",defaultValue = ApplicationConstants.EMPTY_STRING) String firstName,
-            @RequestParam(value = "lastName",defaultValue = ApplicationConstants.EMPTY_STRING) String lastName,
-            @RequestParam(value = "email",defaultValue = ApplicationConstants.EMPTY_STRING) String email
+            @RequestParam(value = "firstName",required = false) String firstName,
+            @RequestParam(value = "lastName",required = false) String lastName,
+            @RequestParam(value = "email",required = false) String email
     ){
 
         List<CustomerDTO> customers = null;
 
         // find by only firstName
-        if (!firstName.isEmpty() && lastName.isEmpty()){
+        if (firstName != null && lastName == null){
             customers = this.customerService.findByFirstName(firstName);
         }
 
         // find by firstName and lastName
-        if (!firstName.isEmpty() && !lastName.isEmpty()){
+        if (firstName != null && lastName != null){
             customers = Collections.singletonList(
                     this.customerService.findByFirstNameAndLastName(firstName,lastName));
         }
 
         // find by only email, because email is unique for any customers
-        if (!email.isEmpty()){
+        if (email != null){
             customers = Collections.singletonList(
                     this.customerService.findByEmail(email));
         }
