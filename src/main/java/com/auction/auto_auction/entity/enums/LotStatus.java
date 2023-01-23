@@ -12,4 +12,9 @@ public enum LotStatus {
     private LotStatus(String label) {
         this.label = label;
     }
+
+    public static LotStatus transform(String label){
+        return LotStatus.valueOf(
+                label.replaceAll(" ", "_").toUpperCase());
+    }
 }
