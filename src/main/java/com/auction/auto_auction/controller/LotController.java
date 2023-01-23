@@ -67,4 +67,12 @@ public class LotController {
 
         return ResponseEntity.ok(lots);
     }
+
+    @PostMapping
+    public ResponseEntity<String> createLot(@Valid @NotNull @RequestBody LotDTO justCreatedLot) {
+
+        this.lotService.create(justCreatedLot);
+
+        return new ResponseEntity<>("Lot is created!", HttpStatus.CREATED);
+    }
 }
