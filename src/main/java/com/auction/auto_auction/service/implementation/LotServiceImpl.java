@@ -137,8 +137,28 @@ public class LotServiceImpl implements LotService{
     }
 
     @Override
-    public void createByExistCarId(int carId, LotDTO lotDTO) {
+    public void createByExistCarId(int carId, LotDTO createdLot) {
 
+        if (createdLot == null) {
+            throw new NullPointerException("Lot doesn`t created, values is null");
+        }
+
+        // find car by its id, car should be already exist in data source
+        Car carEntity = this.unitOfWork.getCarRepository().findById(carId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Car","id",String.valueOf(carId)));
+
+        // set in lot dto mapped car, because for map lot to entity, car should be not null
+        createdLot.setCar(ApplicationMapper.mapToCarDTO(carEntity));
+
+        // map just created lot dto to lot entity
+        Lot lotEntity = ApplicationMapper.mapToLotEntity(createdLot);
+
+        // set lot into car entity and in setter act two-ways relation
+        carEntity.setLot(lotEntity);
+
+        // save new data
+        this.unitOfWork.getLotRepository().save(lotEntity);
     }
 
     @Override
