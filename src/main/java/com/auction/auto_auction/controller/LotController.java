@@ -86,4 +86,15 @@ public class LotController {
 
         return new ResponseEntity<>("Lot is created!", HttpStatus.CREATED);
     }
+
+    @PutMapping(path = "/{id}")
+    public ResponseEntity<String> updateLot(
+            @PathVariable("id") int lotId,
+            @Valid @NotNull @RequestBody LotDTO updatedLot
+    ){
+
+        this.lotService.update(lotId,updatedLot);
+
+        return new ResponseEntity<>("Lot is updated!",HttpStatus.OK);
+    }
 }
