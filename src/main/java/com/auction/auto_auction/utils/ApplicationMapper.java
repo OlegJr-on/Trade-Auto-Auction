@@ -2,6 +2,7 @@ package com.auction.auto_auction.utils;
 
 import com.auction.auto_auction.dto.CarDTO;
 import com.auction.auto_auction.dto.CustomerDTO;
+import com.auction.auto_auction.dto.LotDTO;
 import com.auction.auto_auction.entity.*;
 import com.auction.auto_auction.entity.enums.AutoState;
 
@@ -91,6 +92,19 @@ public class ApplicationMapper {
                 .state(AutoState.transform(dto.getAutoState()))
                 .nominalValue(dto.getNominalValue())
                 .orientedPrice(dto.getOrientedPrice())
+                .build();
+    }
+
+    public static LotDTO mapToLotDTO(Lot entity){
+        return LotDTO
+                .builder()
+                .id(entity.getId())
+                .lotStatus(entity.getLotStatus().label)
+                .launchPrice(entity.getLaunchPrice())
+                .minRate(entity.getMinRate())
+                .startTrading(entity.getStartTrading())
+                .endTrading(entity.getEndTrading())
+                .car(ApplicationMapper.mapToCarDTO(entity.getCar()))
                 .build();
     }
 }
