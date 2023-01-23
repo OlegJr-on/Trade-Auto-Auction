@@ -47,7 +47,14 @@ public class LotServiceImpl implements LotService{
 
     @Override
     public LotDTO getByCarId(int carId) {
-        return null;
+
+        Car carEntity = this.unitOfWork.getCarRepository().findById(carId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Car","id",String.valueOf(carId)));
+
+        Lot lotEntity = carEntity.getLot();
+
+        return ApplicationMapper.mapToLotDTO(lotEntity);
     }
 
     @Override
