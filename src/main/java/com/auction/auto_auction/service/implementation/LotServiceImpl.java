@@ -1,6 +1,7 @@
 package com.auction.auto_auction.service.implementation;
 
 import com.auction.auto_auction.dto.LotDTO;
+import com.auction.auto_auction.entity.AutoPhoto;
 import com.auction.auto_auction.entity.Car;
 import com.auction.auto_auction.entity.Lot;
 import com.auction.auto_auction.exception.ResourceNotFoundException;
@@ -105,8 +106,34 @@ public class LotServiceImpl implements LotService{
 
 
     @Override
-    public void create(LotDTO carDTO) {
+    public void create(LotDTO createdLot) {
 
+        if (createdLot == null) {
+            throw new NullPointerException("Lot doesn`t created, values is null");
+        }
+
+        // map dto to entity
+        Lot lotEntity = ApplicationMapper.mapToLotEntity(createdLot);
+
+        // create relevant entities from given dto
+        Car carEntity = lotEntity.getCar();
+
+        List<AutoPhoto> photos = createdLot.getCar().getPhotosSrc()
+                                                            .stream()
+                                                            .map(AutoPhoto::new)
+                                                            .toList();
+
+        // set photos into car entity and in setter act two-ways relation
+        carEntity.setPhotos(photos);
+
+        // first of all, save data from car entity
+        this.unitOfWork.getCarRepository().save(carEntity);
+
+        //after, set into car entity relevant lot
+        carEntity.setLot(lotEntity);
+
+        // finally, save lot entity with other relations in data source
+        this.unitOfWork.getLotRepository().save(lotEntity);
     }
 
     @Override
