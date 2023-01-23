@@ -1,6 +1,7 @@
 package com.auction.auto_auction.service.implementation;
 
 import com.auction.auto_auction.dto.LotDTO;
+import com.auction.auto_auction.entity.Car;
 import com.auction.auto_auction.entity.Lot;
 import com.auction.auto_auction.exception.ResourceNotFoundException;
 import com.auction.auto_auction.repository.uow.UnitOfWork;
@@ -36,7 +37,12 @@ public class LotServiceImpl implements LotService{
 
     @Override
     public LotDTO getById(int lotId) {
-        return null;
+
+        Lot lotEntity = this.unitOfWork.getLotRepository().findById(lotId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Lot","id",String.valueOf(lotId)));
+
+        return ApplicationMapper.mapToLotDTO(lotEntity);
     }
 
     @Override
