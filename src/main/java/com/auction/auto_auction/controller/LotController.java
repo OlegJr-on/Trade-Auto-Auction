@@ -97,4 +97,14 @@ public class LotController {
 
         return new ResponseEntity<>("Lot is updated!",HttpStatus.OK);
     }
+
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity<String> deleteLotById(@PathVariable("id") int lotId){
+
+        this.lotService.deleteById(lotId);
+
+        return new ResponseEntity<>(
+                                    String.format("Lot with id: %d is removed!",lotId),
+                                    HttpStatus.OK);
+    }
 }
