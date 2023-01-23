@@ -1,5 +1,6 @@
 package com.auction.auto_auction.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -54,4 +55,7 @@ public class CarDTO {
     private BigDecimal orientedPrice;
 
     private List<@NotBlank String> photosSrc = new ArrayList<>();
+
+    @JsonIgnore
+    private LotDTO lot;
 }
