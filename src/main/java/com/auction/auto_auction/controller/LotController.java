@@ -21,4 +21,11 @@ public class LotController {
         this.lotService = lotService;
     }
 
+    @GetMapping
+    public ResponseEntity<List<LotDTO>> getAllLots() {
+
+        List<LotDTO> lots = this.lotService.getAll();
+
+        return ResponseEntity.ok(lots);
+    }
 }
