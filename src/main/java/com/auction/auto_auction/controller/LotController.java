@@ -36,4 +36,35 @@ public class LotController {
 
         return ResponseEntity.ok(lot);
     }
+
+    @GetMapping("/period")
+    public ResponseEntity<List<LotDTO>> getLotsByPeriod(
+            @RequestParam(value = "from",required = false) LocalDateTime from,
+            @RequestParam(value = "to",required = false) LocalDateTime to
+    ){
+
+        List<LotDTO> lots = null;
+
+        // find by period
+        if (from != null && to != null){
+            lots = this.lotService.getByDatePeriod(from,to);
+        }
+
+        // find by date before
+        if (from == null && to != null){
+            lots = this.lotService.getByDateBefore(to);
+        }
+
+        // find by date after
+        if (from != null && to == null){
+            lots = this.lotService.getByDateAfter(from);
+        }
+
+        // if all properties entered wrong - throw exception
+        if (lots == null){
+            throw new NullPointerException("Entered data is incorrect");
+        }
+
+        return ResponseEntity.ok(lots);
+    }
 }
