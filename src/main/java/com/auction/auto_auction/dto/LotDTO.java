@@ -41,4 +41,5 @@ public class LotDTO {
     @Future(message = "The end trading of lot should be later than just now")
     private Date endTrading;
 
+    private @Valid CarDTO car;
 }
