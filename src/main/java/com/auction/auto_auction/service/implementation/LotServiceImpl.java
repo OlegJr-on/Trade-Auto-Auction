@@ -4,6 +4,8 @@ import com.auction.auto_auction.dto.LotDTO;
 import com.auction.auto_auction.entity.AutoPhoto;
 import com.auction.auto_auction.entity.Car;
 import com.auction.auto_auction.entity.Lot;
+import com.auction.auto_auction.entity.enums.AutoState;
+import com.auction.auto_auction.entity.enums.LotStatus;
 import com.auction.auto_auction.exception.ResourceNotFoundException;
 import com.auction.auto_auction.repository.uow.UnitOfWork;
 import com.auction.auto_auction.service.LotService;
@@ -162,8 +164,26 @@ public class LotServiceImpl implements LotService{
     }
 
     @Override
-    public void update(int lotId, LotDTO carDTO) {
+    public void update(int lotId, LotDTO updatedLot) {
 
+        if (updatedLot == null) {
+            throw new NullPointerException("Lot doesn`t updated, entered values is null");
+        }
+
+        // search lot entity by id from data source
+        Lot lotEntity = this.unitOfWork.getLotRepository().findById(lotId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Lot","id",String.valueOf(lotId)));
+
+        //update info
+        lotEntity.setLotStatus(LotStatus.transform(updatedLot.getLotStatus()));
+        lotEntity.setLaunchPrice(updatedLot.getLaunchPrice());
+        lotEntity.setMinRate(updatedLot.getMinRate());
+        lotEntity.setStartTrading(updatedLot.getStartTrading());
+        lotEntity.setEndTrading(updatedLot.getEndTrading());
+
+        // save changes
+        this.unitOfWork.getLotRepository().save(lotEntity);
     }
 
     @Override
