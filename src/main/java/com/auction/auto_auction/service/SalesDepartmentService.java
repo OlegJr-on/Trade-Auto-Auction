@@ -19,6 +19,8 @@ public interface SalesDepartmentService {
 
     List<SalesDepartmentDTO> getByDateAfter(LocalDateTime date);
 
+    List<SalesDepartmentDTO> getByLocation(String location);
+
     void addLotByIdToSaleEvent(int lotId);
 
     void addLotsToSaleEvent(int... lotIds);
