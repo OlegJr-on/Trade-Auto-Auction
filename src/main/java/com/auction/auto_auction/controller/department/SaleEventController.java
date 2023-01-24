@@ -52,4 +52,13 @@ public class SaleEventController {
 
         return ResponseEntity.ok(sale);
     }
+
+    @JsonView(SalesViews.LotsDetails.class)
+    @GetMapping(path = "/lots/{lotId}")
+    public ResponseEntity<SalesDepartmentDTO> getSaleByLotId(@PathVariable("lotId") int lotId) {
+
+        SalesDepartmentDTO sale = this.salesService.getByLotId(lotId);
+
+        return ResponseEntity.ok(sale);
+    }
 }
