@@ -187,8 +187,22 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
     }
 
     @Override
-    public void update(int saleId, SalesDepartmentDTO saleDto) {
+    public void update(int saleId, SalesDepartmentDTO updatedSale) {
 
+        if (updatedSale == null) {
+            throw new NullPointerException("Sale doesn`t updated, values is null");
+        }
+
+        SalesDepartment saleEntity = this.unitOfWork.getSalesDepartmentRepository()
+                .findById(saleId)
+                    .orElseThrow(() ->
+                            new ResourceNotFoundException("Sales","id",String.valueOf(saleId)));
+
+        saleEntity.setSalesName(updatedSale.getSalesName());
+        saleEntity.setSalesDate(updatedSale.getSalesDate());
+        saleEntity.setLocation(updatedSale.getLocation());
+
+        this.unitOfWork.getSalesDepartmentRepository().save(saleEntity);
     }
 
     @Override
