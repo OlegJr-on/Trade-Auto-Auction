@@ -93,4 +93,15 @@ public class SaleEventController {
 
         return ResponseEntity.ok(sales);
     }
+
+    @JsonView(SalesViews.WithTimeLeft.class)
+    @GetMapping("/by")
+    public ResponseEntity<List<SalesDepartmentDTO>> getSalesByLocation(
+            @RequestParam(value = "location",defaultValue = ApplicationConstants.EMPTY_STRING) String location
+    ){
+
+        List<SalesDepartmentDTO> sales = this.salesService.getByLocation(location);
+
+        return ResponseEntity.ok(sales);
+    }
 }
