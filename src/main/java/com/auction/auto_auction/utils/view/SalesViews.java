@@ -1,8 +1,8 @@
 package com.auction.auto_auction.utils.view;
 
-public class SalesViews {
+public class SalesViews implements Views{
 
-    public interface Public { }
+    public interface WithTimeLeft extends Public { }
 
-    public interface WithTimeLeft extends Public{ }
+    public interface LotsDetails extends Public { }
 }
