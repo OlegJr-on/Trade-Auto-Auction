@@ -21,9 +21,9 @@ public interface SalesDepartmentService {
 
     List<SalesDepartmentDTO> getByLocation(String location);
 
-    void addLotByIdToSaleEvent(int lotId);
+    void addLotByIdToSaleEvent(int saleId, int lotId);
 
-    void addLotsToSaleEvent(int... lotIds);
+    void addLotsToSaleEvent(int saleId, int... lotIds);
 
     void create(SalesDepartmentDTO saleDto);
 

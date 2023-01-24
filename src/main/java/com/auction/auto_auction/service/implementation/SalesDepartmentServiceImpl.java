@@ -152,12 +152,12 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
     }
 
     @Override
-    public void addLotByIdToSaleEvent(int lotId) {
+    public void addLotByIdToSaleEvent(int saleId, int lotId) {
 
     }
 
     @Override
-    public void addLotsToSaleEvent(int... lotIds) {
+    public void addLotsToSaleEvent(int saleId, int... lotIds) {
 
     }
 
