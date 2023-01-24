@@ -26,4 +26,6 @@ public interface SalesDepartmentService {
     void update(int saleId,SalesDepartmentDTO saleDto);
 
     void deleteById(int saleId);
+
+    void deleteLotByIdFromSale(int saleId, int lotId);
 }
