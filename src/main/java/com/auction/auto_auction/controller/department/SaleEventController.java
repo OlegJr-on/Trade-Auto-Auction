@@ -141,4 +141,14 @@ public class SaleEventController {
 
         return new ResponseEntity<>("Sale event is updated!",HttpStatus.OK);
     }
+
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity<String> deleteSaleEventById(@PathVariable("id") int saleId){
+
+        this.salesService.deleteById(saleId);
+
+        return new ResponseEntity<>(
+                                    String.format("Sale event with id: %d is removed!",saleId),
+                                    HttpStatus.OK);
+    }
 }
