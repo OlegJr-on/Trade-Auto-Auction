@@ -175,8 +175,15 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
     }
 
     @Override
-    public void create(SalesDepartmentDTO saleDto) {
+    public void create(SalesDepartmentDTO createdSaleEvent) {
 
+        if (createdSaleEvent == null) {
+            throw new NullPointerException("Sale doesn`t created, values is null");
+        }
+
+        SalesDepartment saleEntity = ApplicationMapper.mapToSalesDepartmentEntity(createdSaleEvent);
+
+        this.unitOfWork.getSalesDepartmentRepository().save(saleEntity);
     }
 
     @Override
