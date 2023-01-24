@@ -115,4 +115,16 @@ public class SaleEventController {
 
         return new ResponseEntity<>("Lot added to sale successfully!", HttpStatus.OK);
     }
+
+    @PostMapping
+    public ResponseEntity<String> createSaleEvent(
+            @Valid
+            @NotNull
+            @JsonView(SalesViews.Public.class)
+            @RequestBody SalesDepartmentDTO justCreatedSale
+    ){
+        this.salesService.create(justCreatedSale);
+
+        return new ResponseEntity<>("Sale event is created!", HttpStatus.CREATED);
+    }
 }
