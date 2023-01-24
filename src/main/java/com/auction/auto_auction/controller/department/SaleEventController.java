@@ -34,4 +34,13 @@ public class SaleEventController {
 
         return ResponseEntity.ok(sales);
     }
+
+    @JsonView(SalesViews.WithTimeLeft.class)
+    @GetMapping(path = "/info")
+    public ResponseEntity<List<SalesDepartmentDTO>> getAllSales() {
+
+        List<SalesDepartmentDTO> sales = this.salesService.getAll();
+
+        return ResponseEntity.ok(sales);
+    }
 }
