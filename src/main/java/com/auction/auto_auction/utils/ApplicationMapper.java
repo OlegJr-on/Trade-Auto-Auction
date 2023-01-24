@@ -3,6 +3,7 @@ package com.auction.auto_auction.utils;
 import com.auction.auto_auction.dto.CarDTO;
 import com.auction.auto_auction.dto.CustomerDTO;
 import com.auction.auto_auction.dto.LotDTO;
+import com.auction.auto_auction.dto.SalesDepartmentDTO;
 import com.auction.auto_auction.entity.*;
 import com.auction.auto_auction.entity.enums.AutoState;
 import com.auction.auto_auction.entity.enums.LotStatus;
@@ -118,6 +119,19 @@ public class ApplicationMapper {
                 .startTrading(dto.getStartTrading())
                 .endTrading(dto.getEndTrading())
                 .car(ApplicationMapper.mapToCarEntity(dto.getCar()))
+                .build();
+    }
+
+    public static SalesDepartmentDTO mapToSalesDepartmentDTO(SalesDepartment entity){
+        return SalesDepartmentDTO
+                .builder()
+                .id(entity.getId())
+                .location(entity.getLocation())
+                .salesName(entity.getSalesName())
+                .salesDate(entity.getSalesDate())
+                .lots(entity.getLots().stream()
+                                      .map(ApplicationMapper::mapToLotDTO)
+                                      .toList())
                 .build();
     }
 }
