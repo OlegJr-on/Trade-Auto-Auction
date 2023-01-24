@@ -61,4 +61,36 @@ public class SaleEventController {
 
         return ResponseEntity.ok(sale);
     }
+
+    @JsonView(SalesViews.WithTimeLeft.class)
+    @GetMapping("/period")
+    public ResponseEntity<List<SalesDepartmentDTO>> getSalesByPeriod(
+            @RequestParam(value = "from",required = false) LocalDateTime from,
+            @RequestParam(value = "to",required = false) LocalDateTime to
+    ){
+
+        List<SalesDepartmentDTO> sales = null;
+
+        // find by period
+        if (from != null && to != null){
+            sales = this.salesService.getByDatePeriod(from,to);
+        }
+
+        // find by date before
+        if (from == null && to != null){
+            sales = this.salesService.getByDateBefore(to);
+        }
+
+        // find by date after
+        if (from != null && to == null){
+            sales = this.salesService.getByDateAfter(from);
+        }
+
+        // if all properties entered wrong - throw exception
+        if (sales == null){
+            throw new NullPointerException("Entered data is incorrect");
+        }
+
+        return ResponseEntity.ok(sales);
+    }
 }
