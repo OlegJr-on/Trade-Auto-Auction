@@ -60,7 +60,16 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
 
     @Override
     public SalesDepartmentDTO getByLotId(int lotId) {
-        return null;
+
+        Lot lotEntity = this.unitOfWork.getLotRepository().findById(lotId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Lot","id",String.valueOf(lotId)));
+
+        SalesDepartment saleEntity = lotEntity.getSalesInfo().stream().findFirst()
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Sales","lot.id",String.valueOf(lotId)));
+
+        return ApplicationMapper.mapToSalesDepartmentDTO(saleEntity);
     }
 
     @Override
