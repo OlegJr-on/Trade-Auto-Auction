@@ -1,7 +1,6 @@
 package com.auction.auto_auction.service.implementation;
 
 import com.auction.auto_auction.dto.SalesDepartmentDTO;
-import com.auction.auto_auction.entity.Lot;
 import com.auction.auto_auction.entity.SalesDepartment;
 import com.auction.auto_auction.exception.ResourceNotFoundException;
 import com.auction.auto_auction.repository.uow.UnitOfWork;
@@ -60,6 +59,11 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
     }
 
     @Override
+    public SalesDepartmentDTO getByLotId(int lotId) {
+        return null;
+    }
+
+    @Override
     public List<SalesDepartmentDTO> getByDatePeriod(LocalDateTime start, LocalDateTime end) {
         return null;
     }
@@ -71,6 +75,11 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
 
     @Override
     public List<SalesDepartmentDTO> getByDateAfter(LocalDateTime date) {
+        return null;
+    }
+
+    @Override
+    public List<SalesDepartmentDTO> getByLocation(String location) {
         return null;
     }
 
@@ -96,6 +105,11 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
 
     @Override
     public void deleteById(int saleId) {
+
+    }
+
+    @Override
+    public void deleteLotByIdFromSale(int saleId, int lotId) {
 
     }
 }
