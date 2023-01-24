@@ -222,6 +222,19 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
     @Override
     public void deleteLotByIdFromSale(int saleId, int lotId) {
 
+        Lot lotEntity = this.unitOfWork.getLotRepository().findById(lotId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Lot","id",String.valueOf(lotId)));
+
+        SalesDepartment saleEntity = this.unitOfWork.getSalesDepartmentRepository()
+                .findById(saleId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Sales","id",String.valueOf(saleId)));
+
+        saleEntity.getLots().remove(lotEntity);
+        lotEntity.getSalesInfo().remove(saleEntity);
+
+        this.unitOfWork.getSalesDepartmentRepository().save(saleEntity);
     }
 
     private String generateTimeLeftToEvent(LocalDateTime event){
