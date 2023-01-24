@@ -127,4 +127,18 @@ public class SaleEventController {
 
         return new ResponseEntity<>("Sale event is created!", HttpStatus.CREATED);
     }
+
+    @PutMapping(path = "/{id}")
+    public ResponseEntity<String> updateSaleEvent(
+            @PathVariable("id") int saleId,
+            @Valid
+            @NotNull
+            @JsonView(SalesViews.Public.class)
+            @RequestBody SalesDepartmentDTO justUpdatedSale
+    ){
+
+        this.salesService.update(saleId,justUpdatedSale);
+
+        return new ResponseEntity<>("Sale event is updated!",HttpStatus.OK);
+    }
 }
