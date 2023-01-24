@@ -112,7 +112,20 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
 
     @Override
     public List<SalesDepartmentDTO> getByDateAfter(LocalDateTime date) {
-        return null;
+
+        Optional<List<SalesDepartment>> saleEntities = this.unitOfWork.getSalesDepartmentRepository()
+                .findBySalesDateAfter(date);
+
+        if (saleEntities.get().isEmpty()){
+            throw new ResourceNotFoundException("Not found sale events after date: " + date);
+        }
+
+        return saleEntities.get().stream()
+                                 .map(ApplicationMapper::mapToSalesDepartmentDTO)
+                                 .peek(saleDto -> saleDto.setTimeLeft(
+                                         generateTimeLeftToEvent(saleDto.getSalesDate())
+                                 ))
+                                 .toList();
     }
 
     @Override
