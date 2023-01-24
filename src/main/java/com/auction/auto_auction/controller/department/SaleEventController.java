@@ -104,4 +104,15 @@ public class SaleEventController {
 
         return ResponseEntity.ok(sales);
     }
+
+    @PostMapping("/{saleId}/lots/{lotId}")
+    public ResponseEntity<String> addLotToSaleEvent(
+            @PathVariable("saleId") int saleId,
+            @PathVariable("lotId") int lotId
+    ){
+
+        this.salesService.addLotByIdToSaleEvent(saleId,lotId);
+
+        return new ResponseEntity<>("Lot added to sale successfully!", HttpStatus.OK);
+    }
 }
