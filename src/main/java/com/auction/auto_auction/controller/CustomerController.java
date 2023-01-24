@@ -3,6 +3,9 @@ package com.auction.auto_auction.controller;
 import com.auction.auto_auction.dto.CustomerDTO;
 import com.auction.auto_auction.service.CustomerService;
 import com.auction.auto_auction.utils.ApplicationConstants;
+import com.auction.auto_auction.utils.view.CustomerViews;
+import com.auction.auto_auction.utils.view.Views;
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
@@ -23,6 +26,7 @@ public class CustomerController {
         this.customerService = customerService;
     }
 
+    @JsonView(CustomerViews.CustomerDetails.class)
     @GetMapping
     public ResponseEntity<List<CustomerDTO>> getAllCustomers() {
 
@@ -31,6 +35,7 @@ public class CustomerController {
         return ResponseEntity.ok(customers);
     }
 
+    @JsonView(CustomerViews.CustomerDetails.class)
     @GetMapping(path = "/{id}")
     public ResponseEntity<CustomerDTO> getCustomerById(@PathVariable("id") int customerId) {
 
@@ -39,6 +44,25 @@ public class CustomerController {
         return ResponseEntity.ok(customer);
     }
 
+    @JsonView(CustomerViews.UserDetails.class)
+    @GetMapping(path = "/personal-info")
+    public ResponseEntity<List<CustomerDTO>> getAllUsers() {
+
+        List<CustomerDTO> customers = this.customerService.findAll();
+
+        return ResponseEntity.ok(customers);
+    }
+
+    @JsonView(CustomerViews.UserDetails.class)
+    @GetMapping(path = "/personal-info/{id}")
+    public ResponseEntity<CustomerDTO> getUserById(@PathVariable("id") int customerId) {
+
+        CustomerDTO customer = this.customerService.findById(customerId);
+
+        return ResponseEntity.ok(customer);
+    }
+
+    @JsonView(CustomerViews.UserDetails.class)
     @GetMapping(path = "/by")
     public ResponseEntity<List<CustomerDTO>> getCustomerByProperties(
             @RequestParam(value = "firstName",required = false) String firstName,
@@ -74,7 +98,12 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity<String> createCustomer(@Valid @NotNull @RequestBody CustomerDTO customerDTO) {
+    public ResponseEntity<String> createCustomer(
+            @Valid
+            @NotNull
+            @JsonView(CustomerViews.PasswordDetails.class)
+            @RequestBody
+            CustomerDTO customerDTO) {
 
         this.customerService.create(customerDTO);
 
@@ -84,7 +113,11 @@ public class CustomerController {
     @PutMapping(path = "/{id}")
     public ResponseEntity<String> updateCustomer(
             @PathVariable("id") int customerId,
-            @Valid @NotNull @RequestBody CustomerDTO customerDTO
+            @Valid
+            @NotNull
+            @JsonView(CustomerViews.UserDetails.class)
+            @RequestBody
+            CustomerDTO customerDTO
     ){
 
         this.customerService.update(customerId,customerDTO);
