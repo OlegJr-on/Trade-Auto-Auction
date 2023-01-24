@@ -154,6 +154,19 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
     @Override
     public void addLotByIdToSaleEvent(int saleId, int lotId) {
 
+        Lot lotEntity = this.unitOfWork.getLotRepository().findById(lotId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Lot","id",String.valueOf(lotId)));
+
+        SalesDepartment saleEntity = this.unitOfWork.getSalesDepartmentRepository()
+                .findById(saleId)
+                    .orElseThrow(() ->
+                            new ResourceNotFoundException("Sales","id",String.valueOf(saleId)));
+
+        saleEntity.getLots().add(lotEntity);
+        lotEntity.getSalesInfo().add(saleEntity);
+
+        this.unitOfWork.getSalesDepartmentRepository().save(saleEntity);
     }
 
     @Override
