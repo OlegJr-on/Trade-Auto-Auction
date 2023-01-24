@@ -1,6 +1,7 @@
 package com.auction.auto_auction.service.implementation;
 
 import com.auction.auto_auction.dto.SalesDepartmentDTO;
+import com.auction.auto_auction.entity.Lot;
 import com.auction.auto_auction.entity.SalesDepartment;
 import com.auction.auto_auction.exception.ResourceNotFoundException;
 import com.auction.auto_auction.repository.uow.UnitOfWork;
@@ -32,22 +33,9 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
         List<SalesDepartmentDTO> resultSales = salesFromSource
                         .stream()
                         .map(ApplicationMapper::mapToSalesDepartmentDTO)
-                        .peek(saleDto -> {
-
-                            LocalDateTime timeNow = LocalDateTime.now();
-                            LocalDateTime timeSale = saleDto.getSalesDate();
-
-                            Duration period = Duration.between(timeNow, timeSale);
-
-                            long days = period.toDays();
-                            period = period.minusDays(days);
-                            long hours = period.toHours();
-                            period = period.minusHours(hours);
-                            long minutes = period.toMinutes();
-
-                            saleDto.setTimeLeft(String.format("Days: %d | Hours: %d | Minutes: %d",
-                                    days,hours,minutes));
-                        })
+                        .peek(saleDto -> saleDto.setTimeLeft(
+                                generateTimeLeftToEvent(saleDto.getSalesDate())
+                        ))
                         .toList();
 
         return resultSales;
@@ -55,7 +43,19 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
 
     @Override
     public SalesDepartmentDTO getById(int salesId) {
-        return null;
+
+        SalesDepartment saleEntity = this.unitOfWork.getSalesDepartmentRepository()
+                .findById(salesId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Sales","id",String.valueOf(salesId)));
+
+        SalesDepartmentDTO saleDto = ApplicationMapper.mapToSalesDepartmentDTO(saleEntity);
+
+        saleDto.setTimeLeft(
+                generateTimeLeftToEvent(saleEntity.getSalesDate())
+        );
+
+        return saleDto;
     }
 
     @Override
@@ -111,5 +111,20 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
     @Override
     public void deleteLotByIdFromSale(int saleId, int lotId) {
 
+    }
+
+    private String generateTimeLeftToEvent(LocalDateTime event){
+
+        LocalDateTime timeNow = LocalDateTime.now();
+
+        Duration period = Duration.between(timeNow, event);
+
+        long days = period.toDays();
+        period = period.minusDays(days);
+        long hours = period.toHours();
+        period = period.minusHours(hours);
+        long minutes = period.toMinutes();
+
+        return String.format("Days: %d | Hours: %d | Minutes: %d", days,hours,minutes);
     }
 }
