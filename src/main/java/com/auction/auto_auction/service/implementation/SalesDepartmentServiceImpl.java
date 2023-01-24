@@ -130,7 +130,25 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
 
     @Override
     public List<SalesDepartmentDTO> getByLocation(String location) {
-        return null;
+
+        List<SalesDepartment> saleEntities = this.unitOfWork.getSalesDepartmentRepository()
+                .findAll();
+
+        List<SalesDepartment> salesByLocation = saleEntities.stream()
+                .filter(sale -> sale.getLocation().toLowerCase()
+                                        .contains(location.toLowerCase()))
+                .toList();
+
+        if (salesByLocation.isEmpty()){
+            throw new ResourceNotFoundException("Sales","location",location);
+        }
+
+        return salesByLocation.stream()
+                              .map(ApplicationMapper::mapToSalesDepartmentDTO)
+                              .peek(saleDto -> saleDto.setTimeLeft(
+                                      generateTimeLeftToEvent(saleDto.getSalesDate())
+                              ))
+                              .toList();
     }
 
     @Override
