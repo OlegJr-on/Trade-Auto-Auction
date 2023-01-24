@@ -1,10 +1,15 @@
 package com.auction.auto_auction.service.implementation;
 
 import com.auction.auto_auction.dto.SalesDepartmentDTO;
+import com.auction.auto_auction.entity.Lot;
+import com.auction.auto_auction.entity.SalesDepartment;
+import com.auction.auto_auction.exception.ResourceNotFoundException;
 import com.auction.auto_auction.repository.uow.UnitOfWork;
 import com.auction.auto_auction.service.SalesDepartmentService;
+import com.auction.auto_auction.utils.ApplicationMapper;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -18,7 +23,35 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
 
     @Override
     public List<SalesDepartmentDTO> getAll() {
-        return null;
+
+        List<SalesDepartment> salesFromSource = this.unitOfWork.getSalesDepartmentRepository().findAll();
+
+        if (salesFromSource.isEmpty()){
+            throw new ResourceNotFoundException("Data source is empty");
+        }
+
+        List<SalesDepartmentDTO> resultSales = salesFromSource
+                        .stream()
+                        .map(ApplicationMapper::mapToSalesDepartmentDTO)
+                        .peek(saleDto -> {
+
+                            LocalDateTime timeNow = LocalDateTime.now();
+                            LocalDateTime timeSale = saleDto.getSalesDate();
+
+                            Duration period = Duration.between(timeNow, timeSale);
+
+                            long days = period.toDays();
+                            period = period.minusDays(days);
+                            long hours = period.toHours();
+                            period = period.minusHours(hours);
+                            long minutes = period.toMinutes();
+
+                            saleDto.setTimeLeft(String.format("Days: %d | Hours: %d | Minutes: %d",
+                                    days,hours,minutes));
+                        })
+                        .toList();
+
+        return resultSales;
     }
 
     @Override
