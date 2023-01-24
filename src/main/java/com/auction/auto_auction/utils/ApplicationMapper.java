@@ -134,4 +134,13 @@ public class ApplicationMapper {
                                       .toList())
                 .build();
     }
+
+    public static SalesDepartment mapToSalesDepartmentEntity(SalesDepartmentDTO dto){
+        return SalesDepartment
+                .builder()
+                .salesName(dto.getSalesName())
+                .salesDate(dto.getSalesDate())
+                .location(dto.getLocation())
+                .build();
+    }
 }
