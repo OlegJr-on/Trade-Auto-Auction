@@ -1,5 +1,6 @@
 package com.auction.auto_auction.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Data
@@ -41,4 +43,7 @@ public class LotDTO {
     private LocalDateTime endTrading;
 
     private @Valid CarDTO car;
+
+    @JsonIgnore
+    private List<SalesDepartmentDTO> sales;
 }
