@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SalesDepartmentServiceImpl implements SalesDepartmentService {
@@ -74,7 +75,21 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
 
     @Override
     public List<SalesDepartmentDTO> getByDatePeriod(LocalDateTime start, LocalDateTime end) {
-        return null;
+
+        Optional<List<SalesDepartment>> saleEntities = this.unitOfWork.getSalesDepartmentRepository()
+                .findBySalesDateBetween(start,end);
+
+        if (saleEntities.get().isEmpty()){
+            throw new ResourceNotFoundException(
+                    String.format("Not found sales in date: from %s to %s",start,end));
+        }
+
+        return saleEntities.get().stream()
+                                 .map(ApplicationMapper::mapToSalesDepartmentDTO)
+                                 .peek(saleDto -> saleDto.setTimeLeft(
+                                         generateTimeLeftToEvent(saleDto.getSalesDate())
+                                 ))
+                                 .toList();
     }
 
     @Override
