@@ -151,4 +151,17 @@ public class SaleEventController {
                                     String.format("Sale event with id: %d is removed!",saleId),
                                     HttpStatus.OK);
     }
+
+    @DeleteMapping(path = "/{saleId}/lots/{lotId}")
+    public ResponseEntity<String> deleteLotFromSaleEventById(
+            @PathVariable("saleId") int saleId,
+            @PathVariable("lotId") int lotId
+    ){
+
+        this.salesService.deleteLotByIdFromSale(saleId,lotId);
+
+        return new ResponseEntity<>(
+                                    String.format("Lot with id: %d is removed from sale!",lotId),
+                                    HttpStatus.OK);
+    }
 }
