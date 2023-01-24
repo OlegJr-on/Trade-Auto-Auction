@@ -1,6 +1,7 @@
 package com.auction.auto_auction.dto;
 
 import com.auction.auto_auction.utils.view.SalesViews;
+import com.auction.auto_auction.utils.view.Views;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
@@ -40,5 +41,6 @@ public class SalesDepartmentDTO {
     @JsonView(SalesViews.WithTimeLeft.class)
     private String timeLeft;
 
+    @JsonView(SalesViews.LotsDetails.class)
     private List<LotDTO> lots;
 }
