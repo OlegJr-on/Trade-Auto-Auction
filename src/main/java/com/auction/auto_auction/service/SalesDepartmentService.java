@@ -11,6 +11,8 @@ public interface SalesDepartmentService {
 
     SalesDepartmentDTO getById(int salesId);
 
+    SalesDepartmentDTO getByLotId(int lotId);
+
     List<SalesDepartmentDTO> getByDatePeriod(LocalDateTime start, LocalDateTime end);
 
     List<SalesDepartmentDTO> getByDateBefore(LocalDateTime date);
