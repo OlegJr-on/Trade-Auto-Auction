@@ -208,6 +208,15 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
     @Override
     public void deleteById(int saleId) {
 
+        SalesDepartment saleEntity = this.unitOfWork.getSalesDepartmentRepository()
+                .findById(saleId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Sales","id",String.valueOf(saleId)));
+
+        saleEntity.getLots().forEach(lot -> lot.getSalesInfo().remove(saleEntity));
+        saleEntity.getLots().clear();
+
+        this.unitOfWork.getSalesDepartmentRepository().deleteById(saleId);
     }
 
     @Override
