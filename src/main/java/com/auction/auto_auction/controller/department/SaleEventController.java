@@ -26,4 +26,12 @@ public class SaleEventController {
         this.salesService = salesService;
     }
 
+    @JsonView(SalesViews.LotsDetails.class)
+    @GetMapping
+    public ResponseEntity<List<SalesDepartmentDTO>> getAllSalesWithLots() {
+
+        List<SalesDepartmentDTO> sales = this.salesService.getAll();
+
+        return ResponseEntity.ok(sales);
+    }
 }
