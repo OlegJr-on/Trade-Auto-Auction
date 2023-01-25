@@ -35,6 +35,9 @@ public class LotServiceImpl implements LotService{
             throw new ResourceNotFoundException("Data source is empty");
         }
 
+        // on received lot entities re-set status by special conditions
+        lotsFromSource.forEach(this::setStatusForLot);
+
         return lotsFromSource.stream()
                              .map(ApplicationMapper::mapToLotDTO)
                              .toList();
@@ -47,6 +50,9 @@ public class LotServiceImpl implements LotService{
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Lot","id",String.valueOf(lotId)));
 
+        // on received lot entities re-set status by special conditions
+        this.setStatusForLot(lotEntity);
+
         return ApplicationMapper.mapToLotDTO(lotEntity);
     }
 
@@ -58,6 +64,9 @@ public class LotServiceImpl implements LotService{
                         new ResourceNotFoundException("Car","id",String.valueOf(carId)));
 
         Lot lotEntity = carEntity.getLot();
+
+        // on received lot entities re-set status by special conditions
+        this.setStatusForLot(lotEntity);
 
         return ApplicationMapper.mapToLotDTO(lotEntity);
     }
@@ -72,6 +81,9 @@ public class LotServiceImpl implements LotService{
             throw new ResourceNotFoundException(
                     String.format("Not found lots in date: from %s to %s",start,end));
         }
+
+        // on received lot entities re-set status by special conditions
+        lotEntities.get().forEach(this::setStatusForLot);
 
         return lotEntities.get().stream()
                                 .map(ApplicationMapper::mapToLotDTO)
@@ -88,6 +100,9 @@ public class LotServiceImpl implements LotService{
             throw new ResourceNotFoundException("Not found lots before date: " + date);
         }
 
+        // on received lot entities re-set status by special conditions
+        lotEntities.get().forEach(this::setStatusForLot);
+
         return lotEntities.get().stream()
                                 .map(ApplicationMapper::mapToLotDTO)
                                 .toList();
@@ -103,6 +118,9 @@ public class LotServiceImpl implements LotService{
             throw new ResourceNotFoundException("Not found lots after date: " + date);
         }
 
+        // on received lot entities re-set status by special conditions
+        lotEntities.get().forEach(this::setStatusForLot);
+
         return lotEntities.get().stream()
                                 .map(ApplicationMapper::mapToLotDTO)
                                 .toList();
@@ -117,7 +135,7 @@ public class LotServiceImpl implements LotService{
         }
 
         // check trading time of lot, when it`s incorrect - throw exception
-        checkTradeTimeOfLot(createdLot.getStartTrading(),createdLot.getEndTrading());
+        this.checkTradeTimeOfLot(createdLot.getStartTrading(),createdLot.getEndTrading());
 
         // set default status for just created lot
         createdLot.setLotStatus(LotStatus.NOT_ACTIVE.label);
@@ -154,7 +172,7 @@ public class LotServiceImpl implements LotService{
         }
 
         // check trading time of lot, when it`s incorrect - throw exception
-        checkTradeTimeOfLot(createdLot.getStartTrading(),createdLot.getEndTrading());
+        this.checkTradeTimeOfLot(createdLot.getStartTrading(),createdLot.getEndTrading());
 
         // find car by its id, car should be already exist in data source
         Car carEntity = this.unitOfWork.getCarRepository().findById(carId)
@@ -185,7 +203,7 @@ public class LotServiceImpl implements LotService{
         }
 
         // check trading time of lot, when it`s incorrect - throw exception
-        checkTradeTimeOfLot(updatedLot.getStartTrading(),updatedLot.getEndTrading());
+        this.checkTradeTimeOfLot(updatedLot.getStartTrading(),updatedLot.getEndTrading());
 
         // search lot entity by id from data source
         Lot lotEntity = this.unitOfWork.getLotRepository().findById(lotId)
