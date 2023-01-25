@@ -116,6 +116,9 @@ public class LotServiceImpl implements LotService{
             throw new NullPointerException("Lot doesn`t created, values is null");
         }
 
+        // check trading time of lot, when it`s incorrect - throw exception
+        checkTradeTimeOfLot(createdLot.getStartTrading(),createdLot.getEndTrading());
+
         // set default status for just created lot
         createdLot.setLotStatus(LotStatus.NOT_ACTIVE.label);
 
@@ -150,6 +153,9 @@ public class LotServiceImpl implements LotService{
             throw new NullPointerException("Lot doesn`t created, values is null");
         }
 
+        // check trading time of lot, when it`s incorrect - throw exception
+        checkTradeTimeOfLot(createdLot.getStartTrading(),createdLot.getEndTrading());
+
         // find car by its id, car should be already exist in data source
         Car carEntity = this.unitOfWork.getCarRepository().findById(carId)
                 .orElseThrow(() ->
@@ -177,6 +183,9 @@ public class LotServiceImpl implements LotService{
         if (updatedLot == null) {
             throw new NullPointerException("Lot doesn`t updated, entered values is null");
         }
+
+        // check trading time of lot, when it`s incorrect - throw exception
+        checkTradeTimeOfLot(updatedLot.getStartTrading(),updatedLot.getEndTrading());
 
         // search lot entity by id from data source
         Lot lotEntity = this.unitOfWork.getLotRepository().findById(lotId)
