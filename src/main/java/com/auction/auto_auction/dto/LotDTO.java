@@ -1,5 +1,6 @@
 package com.auction.auto_auction.dto;
 
+import com.auction.auto_auction.utils.view.BidViews;
 import com.auction.auto_auction.utils.view.Views;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -29,12 +30,12 @@ public class LotDTO {
     @JsonView(Views.Public.class)
     private String lotStatus;
 
-    @JsonView(Views.Public.class)
+    @JsonView(BidViews.LotDetails.class)
     @NotNull(message = "Launch price of lot cannot be null")
     @Positive(message = "Launch price of lot cannot be less than 0$")
     private BigDecimal launchPrice;
 
-    @JsonView(Views.Public.class)
+    @JsonView(BidViews.LotDetails.class)
     @NotNull(message = "Minimum rate of lot cannot be null")
     @Positive(message = "Minimum rate of lot cannot be less than 0$")
     private BigDecimal minRate;
@@ -49,6 +50,7 @@ public class LotDTO {
     @Future(message = "The end trading of lot should be later than just now")
     private LocalDateTime endTrading;
 
+    @JsonView(Views.Public.class)
     private @Valid CarDTO car;
 
     @JsonIgnore
