@@ -1,5 +1,6 @@
 package com.auction.auto_auction.dto;
 
+import com.auction.auto_auction.utils.view.BidViews;
 import com.auction.auto_auction.utils.view.CustomerViews;
 import com.auction.auto_auction.utils.view.Views;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -22,13 +23,17 @@ public class CustomerDTO {
     @JsonView(Views.Public.class)
     private int id;
 
-    @JsonView({CustomerViews.UserDetails.class,CustomerViews.CustomerDetails.class})
+    @JsonView({ Views.Public.class,
+                CustomerViews.UserDetails.class,
+                CustomerViews.CustomerDetails.class})
     @NotNull(message = "First name must be not null")
     @Size(min = 3,max = 20,message = "First name must have at least 3 and no more than 20 characters" )
     @Pattern(regexp = "^[a-zA-Z]*$",message = "First name must have only letters")
     private String firstName;
 
-    @JsonView({CustomerViews.UserDetails.class,CustomerViews.CustomerDetails.class})
+    @JsonView({ CustomerViews.UserDetails.class,
+                CustomerViews.CustomerDetails.class,
+                BidViews.CustomerDetails.class})
     @NotNull(message = "Last name must be not null")
     @Size(min = 3,max = 30,message = "Last name must have at least 3 and no more than 30 characters" )
     @Pattern(regexp = "^[a-zA-Z]*$",message = "Last name must have only letters")
@@ -39,16 +44,16 @@ public class CustomerDTO {
     @Past(message = "Date of birthday should be in the past")
     private LocalDate birthDay;
 
-    @JsonView(CustomerViews.UserDetails.class)
+    @JsonView({CustomerViews.UserDetails.class,BidViews.CustomerDetails.class})
     @NotNull(message = "The phone number is required")
     @Pattern(regexp = "^(\\d{3}[- .]?){2}\\d{4}$",message = "Phone number should be like 0447771111")
     private String phoneNumber;
 
-    @JsonView(CustomerViews.UserDetails.class)
+    @JsonView({CustomerViews.UserDetails.class,BidViews.CustomerDetails.class})
     @NotNull(message = "The location is required")
     private String location;
 
-    @JsonView({CustomerViews.UserDetails.class,CustomerViews.CustomerDetails.class})
+    @JsonView({Views.Public.class,CustomerViews.UserDetails.class,CustomerViews.CustomerDetails.class})
     @NotNull(message = "Email is required")
     @Pattern(regexp = "^(.+)@(\\S+)$",message = "Email should be like username@domain.com")
     private String email;
