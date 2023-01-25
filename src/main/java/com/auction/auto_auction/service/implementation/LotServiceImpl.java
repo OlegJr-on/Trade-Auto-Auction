@@ -114,6 +114,9 @@ public class LotServiceImpl implements LotService{
             throw new NullPointerException("Lot doesn`t created, values is null");
         }
 
+        // set default status for just created lot
+        createdLot.setLotStatus(LotStatus.NOT_ACTIVE.label);
+
         // map dto to entity
         Lot lotEntity = ApplicationMapper.mapToLotEntity(createdLot);
 
@@ -152,6 +155,9 @@ public class LotServiceImpl implements LotService{
 
         // set in lot dto mapped car, because for map lot to entity, car should be not null
         createdLot.setCar(ApplicationMapper.mapToCarDTO(carEntity));
+
+        // set default status for just created lot
+        createdLot.setLotStatus(LotStatus.NOT_ACTIVE.label);
 
         // map just created lot dto to lot entity
         Lot lotEntity = ApplicationMapper.mapToLotEntity(createdLot);
