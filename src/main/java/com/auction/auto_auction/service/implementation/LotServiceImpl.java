@@ -2,9 +2,9 @@ package com.auction.auto_auction.service.implementation;
 
 import com.auction.auto_auction.dto.LotDTO;
 import com.auction.auto_auction.entity.AutoPhoto;
+import com.auction.auto_auction.entity.Bid;
 import com.auction.auto_auction.entity.Car;
 import com.auction.auto_auction.entity.Lot;
-import com.auction.auto_auction.entity.enums.AutoState;
 import com.auction.auto_auction.entity.enums.LotStatus;
 import com.auction.auto_auction.exception.ResourceNotFoundException;
 import com.auction.auto_auction.exception.TimeLotException;
@@ -246,6 +246,38 @@ public class LotServiceImpl implements LotService{
             throw new TimeLotException(
                     "Lot trading time must be greater than 1 min. and less than 5 min.");
         }
+    }
 
+    private void setStatusForLot(@NotNull Lot lotEntity){
+
+        LocalDateTime timeNow = LocalDateTime.now();
+        LocalDateTime startTrading = lotEntity.getStartTrading();
+        LocalDateTime endTrading = lotEntity.getEndTrading();
+        List<Bid> bidsOfGivenLot = this.unitOfWork.getBidRepository()
+                                                        .findByLotId(lotEntity.getId())
+                                                        .get();
+
+        // set status "Trading"
+        if (startTrading.isBefore(timeNow) && endTrading.isAfter(timeNow)){
+            lotEntity.setLotStatus(LotStatus.TRADING);
+        }
+
+        // set status "Sold out"
+        if (endTrading.isBefore(timeNow) &&
+                bidsOfGivenLot.stream().anyMatch(Bid::isActive)){
+            lotEntity.setLotStatus(LotStatus.SOLD_OUT);
+        }
+
+        // set status "Overdue"
+        if (endTrading.isBefore(timeNow) && bidsOfGivenLot.isEmpty()){
+            lotEntity.setLotStatus(LotStatus.OVERDUE);
+        }
+
+        // set status "Not active"
+        if (startTrading.isAfter(timeNow)){
+            lotEntity.setLotStatus(LotStatus.NOT_ACTIVE);
+        }
+
+        this.unitOfWork.getLotRepository().save(lotEntity);
     }
 }
