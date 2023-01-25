@@ -7,9 +7,11 @@ import com.auction.auto_auction.entity.Lot;
 import com.auction.auto_auction.entity.enums.AutoState;
 import com.auction.auto_auction.entity.enums.LotStatus;
 import com.auction.auto_auction.exception.ResourceNotFoundException;
+import com.auction.auto_auction.exception.TimeLotException;
 import com.auction.auto_auction.repository.uow.UnitOfWork;
 import com.auction.auto_auction.service.LotService;
 import com.auction.auto_auction.utils.ApplicationMapper;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -212,5 +214,29 @@ public class LotServiceImpl implements LotService{
 
         this.unitOfWork.getLotRepository().deleteById(lotEntity.getId());
         this.unitOfWork.getCarRepository().deleteById(carEntity.getId());
+    }
+
+    private void checkTradeTimeOfLot(LocalDateTime start, LocalDateTime end){
+
+        // error - when entered date start trading of lot is later than date end trading
+        if (start.isAfter(end)){
+            throw new TimeLotException(
+                    "The date of the start lot trading must not be later than end of lot trading.",
+                    start, end);
+        }
+
+        // error - when start trading of lot equals end trading of lot
+        if (start.compareTo(end) == 0){
+            throw new TimeLotException(
+                    "The date of the start lot trading must not be equal the end date of lot trading.",
+                    start, end);
+        }
+
+        // error - when time trading of lot is greater than 1 min. and less than 5 min.
+        if (end.minusMinutes(1).isBefore(start) || start.plusMinutes(5).isBefore(end)){
+            throw new TimeLotException(
+                    "Lot trading time must be greater than 1 min. and less than 5 min.");
+        }
+
     }
 }
