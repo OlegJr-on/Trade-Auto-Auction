@@ -26,7 +26,6 @@ public class LotDTO {
     private int id;
 
     @JsonView(Views.Public.class)
-    @NotNull(message = "State of lot cannot be null")
     private String lotStatus;
 
     @JsonView(Views.Public.class)
