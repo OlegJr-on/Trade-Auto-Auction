@@ -23,6 +23,7 @@ import java.util.List;
 @Builder
 public class LotDTO {
 
+    @JsonView(Views.Public.class)
     private int id;
 
     @JsonView(Views.Public.class)
