@@ -28,4 +28,10 @@ public class BidDTO {
 
     @JsonView({Views.Public.class,BidViews.BidDetails.class})
     private BigDecimal bet;
+
+    @JsonView({Views.Public.class, BidViews.LotDetails.class})
+    private LotDTO lot;
+
+    @JsonView({Views.Public.class, BidViews.CustomerDetails.class})
+    private CustomerDTO customer;
 }
