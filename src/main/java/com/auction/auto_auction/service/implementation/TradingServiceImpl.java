@@ -96,7 +96,17 @@ public class TradingServiceImpl implements TradingService{
 
     @Override
     public List<BidDTO> getByDateBefore(LocalDateTime date) {
-        return null;
+
+        Optional<List<Bid>> bidEntities = this.unitOfWork.getBidRepository()
+                .findByOperationDateBefore(date);
+
+        if (bidEntities.get().isEmpty()){
+            throw new ResourceNotFoundException("Not found bids before date: " + date);
+        }
+
+        return bidEntities.get().stream()
+                                .map(ApplicationMapper::mapToBidDTO)
+                                .toList();
     }
 
     @Override
