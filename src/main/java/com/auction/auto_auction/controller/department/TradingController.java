@@ -54,4 +54,15 @@ public class TradingController {
 
         return ResponseEntity.ok(bid);
     }
+
+    @JsonView(Views.Public.class)
+    @GetMapping(path = "/customers/{customerId}/bids")
+    public ResponseEntity<List<BidDTO>> getBidWithDetailByCustomerId(
+            @PathVariable("customerId") int customerId
+    ) {
+
+        List<BidDTO> bids = this.tradingService.getByCustomerId(customerId);
+
+        return ResponseEntity.ok(bids);
+    }
 }
