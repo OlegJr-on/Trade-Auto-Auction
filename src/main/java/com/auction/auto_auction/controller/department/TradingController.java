@@ -145,4 +145,19 @@ public class TradingController {
                                     String.format("Bid with id: %d is removed!",bidId),
                                     HttpStatus.OK);
     }
+
+    @DeleteMapping(path = "/bids")
+    public ResponseEntity<String> deleteBidByDatePeriod(
+            @RequestParam(value = "from",required = false) LocalDateTime from,
+            @RequestParam(value = "to",required = false) LocalDateTime to
+    ){
+
+        this.tradingService.deleteByPeriod(from,to);
+
+        return new ResponseEntity<>(
+                                    String.format("Bids for the period: (%s) - (%s) have been deleted",
+                                         from.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")),
+                                         to.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))),
+                                    HttpStatus.OK);
+    }
 }
