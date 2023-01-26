@@ -55,4 +55,7 @@ public class LotDTO {
 
     @JsonIgnore
     private List<SalesDepartmentDTO> sales;
+
+    @JsonIgnore
+    private List<BidDTO> bids;
 }
