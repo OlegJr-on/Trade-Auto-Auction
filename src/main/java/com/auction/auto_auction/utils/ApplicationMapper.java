@@ -1,9 +1,6 @@
 package com.auction.auto_auction.utils;
 
-import com.auction.auto_auction.dto.CarDTO;
-import com.auction.auto_auction.dto.CustomerDTO;
-import com.auction.auto_auction.dto.LotDTO;
-import com.auction.auto_auction.dto.SalesDepartmentDTO;
+import com.auction.auto_auction.dto.*;
 import com.auction.auto_auction.entity.*;
 import com.auction.auto_auction.entity.enums.AutoState;
 import com.auction.auto_auction.entity.enums.LotStatus;
@@ -141,6 +138,18 @@ public class ApplicationMapper {
                 .salesName(dto.getSalesName())
                 .salesDate(dto.getSalesDate())
                 .location(dto.getLocation())
+                .build();
+    }
+
+    public static BidDTO mapToBidDTO(Bid entity){
+        return BidDTO
+                .builder()
+                .id(entity.getId())
+                .operationDate(entity.getOperationDate())
+                .win(entity.isActive())
+                .bet(entity.getBet())
+                .customer(ApplicationMapper.mapToCustomerDTO(entity.getCustomer()))
+                .lot(ApplicationMapper.mapToLotDTO(entity.getLot()))
                 .build();
     }
 }
