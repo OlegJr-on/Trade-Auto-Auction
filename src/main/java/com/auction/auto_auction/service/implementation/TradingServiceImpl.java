@@ -1,9 +1,7 @@
 package com.auction.auto_auction.service.implementation;
 
 import com.auction.auto_auction.dto.BidDTO;
-import com.auction.auto_auction.entity.Bid;
-import com.auction.auto_auction.entity.Customer;
-import com.auction.auto_auction.entity.Lot;
+import com.auction.auto_auction.entity.*;
 import com.auction.auto_auction.entity.enums.LotStatus;
 import com.auction.auto_auction.exception.OutOfMoneyException;
 import com.auction.auto_auction.exception.ResourceNotFoundException;
@@ -251,6 +249,17 @@ public class TradingServiceImpl implements TradingService{
     @Override
     public void deleteById(int bidId) {
 
+        // search bid entity from data source by id
+        Bid bidEntity = this.unitOfWork.getBidRepository().findById(bidId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Bid","id",String.valueOf(bidId)));
+
+        // remove related data on objects
+        bidEntity.getLot().getBids().remove(bidEntity);
+        bidEntity.getCustomer().getBids().remove(bidEntity);
+
+        // delete data by id
+        this.unitOfWork.getBidRepository().deleteById(bidEntity.getId());
     }
 
     @Override
