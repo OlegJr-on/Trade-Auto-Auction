@@ -52,7 +52,16 @@ public class TradingServiceImpl implements TradingService{
 
     @Override
     public List<BidDTO> getByLotId(int lotId) {
-        return null;
+
+        Optional<List<Bid>> bidEntities = this.unitOfWork.getBidRepository().findByLotId(lotId);
+
+        if (bidEntities.get().isEmpty()){
+            throw new ResourceNotFoundException("Not found bids by lot id: " + lotId);
+        }
+
+        return bidEntities.get().stream()
+                                .map(ApplicationMapper::mapToBidDTO)
+                                .toList();
     }
 
     @Override
