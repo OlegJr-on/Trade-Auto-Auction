@@ -109,4 +109,17 @@ public class TradingController {
 
         return ResponseEntity.ok(bids);
     }
+
+    @PostMapping(path = "customers/{customerId}/lots/{lotId}")
+    public ResponseEntity<String> makeBid(
+            @PathVariable("customerId") int customerId,
+            @PathVariable("lotId") int lotId,
+            @RequestBody @NotNull BigDecimal bet
+    ){
+
+        this.tradingService.makeBid(customerId,lotId,bet);
+
+        return new ResponseEntity<>("The bid is made!", HttpStatus.OK);
+    }
+
 }
