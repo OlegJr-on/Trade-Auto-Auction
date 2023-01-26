@@ -28,7 +28,12 @@ public class TradingServiceImpl implements TradingService{
 
     @Override
     public BidDTO getById(int bidId) {
-        return null;
+
+        Bid bidEntity = this.unitOfWork.getBidRepository().findById(bidId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Bid","id",String.valueOf(bidId)));
+
+        return ApplicationMapper.mapToBidDTO(bidEntity);
     }
 
     @Override
