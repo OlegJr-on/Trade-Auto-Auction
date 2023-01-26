@@ -1,6 +1,7 @@
 package com.auction.auto_auction.controller.department;
 
 import com.auction.auto_auction.dto.BidDTO;
+import com.auction.auto_auction.dto.LotDTO;
 import com.auction.auto_auction.dto.SalesDepartmentDTO;
 import com.auction.auto_auction.service.TradingService;
 import com.auction.auto_auction.utils.view.BidViews;
@@ -73,6 +74,38 @@ public class TradingController {
     ) {
 
         List<BidDTO> bids = this.tradingService.getByLotId(lotId);
+
+        return ResponseEntity.ok(bids);
+    }
+
+    @JsonView(Views.Public.class)
+    @GetMapping(path = "/bids/period")
+    public ResponseEntity<List<BidDTO>> getBidsByPeriod(
+            @RequestParam(value = "from",required = false) LocalDateTime from,
+            @RequestParam(value = "to",required = false) LocalDateTime to
+    ){
+
+        List<BidDTO> bids = null;
+
+        // find by period
+        if (from != null && to != null){
+            bids = this.tradingService.getByDatePeriod(from,to);
+        }
+
+        // find by date before
+        if (from == null && to != null){
+            bids = this.tradingService.getByDateBefore(to);
+        }
+
+        // find by date after
+        if (from != null && to == null){
+            bids = this.tradingService.getByDateAfter(from);
+        }
+
+        // if all properties entered wrong - throw exception
+        if (bids == null){
+            throw new NullPointerException("Entered data is incorrect");
+        }
 
         return ResponseEntity.ok(bids);
     }
