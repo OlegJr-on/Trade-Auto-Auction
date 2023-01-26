@@ -7,6 +7,7 @@ import com.auction.auto_auction.service.TradingService;
 import com.auction.auto_auction.utils.view.BidViews;
 import com.auction.auto_auction.utils.view.Views;
 import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -122,4 +123,16 @@ public class TradingController {
         return new ResponseEntity<>("The bid is made!", HttpStatus.OK);
     }
 
+    @PutMapping(path = "bids/{id}")
+    public ResponseEntity<String> editBid(
+            @PathVariable("id") int bidId,
+            @NotNull
+            @JsonView(BidViews.BidDetails.class)
+            @RequestBody BidDTO editedBid
+    ){
+
+        this.tradingService.editBid(bidId,editedBid);
+
+        return new ResponseEntity<>("Bid is edited!",HttpStatus.OK);
+    }
 }
