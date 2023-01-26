@@ -156,6 +156,47 @@ public class TradingServiceImpl implements TradingService{
         this.unitOfWork.getBidRepository().save(makeBid);
     }
 
+    private void beatExistingBet(List<Bid> bidsOnLot, BigDecimal moneyBet,
+                                 Customer customerWhichMakeBid, Lot lotToWhichTrading){
+
+        //get last bid for current lot
+        Bid lastBid = bidsOnLot.stream()
+                               .filter(Bid::isActive)
+                               .findAny()
+                               .orElseThrow(() ->
+                                       new ResourceNotFoundException("Not found last bid on lot."));
+
+
+        //checks if bet is bigger than "lastBid + minRate"
+        BigDecimal lastBet = lastBid.getBet();
+        BigDecimal currentBetMinusMinRate =  moneyBet.subtract(lotToWhichTrading.getMinRate());
+
+        if (lastBet.compareTo(currentBetMinusMinRate) >= 0)
+            throw new OutOfMoneyException("The bet isn`t enough money");
+
+        //set is_active for last bid - false
+        lastBid.setActive(false);
+
+        //create bid
+        Bid makeBid = Bid
+                .builder()
+                .isActive(true) // that bet is biggest
+                .bet(moneyBet)
+                .operationDate(LocalDateTime.now())
+                .customer(customerWhichMakeBid)
+                .lot(lotToWhichTrading)
+                .build();
+
+        // create two-ways relative:
+        //  1) with customer;
+        customerWhichMakeBid.getBids().add(makeBid);
+        //  2) with lot
+        lotToWhichTrading.getBids().add(makeBid);
+
+        //save changes
+        this.unitOfWork.getBidRepository().save(lastBid);
+        this.unitOfWork.getBidRepository().save(makeBid);
+    }
 
     @Override
     public void editBid(int bidId, BidDTO bidDto) {
