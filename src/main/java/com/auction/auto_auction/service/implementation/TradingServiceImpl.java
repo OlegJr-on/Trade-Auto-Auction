@@ -80,7 +80,18 @@ public class TradingServiceImpl implements TradingService{
 
     @Override
     public List<BidDTO> getByDatePeriod(LocalDateTime start, LocalDateTime end) {
-        return null;
+
+        Optional<List<Bid>> bidEntities = this.unitOfWork.getBidRepository()
+                .findByOperationDateBetween(start,end);
+
+        if (bidEntities.get().isEmpty()){
+            throw new ResourceNotFoundException(
+                    String.format("Not found bids in date: from %s to %s",start,end));
+        }
+
+        return bidEntities.get().stream()
+                                .map(ApplicationMapper::mapToBidDTO)
+                                .toList();
     }
 
     @Override
