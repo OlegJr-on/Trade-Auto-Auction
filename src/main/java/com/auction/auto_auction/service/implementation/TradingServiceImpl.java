@@ -265,5 +265,22 @@ public class TradingServiceImpl implements TradingService{
     @Override
     public void deleteByPeriod(LocalDateTime from, LocalDateTime to) {
 
+        // search bid entity from data source by date period
+        Optional<List<Bid>> bidEntities = this.unitOfWork.getBidRepository()
+                .findByOperationDateBetween(from,to);
+
+        if (bidEntities.get().isEmpty()){
+            throw new ResourceNotFoundException(
+                    String.format("Not found bids in date: from %s to %s",from,to));
+        }
+
+        // remove related data on objects
+        bidEntities.get().forEach(bid -> bid.getCustomer().getBids().remove(bid));
+        bidEntities.get().forEach(bid -> bid.getLot().getBids().remove(bid));
+
+        // delete data by id
+        bidEntities.get().forEach(
+                bid -> this.unitOfWork.getBidRepository().deleteById(bid.getId())
+        );
     }
 }
