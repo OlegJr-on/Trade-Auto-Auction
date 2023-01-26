@@ -38,7 +38,16 @@ public class TradingServiceImpl implements TradingService{
 
     @Override
     public List<BidDTO> getByCustomerId(int customerId) {
-        return null;
+
+        Optional<List<Bid>> bidEntities = this.unitOfWork.getBidRepository().findByCustomerId(customerId);
+
+        if (bidEntities.get().isEmpty()){
+            throw new ResourceNotFoundException("Not found bids by customer id: " + customerId);
+        }
+
+        return bidEntities.get().stream()
+                                .map(ApplicationMapper::mapToBidDTO)
+                                .toList();
     }
 
     @Override
