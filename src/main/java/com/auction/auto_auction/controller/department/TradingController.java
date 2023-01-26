@@ -36,4 +36,13 @@ public class TradingController {
 
         return ResponseEntity.ok(bids);
     }
+
+    @JsonView(Views.Public.class)
+    @GetMapping(path = "/bids-details")
+    public ResponseEntity<List<BidDTO>> getAllBidsWithDetails() {
+
+        List<BidDTO> bids = this.tradingService.getAll();
+
+        return ResponseEntity.ok(bids);
+    }
 }
