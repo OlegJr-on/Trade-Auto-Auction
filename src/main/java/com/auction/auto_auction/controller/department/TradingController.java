@@ -28,4 +28,12 @@ public class TradingController {
         this.tradingService = tradingService;
     }
 
+    @JsonView(BidViews.BidDetails.class)
+    @GetMapping(path = "/bids")
+    public ResponseEntity<List<BidDTO>> getAllBids() {
+
+        List<BidDTO> bids = this.tradingService.getAll();
+
+        return ResponseEntity.ok(bids);
+    }
 }
