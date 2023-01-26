@@ -135,4 +135,14 @@ public class TradingController {
 
         return new ResponseEntity<>("Bid is edited!",HttpStatus.OK);
     }
+
+    @DeleteMapping(path = "/bids/{id}")
+    public ResponseEntity<String> deleteBidById(@PathVariable("id") int bidId){
+
+        this.tradingService.deleteById(bidId);
+
+        return new ResponseEntity<>(
+                                    String.format("Bid with id: %d is removed!",bidId),
+                                    HttpStatus.OK);
+    }
 }
