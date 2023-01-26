@@ -66,7 +66,16 @@ public class TradingServiceImpl implements TradingService{
 
     @Override
     public List<BidDTO> getAll() {
-        return null;
+
+        List<Bid> bidsFromSource = this.unitOfWork.getBidRepository().findAll();
+
+        if (bidsFromSource.isEmpty()){
+            throw new ResourceNotFoundException("Data source is empty");
+        }
+
+        return bidsFromSource.stream()
+                             .map(ApplicationMapper::mapToBidDTO)
+                             .toList();
     }
 
     @Override
