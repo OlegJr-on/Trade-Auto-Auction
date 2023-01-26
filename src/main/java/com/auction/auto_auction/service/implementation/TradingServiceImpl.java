@@ -127,6 +127,36 @@ public class TradingServiceImpl implements TradingService{
     @Override
     public void makeBid(int customerId, int lotId, BigDecimal bet) {
 
+        // get customer by id from source
+        Customer customerWhichMakeBid = this.unitOfWork.getCustomerRepository().findById(customerId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Customer","id",String.valueOf(customerId)));
+
+        // get lot by id from source
+        Lot lotToWhichBet = this.unitOfWork.getLotRepository().findById(lotId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Not found Lot with id: " + lotId));
+
+        // check if lot is trading now
+        if (lotToWhichBet.getLotStatus() != LotStatus.TRADING) {
+            throw new TimeLotException("Current lot isn`t trading just now");
+        }
+
+        // checks if customer have enough money for this bet
+        if (customerWhichMakeBid.getBankAccount().getBalance().compareTo(bet) < 0)
+            throw new OutOfMoneyException("Customer doesn`t have enough money for make bid");
+
+        // get bids with lotId
+        Optional<List<Bid>> bidsOnLot = this.unitOfWork.getBidRepository().findByLotId(lotId);
+
+        //checks if bids for lot is already exist
+        if (!bidsOnLot.get().isEmpty()){
+            beatExistingBet(bidsOnLot.get(),bet,customerWhichMakeBid,lotToWhichBet);
+        }
+        // if bids on lot does not exist, make first bet
+        else {
+            doFirstBet(bet,customerWhichMakeBid,lotToWhichBet);
+        }
     }
 
     private void doFirstBet(BigDecimal moneyBet, Customer customerWhichMakeBid, Lot lotToWhichTrading){
