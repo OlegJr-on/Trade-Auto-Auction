@@ -3,6 +3,7 @@ package com.auction.auto_auction.dto;
 import com.auction.auto_auction.utils.view.BidViews;
 import com.auction.auto_auction.utils.view.CustomerViews;
 import com.auction.auto_auction.utils.view.Views;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -77,4 +78,7 @@ public class CustomerDTO {
     @JsonView(CustomerViews.CustomerDetails.class)
     @Builder.Default
     private BigDecimal balance = BigDecimal.ZERO;
+
+    @JsonIgnore
+    private List<BidDTO> bids;
 }
