@@ -17,6 +17,12 @@ public interface TradingService {
 
     List<BidDTO> getAll();
 
+    List<BidDTO> getByDatePeriod(LocalDateTime start, LocalDateTime end);
+
+    List<BidDTO> getByDateBefore(LocalDateTime date);
+
+    List<BidDTO> getByDateAfter(LocalDateTime date);
+
     void makeBid(int customerId, int lotId, BigDecimal bet);
 
     void editBid(int bidId, BidDTO bidDto);
