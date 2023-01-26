@@ -19,11 +19,65 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class TradingServiceImpl {
+public class TradingServiceImpl implements TradingService{
     private final UnitOfWork unitOfWork;
 
     public TradingServiceImpl(UnitOfWork unitOfWork) {
         this.unitOfWork = unitOfWork;
     }
 
+    @Override
+    public BidDTO getById(int bidId) {
+        return null;
+    }
+
+    @Override
+    public List<BidDTO> getByCustomerId(int customerId) {
+        return null;
+    }
+
+    @Override
+    public List<BidDTO> getByLotId(int lotId) {
+        return null;
+    }
+
+    @Override
+    public List<BidDTO> getAll() {
+        return null;
+    }
+
+    @Override
+    public List<BidDTO> getByDatePeriod(LocalDateTime start, LocalDateTime end) {
+        return null;
+    }
+
+    @Override
+    public List<BidDTO> getByDateBefore(LocalDateTime date) {
+        return null;
+    }
+
+    @Override
+    public List<BidDTO> getByDateAfter(LocalDateTime date) {
+        return null;
+    }
+
+    @Override
+    public void makeBid(int customerId, int lotId, BigDecimal bet) {
+
+    }
+
+    @Override
+    public void editBid(int bidId, BidDTO bidDto) {
+
+    }
+
+    @Override
+    public void deleteById(int bidId) {
+
+    }
+
+    @Override
+    public void deleteByPeriod(LocalDateTime from, LocalDateTime to) {
+
+    }
 }
