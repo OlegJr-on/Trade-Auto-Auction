@@ -129,6 +129,34 @@ public class TradingServiceImpl implements TradingService{
 
     }
 
+    private void doFirstBet(BigDecimal moneyBet, Customer customerWhichMakeBid, Lot lotToWhichTrading){
+
+        // check if bet is bigger than launchPrice on lot
+        if (moneyBet.compareTo(lotToWhichTrading.getLaunchPrice()) < 0){
+            throw new OutOfMoneyException("The bet isn`t enough money");
+        }
+
+        //create bid
+        Bid makeBid = Bid
+                .builder()
+                .isActive(true)
+                .bet(moneyBet)
+                .operationDate(LocalDateTime.now())
+                .customer(customerWhichMakeBid)
+                .lot(lotToWhichTrading)
+                .build();
+
+        // create two-ways relative:
+        //  1) with customer;
+        customerWhichMakeBid.getBids().add(makeBid);
+        //  2) with lot
+        lotToWhichTrading.getBids().add(makeBid);
+
+        //save changes
+        this.unitOfWork.getBidRepository().save(makeBid);
+    }
+
+
     @Override
     public void editBid(int bidId, BidDTO bidDto) {
 
