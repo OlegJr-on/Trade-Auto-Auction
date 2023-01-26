@@ -229,8 +229,23 @@ public class TradingServiceImpl implements TradingService{
     }
 
     @Override
-    public void editBid(int bidId, BidDTO bidDto) {
+    public void editBid(int bidId, BidDTO editedBid) {
 
+        if (editedBid == null) {
+            throw new NullPointerException("Bid doesn`t edited, entered values is null");
+        }
+
+        // search bid entity by id from data source
+        Bid bidEntity = this.unitOfWork.getBidRepository().findById(bidId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Bid","id",String.valueOf(bidId)));
+
+        //update info
+        bidEntity.setBet(editedBid.getBet());
+        bidEntity.setActive(editedBid.isWin());
+
+        // save changes
+        this.unitOfWork.getBidRepository().save(bidEntity);
     }
 
     @Override
