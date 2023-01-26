@@ -18,4 +18,6 @@ public interface TradingService {
     void editBid(int bidId, BidDTO bidDto);
 
     void deleteById(int bidId);
+
+    void deleteByPeriod(LocalDateTime from, LocalDateTime to);
 }
