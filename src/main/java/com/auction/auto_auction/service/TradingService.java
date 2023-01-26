@@ -11,6 +11,10 @@ public interface TradingService {
 
     BidDTO getById(int bidId);
 
+    List<BidDTO> getByCustomerId(int customerId);
+
+    List<BidDTO> getByLotId(int lotId);
+
     List<BidDTO> getAll();
 
     void makeBid(int customerId, int lotId, BigDecimal bet);
