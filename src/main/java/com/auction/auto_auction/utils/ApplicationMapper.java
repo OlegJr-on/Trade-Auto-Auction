@@ -79,21 +79,6 @@ public class ApplicationMapper {
                 .build();
     }
 
-    public static Car mapToCarEntity(CarDTO dto){
-        return Car
-                .builder()
-                .mark(dto.getMark())
-                .model(dto.getModel())
-                .registryDate(dto.getRegistryDate())
-                .run(dto.getRun())
-                .weight(dto.getWeight())
-                .damage(dto.getDamage())
-                .state(AutoState.transform(dto.getAutoState()))
-                .nominalValue(dto.getNominalValue())
-                .orientedPrice(dto.getOrientedPrice())
-                .build();
-    }
-
     public static LotDTO mapToLotDTO(Lot entity){
         return LotDTO
                 .builder()
@@ -104,18 +89,6 @@ public class ApplicationMapper {
                 .startTrading(entity.getStartTrading())
                 .endTrading(entity.getEndTrading())
                 .car(ApplicationMapper.mapToCarDTO(entity.getCar()))
-                .build();
-    }
-
-    public static Lot mapToLotEntity(LotDTO dto){
-        return Lot
-                .builder()
-                .lotStatus(LotStatus.transform(dto.getLotStatus()))
-                .launchPrice(dto.getLaunchPrice())
-                .minRate(dto.getMinRate())
-                .startTrading(dto.getStartTrading())
-                .endTrading(dto.getEndTrading())
-                .car(ApplicationMapper.mapToCarEntity(dto.getCar()))
                 .build();
     }
 
