@@ -8,9 +8,10 @@ import com.auction.auto_auction.entity.Lot;
 import com.auction.auto_auction.entity.enums.LotStatus;
 import com.auction.auto_auction.exception.ResourceNotFoundException;
 import com.auction.auto_auction.exception.TimeLotException;
+import com.auction.auto_auction.mapper.CarMapper;
+import com.auction.auto_auction.mapper.LotMapper;
 import com.auction.auto_auction.repository.uow.UnitOfWork;
 import com.auction.auto_auction.service.LotService;
-import com.auction.auto_auction.utils.ApplicationMapper;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
 
@@ -21,9 +22,13 @@ import java.util.Optional;
 @Service
 public class LotServiceImpl implements LotService{
     private final UnitOfWork unitOfWork;
+    private final LotMapper lotMapper;
+    private final CarMapper carMapper;
 
-    public LotServiceImpl(UnitOfWork unitOfWork) {
+    public LotServiceImpl(UnitOfWork unitOfWork, LotMapper lotMapper, CarMapper carMapper) {
         this.unitOfWork = unitOfWork;
+        this.lotMapper = lotMapper;
+        this.carMapper = carMapper;
     }
 
     @Override
@@ -39,7 +44,7 @@ public class LotServiceImpl implements LotService{
         lotsFromSource.forEach(this::setStatusForLot);
 
         return lotsFromSource.stream()
-                             .map(ApplicationMapper::mapToLotDTO)
+                             .map(this.lotMapper::mapToDTO)
                              .toList();
     }
 
@@ -53,7 +58,7 @@ public class LotServiceImpl implements LotService{
         // on received lot entities re-set status by special conditions
         this.setStatusForLot(lotEntity);
 
-        return ApplicationMapper.mapToLotDTO(lotEntity);
+        return this.lotMapper.mapToDTO(lotEntity);
     }
 
     @Override
@@ -68,7 +73,7 @@ public class LotServiceImpl implements LotService{
         // on received lot entities re-set status by special conditions
         this.setStatusForLot(lotEntity);
 
-        return ApplicationMapper.mapToLotDTO(lotEntity);
+        return this.lotMapper.mapToDTO(lotEntity);
     }
 
     @Override
@@ -86,7 +91,7 @@ public class LotServiceImpl implements LotService{
         lotEntities.get().forEach(this::setStatusForLot);
 
         return lotEntities.get().stream()
-                                .map(ApplicationMapper::mapToLotDTO)
+                                .map(this.lotMapper::mapToDTO)
                                 .toList();
     }
 
@@ -104,7 +109,7 @@ public class LotServiceImpl implements LotService{
         lotEntities.get().forEach(this::setStatusForLot);
 
         return lotEntities.get().stream()
-                                .map(ApplicationMapper::mapToLotDTO)
+                                .map(this.lotMapper::mapToDTO)
                                 .toList();
     }
 
@@ -122,7 +127,7 @@ public class LotServiceImpl implements LotService{
         lotEntities.get().forEach(this::setStatusForLot);
 
         return lotEntities.get().stream()
-                                .map(ApplicationMapper::mapToLotDTO)
+                                .map(this.lotMapper::mapToDTO)
                                 .toList();
     }
 
@@ -141,7 +146,7 @@ public class LotServiceImpl implements LotService{
         createdLot.setLotStatus(LotStatus.NOT_ACTIVE.label);
 
         // map dto to entity
-        Lot lotEntity = ApplicationMapper.mapToLotEntity(createdLot);
+        Lot lotEntity = this.lotMapper.mapToEntity(createdLot);
 
         // create relevant entities from given dto
         Car carEntity = lotEntity.getCar();
@@ -180,13 +185,13 @@ public class LotServiceImpl implements LotService{
                         new ResourceNotFoundException("Car","id",String.valueOf(carId)));
 
         // set in lot dto mapped car, because for map lot to entity, car should be not null
-        createdLot.setCar(ApplicationMapper.mapToCarDTO(carEntity));
+        createdLot.setCar(this.carMapper.mapToDTO(carEntity));
 
         // set default status for just created lot
         createdLot.setLotStatus(LotStatus.NOT_ACTIVE.label);
 
         // map just created lot dto to lot entity
-        Lot lotEntity = ApplicationMapper.mapToLotEntity(createdLot);
+        Lot lotEntity = this.lotMapper.mapToEntity(createdLot);
 
         // set lot into car entity and in setter act two-ways relation
         carEntity.setLot(lotEntity);
