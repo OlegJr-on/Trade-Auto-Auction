@@ -4,9 +4,9 @@ import com.auction.auto_auction.dto.CarDTO;
 import com.auction.auto_auction.entity.*;
 import com.auction.auto_auction.entity.enums.AutoState;
 import com.auction.auto_auction.exception.ResourceNotFoundException;
+import com.auction.auto_auction.mapper.CarMapper;
 import com.auction.auto_auction.repository.uow.UnitOfWork;
 import com.auction.auto_auction.service.CarService;
-import com.auction.auto_auction.utils.ApplicationMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,9 +15,11 @@ import java.util.Optional;
 @Service
 public class CarServiceImpl implements CarService {
     private final UnitOfWork unitOfWork;
+    private final CarMapper carMapper;
 
-    public CarServiceImpl(UnitOfWork unitOfWork) {
+    public CarServiceImpl(UnitOfWork unitOfWork, CarMapper carMapper) {
         this.unitOfWork = unitOfWork;
+        this.carMapper = carMapper;
     }
 
     @Override
@@ -30,7 +32,7 @@ public class CarServiceImpl implements CarService {
         }
 
         return carsFromSource.stream()
-                             .map(ApplicationMapper::mapToCarDTO)
+                             .map(this.carMapper::mapToDTO)
                              .toList();
     }
 
@@ -41,7 +43,7 @@ public class CarServiceImpl implements CarService {
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Car","id",String.valueOf(carId)));
 
-        return ApplicationMapper.mapToCarDTO(carEntity);
+        return this.carMapper.mapToDTO(carEntity);
     }
 
     @Override
@@ -54,7 +56,7 @@ public class CarServiceImpl implements CarService {
         }
 
         return carEntities.get().stream()
-                                .map(ApplicationMapper::mapToCarDTO)
+                                .map(this.carMapper::mapToDTO)
                                 .toList();
     }
 
@@ -68,7 +70,7 @@ public class CarServiceImpl implements CarService {
         }
 
         return carEntities.get().stream()
-                                .map(ApplicationMapper::mapToCarDTO)
+                                .map(this.carMapper::mapToDTO)
                                 .toList();
     }
 
@@ -80,15 +82,10 @@ public class CarServiceImpl implements CarService {
         }
 
         // map dto to entity
-        Car carEntity = ApplicationMapper.mapToCarEntity(createdCar);
+        Car carEntity = this.carMapper.mapToEntity(createdCar);
 
-        // create relevant photos entities from given dto
-        List<AutoPhoto> photos = createdCar.getPhotosSrc().stream()
-                                                          .map(AutoPhoto::new)
-                                                          .toList();
-
-        // set photos into car entity and in setter act two-ways relation
-        carEntity.setPhotos(photos);
+        // set carEntity into every just created photoEntity - it`s for two-way relative
+        carEntity.getPhotos().forEach(photo -> photo.setCar(carEntity));
 
         // save new data into data source
         this.unitOfWork.getCarRepository().save(carEntity);
