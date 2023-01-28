@@ -27,37 +27,6 @@ public class ApplicationMapper {
                 .build();
     }
 
-    public static CustomerDTO mapToCustomerDTO(User entity) {
-        return CustomerDTO
-                .builder()
-                .id(entity.getCustomer().getId())
-                .firstName(entity.getFirstName())
-                .lastName(entity.getLastName())
-                .birthDay(entity.getBirthDay())
-                .email(entity.getEmail())
-                .location(entity.getLocation())
-                .phoneNumber(entity.getPhoneNumber())
-                .discount(entity.getCustomer().getDiscount())
-                .balance(entity.getCustomer().getBankAccount().getBalance())
-                .roles(entity.getRoles()
-                        .stream()
-                        .map(Role::getRoleName)
-                        .collect(Collectors.toList()))
-                .build();
-    }
-
-    public static User mapToUserEntity(CustomerDTO dto) {
-        return User
-                .builder()
-                .firstName(dto.getFirstName())
-                .lastName(dto.getLastName())
-                .phoneNumber(dto.getPhoneNumber())
-                .email(dto.getEmail())
-                .password(dto.getPassword())
-                .location(dto.getLocation())
-                .birthDay(dto.getBirthDay())
-                .build();
-    }
 
     public static CarDTO mapToCarDTO(Car entity) {
         return CarDTO
