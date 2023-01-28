@@ -4,9 +4,9 @@ import com.auction.auto_auction.dto.SalesDepartmentDTO;
 import com.auction.auto_auction.entity.Lot;
 import com.auction.auto_auction.entity.SalesDepartment;
 import com.auction.auto_auction.exception.ResourceNotFoundException;
+import com.auction.auto_auction.mapper.SalesMapper;
 import com.auction.auto_auction.repository.uow.UnitOfWork;
 import com.auction.auto_auction.service.SalesDepartmentService;
-import com.auction.auto_auction.utils.ApplicationMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -17,9 +17,11 @@ import java.util.Optional;
 @Service
 public class SalesDepartmentServiceImpl implements SalesDepartmentService {
     private final UnitOfWork unitOfWork;
+    private final SalesMapper salesMapper;
 
-    public SalesDepartmentServiceImpl(UnitOfWork unitOfWork) {
+    public SalesDepartmentServiceImpl(UnitOfWork unitOfWork, SalesMapper salesMapper) {
         this.unitOfWork = unitOfWork;
+        this.salesMapper = salesMapper;
     }
 
     @Override
@@ -33,7 +35,7 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
 
         List<SalesDepartmentDTO> resultSales = salesFromSource
                         .stream()
-                        .map(ApplicationMapper::mapToSalesDepartmentDTO)
+                        .map(this.salesMapper::mapToDTO)
                         .peek(saleDto -> saleDto.setTimeLeft(
                                 generateTimeLeftToEvent(saleDto.getSalesDate())
                         ))
@@ -50,7 +52,7 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Sales","id",String.valueOf(salesId)));
 
-        SalesDepartmentDTO saleDto = ApplicationMapper.mapToSalesDepartmentDTO(saleEntity);
+        SalesDepartmentDTO saleDto = this.salesMapper.mapToDTO(saleEntity);
 
         saleDto.setTimeLeft(
                 generateTimeLeftToEvent(saleEntity.getSalesDate())
@@ -70,7 +72,7 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Sales","lot.id",String.valueOf(lotId)));
 
-        return ApplicationMapper.mapToSalesDepartmentDTO(saleEntity);
+        return this.salesMapper.mapToDTO(saleEntity);
     }
 
     @Override
@@ -85,7 +87,7 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
         }
 
         return saleEntities.get().stream()
-                                 .map(ApplicationMapper::mapToSalesDepartmentDTO)
+                                 .map(this.salesMapper::mapToDTO)
                                  .peek(saleDto -> saleDto.setTimeLeft(
                                          generateTimeLeftToEvent(saleDto.getSalesDate())
                                  ))
@@ -103,7 +105,7 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
         }
 
         return saleEntities.get().stream()
-                                 .map(ApplicationMapper::mapToSalesDepartmentDTO)
+                                 .map(this.salesMapper::mapToDTO)
                                  .peek(saleDto -> saleDto.setTimeLeft(
                                          generateTimeLeftToEvent(saleDto.getSalesDate())
                                  ))
@@ -121,7 +123,7 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
         }
 
         return saleEntities.get().stream()
-                                 .map(ApplicationMapper::mapToSalesDepartmentDTO)
+                                 .map(this.salesMapper::mapToDTO)
                                  .peek(saleDto -> saleDto.setTimeLeft(
                                          generateTimeLeftToEvent(saleDto.getSalesDate())
                                  ))
@@ -144,7 +146,7 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
         }
 
         return salesByLocation.stream()
-                              .map(ApplicationMapper::mapToSalesDepartmentDTO)
+                              .map(this.salesMapper::mapToDTO)
                               .peek(saleDto -> saleDto.setTimeLeft(
                                       generateTimeLeftToEvent(saleDto.getSalesDate())
                               ))
@@ -181,7 +183,7 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
             throw new NullPointerException("Sale doesn`t created, values is null");
         }
 
-        SalesDepartment saleEntity = ApplicationMapper.mapToSalesDepartmentEntity(createdSaleEvent);
+        SalesDepartment saleEntity = this.salesMapper.mapToEntity(createdSaleEvent);
 
         this.unitOfWork.getSalesDepartmentRepository().save(saleEntity);
     }
