@@ -6,10 +6,10 @@ import com.auction.auto_auction.entity.Customer;
 import com.auction.auto_auction.entity.Role;
 import com.auction.auto_auction.entity.User;
 import com.auction.auto_auction.exception.ResourceNotFoundException;
+import com.auction.auto_auction.mapper.CustomerMapper;
 import com.auction.auto_auction.repository.uow.UnitOfWork;
 import com.auction.auto_auction.service.CustomerService;
 import com.auction.auto_auction.utils.ApplicationConstants;
-import com.auction.auto_auction.utils.ApplicationMapper;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -19,9 +19,11 @@ import java.util.*;
 @Service
 public class CustomerServiceImpl implements CustomerService{
     private final UnitOfWork unitOfWork;
+    private final CustomerMapper customerMapper;
 
-    public CustomerServiceImpl(UnitOfWork unitOfWork) {
+    public CustomerServiceImpl(UnitOfWork unitOfWork, CustomerMapper customerMapper) {
         this.unitOfWork = unitOfWork;
+        this.customerMapper = customerMapper;
     }
 
     @Override
@@ -34,7 +36,7 @@ public class CustomerServiceImpl implements CustomerService{
         }
 
         return customersFromSource.stream()
-                                  .map(ApplicationMapper::mapToCustomerDTO)
+                                  .map(this.customerMapper::mapToDTO)
                                   .toList();
     }
 
@@ -45,7 +47,7 @@ public class CustomerServiceImpl implements CustomerService{
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Customer","id",String.valueOf(customerId)));
 
-        return ApplicationMapper.mapToCustomerDTO(customerEntity);
+        return this.customerMapper.mapToDTO(customerEntity);
     }
 
     @Override
@@ -58,7 +60,7 @@ public class CustomerServiceImpl implements CustomerService{
         }
 
         return userEntities.get().stream()
-                                 .map(ApplicationMapper::mapToCustomerDTO)
+                                 .map(this.customerMapper::mapToDTO)
                                  .toList();
     }
 
@@ -70,7 +72,7 @@ public class CustomerServiceImpl implements CustomerService{
                         new ResourceNotFoundException("Customer","firstName and lastName",
                                                                 String.format("%s %s",firstName,lastName)));
 
-        return ApplicationMapper.mapToCustomerDTO(entity);
+        return this.customerMapper.mapToDTO(entity);
     }
 
     @Override
@@ -80,7 +82,7 @@ public class CustomerServiceImpl implements CustomerService{
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Customer","email",email));
 
-        return ApplicationMapper.mapToCustomerDTO(entity);
+        return this.customerMapper.mapToDTO(entity);
     }
 
     @Override
@@ -96,7 +98,7 @@ public class CustomerServiceImpl implements CustomerService{
                         new NoSuchElementException("Something went wrong, customer role doesn't set"));
 
         // map dto to entity and set taken role in entity
-        User userEntity = ApplicationMapper.mapToUserEntity(createdCustomer);
+        User userEntity = this.customerMapper.mapToEntity(createdCustomer);
         userEntity.setRoles(Collections.singletonList(regUserRole));
 
         // set data to another components of customerDTO
