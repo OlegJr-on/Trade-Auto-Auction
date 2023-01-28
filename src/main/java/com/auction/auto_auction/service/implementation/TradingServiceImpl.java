@@ -138,7 +138,9 @@ public class TradingServiceImpl implements TradingService{
                         new ResourceNotFoundException("Not found Lot with id: " + lotId));
 
         // check if lot is trading now
-        if (lotToWhichBet.getLotStatus() != LotStatus.TRADING) {
+        LocalDateTime timeNow = LocalDateTime.now();
+        if (!(lotToWhichBet.getStartTrading().isBefore(timeNow) &&
+                lotToWhichBet.getEndTrading().isAfter(timeNow))) {
             throw new TimeLotException("Current lot isn`t trading just now");
         }
 
