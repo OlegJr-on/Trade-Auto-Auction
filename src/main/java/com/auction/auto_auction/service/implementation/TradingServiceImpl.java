@@ -6,9 +6,9 @@ import com.auction.auto_auction.entity.enums.LotStatus;
 import com.auction.auto_auction.exception.OutOfMoneyException;
 import com.auction.auto_auction.exception.ResourceNotFoundException;
 import com.auction.auto_auction.exception.TimeLotException;
+import com.auction.auto_auction.mapper.BidMapper;
 import com.auction.auto_auction.repository.uow.UnitOfWork;
 import com.auction.auto_auction.service.TradingService;
-import com.auction.auto_auction.utils.ApplicationMapper;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -19,9 +19,11 @@ import java.util.Optional;
 @Service
 public class TradingServiceImpl implements TradingService{
     private final UnitOfWork unitOfWork;
+    private final BidMapper bidMapper;
 
-    public TradingServiceImpl(UnitOfWork unitOfWork) {
+    public TradingServiceImpl(UnitOfWork unitOfWork, BidMapper bidMapper) {
         this.unitOfWork = unitOfWork;
+        this.bidMapper = bidMapper;
     }
 
     @Override
@@ -31,7 +33,7 @@ public class TradingServiceImpl implements TradingService{
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Bid","id",String.valueOf(bidId)));
 
-        return ApplicationMapper.mapToBidDTO(bidEntity);
+        return this.bidMapper.mapToDTO(bidEntity);
     }
 
     @Override
@@ -44,7 +46,7 @@ public class TradingServiceImpl implements TradingService{
         }
 
         return bidEntities.get().stream()
-                                .map(ApplicationMapper::mapToBidDTO)
+                                .map(this.bidMapper::mapToDTO)
                                 .toList();
     }
 
@@ -58,7 +60,7 @@ public class TradingServiceImpl implements TradingService{
         }
 
         return bidEntities.get().stream()
-                                .map(ApplicationMapper::mapToBidDTO)
+                                .map(this.bidMapper::mapToDTO)
                                 .toList();
     }
 
@@ -72,7 +74,7 @@ public class TradingServiceImpl implements TradingService{
         }
 
         return bidsFromSource.stream()
-                             .map(ApplicationMapper::mapToBidDTO)
+                             .map(this.bidMapper::mapToDTO)
                              .toList();
     }
 
@@ -88,7 +90,7 @@ public class TradingServiceImpl implements TradingService{
         }
 
         return bidEntities.get().stream()
-                                .map(ApplicationMapper::mapToBidDTO)
+                                .map(this.bidMapper::mapToDTO)
                                 .toList();
     }
 
@@ -103,7 +105,7 @@ public class TradingServiceImpl implements TradingService{
         }
 
         return bidEntities.get().stream()
-                                .map(ApplicationMapper::mapToBidDTO)
+                                .map(this.bidMapper::mapToDTO)
                                 .toList();
     }
 
@@ -118,7 +120,7 @@ public class TradingServiceImpl implements TradingService{
         }
 
         return bidEntities.get().stream()
-                                .map(ApplicationMapper::mapToBidDTO)
+                                .map(this.bidMapper::mapToDTO)
                                 .toList();
     }
 
