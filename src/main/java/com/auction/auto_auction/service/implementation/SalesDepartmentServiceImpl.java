@@ -243,11 +243,11 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
 
         Duration period = Duration.between(timeNow, event);
 
-        long days = period.toDays();
+        long days =  Math.max(0, period.toDays());
         period = period.minusDays(days);
-        long hours = period.toHours();
+        long hours = Math.max(0, period.toHours());
         period = period.minusHours(hours);
-        long minutes = period.toMinutes();
+        long minutes = Math.max(0, period.toMinutes());
 
         return String.format("Days: %d | Hours: %d | Minutes: %d", days,hours,minutes);
     }
