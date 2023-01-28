@@ -92,28 +92,6 @@ public class ApplicationMapper {
                 .build();
     }
 
-    public static SalesDepartmentDTO mapToSalesDepartmentDTO(SalesDepartment entity){
-        return SalesDepartmentDTO
-                .builder()
-                .id(entity.getId())
-                .location(entity.getLocation())
-                .salesName(entity.getSalesName())
-                .salesDate(entity.getSalesDate())
-                .lots(entity.getLots().stream()
-                                      .map(ApplicationMapper::mapToLotDTO)
-                                      .toList())
-                .build();
-    }
-
-    public static SalesDepartment mapToSalesDepartmentEntity(SalesDepartmentDTO dto){
-        return SalesDepartment
-                .builder()
-                .salesName(dto.getSalesName())
-                .salesDate(dto.getSalesDate())
-                .location(dto.getLocation())
-                .build();
-    }
-
     public static BidDTO mapToBidDTO(Bid entity){
         return BidDTO
                 .builder()
