@@ -54,7 +54,23 @@ public class CustomerStatisticServiceImpl implements CustomerStatisticService{
 
     @Override
     public List<CustomerDTO> getRichestCustomers() {
-        return null;
+
+        List<Customer> customers = this.unitOfWork.getCustomerRepository().findAll();
+
+        if (customers.isEmpty())
+        {
+            throw new ResourceNotFoundException("Not found customers.");
+        }
+
+        // Top 5 richest customers
+        List<CustomerDTO> richestCustomers = customers.stream()
+                .map(this.customerMapper::mapToDTO)
+                .filter(cus -> cus.getBalance().compareTo(BigDecimal.ZERO) > 0)
+                .sorted(Comparator.comparing(CustomerDTO::getBalance).reversed())
+                .limit(5)
+                .toList();
+
+        return richestCustomers;
     }
 
     @Override
