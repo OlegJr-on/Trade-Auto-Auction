@@ -17,7 +17,7 @@ import java.util.Optional;
 
 
 @Service
-public class CustomerStatisticServiceImpl {
+public class CustomerStatisticServiceImpl implements CustomerStatisticService{
     private final UnitOfWork unitOfWork;
     private final CustomerMapper customerMapper;
 
@@ -26,4 +26,23 @@ public class CustomerStatisticServiceImpl {
         this.customerMapper = customerMapper;
     }
 
+    @Override
+    public List<CustomerStatisticDTO> getMostActivityCustomers() {
+        return null;
+    }
+
+    @Override
+    public List<CustomerDTO> getRichestCustomers() {
+        return null;
+    }
+
+    @Override
+    public List<CustomerStatisticDTO> getCustomersWhoMostSpend() {
+        return null;
+    }
+
+    @Override
+    public List<CustomerStatisticDTO> getMostCustomersByGrowthUponLaunchPrice() {
+        return null;
+    }
 }
