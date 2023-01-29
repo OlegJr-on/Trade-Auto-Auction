@@ -10,4 +10,6 @@ public interface CustomerStatisticService {
 
     List<CustomerStatisticDTO> getMostActivityCustomers();
 
+    List<CustomerDTO> getRichestCustomers();
+
 }
