@@ -75,6 +75,35 @@ public class CustomerStatisticServiceImpl implements CustomerStatisticService{
 
     @Override
     public List<CustomerStatisticDTO> getCustomersWhoMostSpend() {
-        return null;
+
+        // find customers which spend money on lot
+        Optional<List<Customer>> customersWhoSpend = this.unitOfWork.getCustomerRepository()
+                .findCustomersWhoMostSpend();
+
+        if (customersWhoSpend.isEmpty())
+        {
+            throw new ResourceNotFoundException("Not found customers.");
+        }
+
+        List<CustomerStatisticDTO> mostSpendCustomers = customersWhoSpend.get().stream()
+                .map(cus -> CustomerStatisticDTO
+                                    .builder()
+                                    .customer(this.customerMapper.mapToDTO(cus))
+                                    .bidQuantity(cus.getBids().size())
+                                    .spendMoney(
+                                            cus.getBids().stream()
+                                                    .filter(Bid::isActive)
+                                                    .flatMap(bid -> bid.getOrder().getOrdersDetails().stream())
+                                                    .map(OrdersDetails::getTotalPrice)
+                                                    .reduce(BigDecimal.ZERO,BigDecimal::add)
+                                                    .setScale(2)
+                                    )
+                                    .quantityWinLot(cus.getBids().stream().filter(Bid::isActive).count())
+                                    .build())
+                .sorted(Comparator.comparing(CustomerStatisticDTO::getSpendMoney).reversed())
+                .toList();
+
+        return mostSpendCustomers;
     }
+
 }
