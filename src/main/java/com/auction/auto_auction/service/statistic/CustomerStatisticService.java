@@ -12,4 +12,6 @@ public interface CustomerStatisticService {
 
     List<CustomerDTO> getRichestCustomers();
 
+    List<CustomerStatisticDTO> getCustomersWhoMostSpend();
+
 }
