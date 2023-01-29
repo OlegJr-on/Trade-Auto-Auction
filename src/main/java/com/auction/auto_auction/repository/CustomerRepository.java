@@ -17,5 +17,5 @@ public interface CustomerRepository extends JpaRepository<Customer,Integer> {
             "            JOIN OrdersDetails od ON o.id = od.order.id " +
             "GROUP BY c.id " +
             "ORDER BY spendMoney desc")
-    Optional<List<Customer>> getCustomersWhoMostSpend();
+    Optional<List<Customer>> findCustomersWhoMostSpend();
 }
