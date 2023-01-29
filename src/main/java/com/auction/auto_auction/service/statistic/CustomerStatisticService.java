@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface CustomerStatisticService {
 
+    List<CustomerStatisticDTO> getMostActivityCustomers();
+
 }
