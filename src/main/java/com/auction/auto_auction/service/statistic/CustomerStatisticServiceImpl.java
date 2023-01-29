@@ -28,7 +28,28 @@ public class CustomerStatisticServiceImpl implements CustomerStatisticService{
 
     @Override
     public List<CustomerStatisticDTO> getMostActivityCustomers() {
-        return null;
+
+        // find customers who made at least one bid
+        Optional<List<Customer>> customersWhoMadeBids = this.unitOfWork.getCustomerRepository()
+                .findAllByBidsNotNull();
+
+        if (customersWhoMadeBids.get().isEmpty())
+        {
+            throw new ResourceNotFoundException("Not found customers who make bids.");
+        }
+
+        // create a resulting list
+        List<CustomerStatisticDTO> mostActiveCustomers = customersWhoMadeBids.get()
+                .stream()
+                .map(cus -> CustomerStatisticDTO
+                                                .builder()
+                                                .customer(this.customerMapper.mapToDTO(cus))
+                                                .bidQuantity(cus.getBids().size())
+                                                .build())
+                .sorted(Comparator.comparingLong(CustomerStatisticDTO::getBidQuantity).reversed())
+                .toList();
+
+        return mostActiveCustomers;
     }
 
     @Override
@@ -38,11 +59,6 @@ public class CustomerStatisticServiceImpl implements CustomerStatisticService{
 
     @Override
     public List<CustomerStatisticDTO> getCustomersWhoMostSpend() {
-        return null;
-    }
-
-    @Override
-    public List<CustomerStatisticDTO> getMostCustomersByGrowthUponLaunchPrice() {
         return null;
     }
 }
