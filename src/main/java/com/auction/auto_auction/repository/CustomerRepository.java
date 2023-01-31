@@ -18,4 +18,9 @@ public interface CustomerRepository extends JpaRepository<Customer,Integer> {
             "GROUP BY c.id " +
             "ORDER BY spendMoney desc")
     Optional<List<Customer>> findCustomersWhoMostSpend();
+
+    @Query("SELECT cus FROM Customer AS cus " +
+            "JOIN BankAccount AS ba ON cus.id = ba.customer.id " +
+                "WHERE ba.balance > 0")
+    Optional<List<Customer>> findCustomersWhoseBalanceMoreThanZero();
 }
