@@ -11,6 +11,8 @@ import com.auction.auto_auction.repository.uow.UnitOfWork;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -106,4 +108,39 @@ public class CustomerStatisticServiceImpl implements CustomerStatisticService{
         return mostSpendCustomers;
     }
 
+    @Override
+    public List<CustomerStatisticDTO> getCustomersByAverageGrowthIndicatorForLaunchPrice() {
+
+        Optional<List<Customer>> customersWithBids = this.unitOfWork.getCustomerRepository()
+                .findAllByBidsNotNull();
+
+        if (customersWithBids.get().isEmpty())
+        {
+            throw new ResourceNotFoundException("Not found customers who make bids.");
+        }
+
+        List<CustomerStatisticDTO> customerStatistic = customersWithBids.get().stream()
+                .map(cus -> CustomerStatisticDTO.builder()
+                        .customer(this.customerMapper.mapToDTO(cus))
+                        .bidQuantity(cus.getBids().size())
+                        .quantityWinLot(cus.getBids().stream().filter(Bid::isActive).count())
+                        .averageGrowthIndicatorByLaunchPrice(
+                                cus.getBids().stream().filter(Bid::isActive)
+                                        .map(bid -> {
+
+                                            BigDecimal launchPrice = bid.getLot().getLaunchPrice();
+                                            BigDecimal finalPrice = bid.getBet();
+
+                                            return finalPrice.divide(launchPrice, 3,RoundingMode.CEILING)
+                                                             .multiply(BigDecimal.valueOf(100))
+                                                             .longValue();
+                                        })
+                                        .mapToLong(x -> x).average().orElse(0)
+                        )
+                        .build())
+                .sorted(Comparator.comparing(CustomerStatisticDTO::getAverageGrowthIndicatorByLaunchPrice).reversed())
+                .toList();
+
+        return customerStatistic;
+    }
 }
