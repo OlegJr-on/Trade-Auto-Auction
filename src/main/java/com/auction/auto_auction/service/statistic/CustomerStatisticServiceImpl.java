@@ -30,16 +30,13 @@ public class CustomerStatisticServiceImpl implements CustomerStatisticService{
     public List<CustomerStatisticDTO> getMostActivityCustomers() {
 
         // find customers who made at least one bid
-        Optional<List<Customer>> customersWhoMadeBids = this.unitOfWork.getCustomerRepository()
-                .findAllByBidsNotNull();
-
-        if (customersWhoMadeBids.get().isEmpty())
-        {
-            throw new ResourceNotFoundException("Not found customers who make bids.");
-        }
+        List<Customer> customersWhoMadeBids = this.unitOfWork.getCustomerRepository()
+                .findAllByBidsNotNull()
+                    .orElseThrow(() ->
+                        new ResourceNotFoundException("Not found customers who make bids."));
 
         // create a resulting list
-        List<CustomerStatisticDTO> mostActiveCustomers = customersWhoMadeBids.get()
+        List<CustomerStatisticDTO> mostActiveCustomers = customersWhoMadeBids
                 .stream()
                 .map(cus -> CustomerStatisticDTO
                                                 .builder()
@@ -55,48 +52,39 @@ public class CustomerStatisticServiceImpl implements CustomerStatisticService{
     @Override
     public List<CustomerDTO> getRichestCustomers() {
 
-        List<Customer> customers = this.unitOfWork.getCustomerRepository().findAll();
-
-        if (customers.isEmpty())
-        {
-            throw new ResourceNotFoundException("Not found customers.");
-        }
+        List<Customer> customers = this.unitOfWork.getCustomerRepository()
+                .findCustomersWhoseBalanceMoreThanZero()
+                    .orElseThrow(ResourceNotFoundException::new);
 
         // Top 5 richest customers
-        List<CustomerDTO> richestCustomers = customers.stream()
-                .map(this.customerMapper::mapToDTO)
-                .filter(cus -> cus.getBalance().compareTo(BigDecimal.ZERO) > 0)
-                .sorted(Comparator.comparing(CustomerDTO::getBalance).reversed())
-                .limit(5)
-                .toList();
-
-        return richestCustomers;
+        return customers.stream()
+                        .map(this.customerMapper::mapToDTO)
+                        .sorted(Comparator.comparing(CustomerDTO::getBalance).reversed())
+                        .limit(5)
+                        .toList();
     }
 
     @Override
     public List<CustomerStatisticDTO> getCustomersWhoMostSpend() {
 
         // find customers which spend money on lot
-        Optional<List<Customer>> customersWhoSpend = this.unitOfWork.getCustomerRepository()
-                .findCustomersWhoMostSpend();
+        List<Customer> customersWhoSpend = this.unitOfWork.getCustomerRepository()
+                .findCustomersWhoMostSpend()
+                    .orElseThrow(() ->
+                        new ResourceNotFoundException("Not found customers."));
 
-        if (customersWhoSpend.isEmpty())
-        {
-            throw new ResourceNotFoundException("Not found customers.");
-        }
-
-        List<CustomerStatisticDTO> mostSpendCustomers = customersWhoSpend.get().stream()
+        List<CustomerStatisticDTO> mostSpendCustomers = customersWhoSpend.stream()
                 .map(cus -> CustomerStatisticDTO
                                     .builder()
                                     .customer(this.customerMapper.mapToDTO(cus))
                                     .bidQuantity(cus.getBids().size())
                                     .spendMoney(
                                             cus.getBids().stream()
-                                                    .filter(Bid::isActive)
-                                                    .flatMap(bid -> bid.getOrder().getOrdersDetails().stream())
-                                                    .map(OrdersDetails::getTotalPrice)
-                                                    .reduce(BigDecimal.ZERO,BigDecimal::add)
-                                                    .setScale(2)
+                                                         .filter(Bid::isActive)
+                                                         .flatMap(bid -> bid.getOrder().getOrdersDetails().stream())
+                                                         .map(OrdersDetails::getTotalPrice)
+                                                         .reduce(BigDecimal.ZERO,BigDecimal::add)
+                                                         .setScale(2)
                                     )
                                     .quantityWinLot(cus.getBids().stream().filter(Bid::isActive).count())
                                     .build())
@@ -109,33 +97,33 @@ public class CustomerStatisticServiceImpl implements CustomerStatisticService{
     @Override
     public List<CustomerStatisticDTO> getCustomersByAverageGrowthIndicatorForLaunchPrice() {
 
-        Optional<List<Customer>> customersWithBids = this.unitOfWork.getCustomerRepository()
-                .findAllByBidsNotNull();
+        List<Customer> customersWithBids = this.unitOfWork.getCustomerRepository()
+                .findAllByBidsNotNull()
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Not found customers who make bids."));
 
-        if (customersWithBids.get().isEmpty())
-        {
-            throw new ResourceNotFoundException("Not found customers who make bids.");
-        }
+        List<CustomerStatisticDTO> customerStatistic = customersWithBids.stream()
+                .map(cus -> CustomerStatisticDTO
+                                    .builder()
+                                    .customer(this.customerMapper.mapToDTO(cus))
+                                    .bidQuantity(cus.getBids().size())
+                                    .quantityWinLot(cus.getBids().stream().filter(Bid::isActive).count())
+                                    .averageGrowthIndicatorByLaunchPrice(
+                                            cus.getBids().stream()
+                                                    .filter(Bid::isActive)
+                                                    .map(bid -> {
 
-        List<CustomerStatisticDTO> customerStatistic = customersWithBids.get().stream()
-                .map(cus -> CustomerStatisticDTO.builder()
-                        .customer(this.customerMapper.mapToDTO(cus))
-                        .bidQuantity(cus.getBids().size())
-                        .quantityWinLot(cus.getBids().stream().filter(Bid::isActive).count())
-                        .averageGrowthIndicatorByLaunchPrice(
-                                cus.getBids().stream().filter(Bid::isActive)
-                                        .map(bid -> {
+                                                        BigDecimal launchPrice = bid.getLot().getLaunchPrice();
+                                                        BigDecimal finalPrice = bid.getBet();
 
-                                            BigDecimal launchPrice = bid.getLot().getLaunchPrice();
-                                            BigDecimal finalPrice = bid.getBet();
-
-                                            return finalPrice.divide(launchPrice, 3,RoundingMode.CEILING)
-                                                             .multiply(BigDecimal.valueOf(100))
-                                                             .longValue();
-                                        })
-                                        .mapToLong(x -> x).average().orElse(0)
-                        )
-                        .build())
+                                                        return finalPrice.divide(launchPrice, 3,RoundingMode.CEILING)
+                                                                         .multiply(BigDecimal.valueOf(100))
+                                                                         .longValue();
+                                                    })
+                                                    .mapToLong(x -> x)
+                                                    .average()
+                                                    .orElse(0))
+                                    .build())
                 .sorted(Comparator.comparing(CustomerStatisticDTO::getAverageGrowthIndicatorByLaunchPrice).reversed())
                 .toList();
 
