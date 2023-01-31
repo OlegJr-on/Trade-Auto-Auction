@@ -8,6 +8,7 @@ import com.auction.auto_auction.mapper.CarMapper;
 import com.auction.auto_auction.repository.uow.UnitOfWork;
 import com.auction.auto_auction.service.CarService;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,10 +30,6 @@ public class CarServiceImpl implements CarService {
 
         List<Car> carsFromSource = this.unitOfWork.getCarRepository().findAll();
 
-        if (carsFromSource.isEmpty()){
-            throw new ResourceNotFoundException("Data source is empty");
-        }
-
         return carsFromSource.stream()
                              .map(this.carMapper::mapToDTO)
                              .toList();
@@ -51,37 +48,31 @@ public class CarServiceImpl implements CarService {
     @Override
     public List<CarDTO> findByMark(String mark) {
 
-        Optional<List<Car>> carEntities = this.unitOfWork.getCarRepository().findByMark(mark);
+        List<Car> carEntities = this.unitOfWork.getCarRepository()
+                                               .findByMark(mark)
+                                               .orElseThrow(() ->
+                                                    new ResourceNotFoundException("Car","mark",mark));
 
-        if (carEntities.get().isEmpty()){
-            throw new ResourceNotFoundException("Car","mark",mark);
-        }
-
-        return carEntities.get().stream()
-                                .map(this.carMapper::mapToDTO)
-                                .toList();
+        return carEntities.stream()
+                          .map(this.carMapper::mapToDTO)
+                          .toList();
     }
 
     @Override
     public List<CarDTO> findByMarkAndModel(String mark, String model) {
 
-        Optional<List<Car>> carEntities = this.unitOfWork.getCarRepository().findByMarkAndModel(mark,model);
+        List<Car> carEntities = this.unitOfWork.getCarRepository()
+                .findByMarkAndModel(mark,model)
+                    .orElseThrow(() ->
+                            new ResourceNotFoundException("Car","mark and model", String.format("%s %s",mark,model)));
 
-        if (carEntities.get().isEmpty()){
-            throw new ResourceNotFoundException("Car","mark and model", String.format("%s %s",mark,model));
-        }
-
-        return carEntities.get().stream()
-                                .map(this.carMapper::mapToDTO)
-                                .toList();
+        return carEntities.stream()
+                          .map(this.carMapper::mapToDTO)
+                          .toList();
     }
 
     @Override
-    public void create(CarDTO createdCar) {
-
-        if (createdCar == null) {
-            throw new NullPointerException("Car doesn`t created, values is null");
-        }
+    public void create(@NotNull CarDTO createdCar) {
 
         // map dto to entity
         Car carEntity = this.carMapper.mapToEntity(createdCar);
@@ -95,11 +86,7 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
-    public void update(int carId, CarDTO updatedCar) {
-
-        if (updatedCar == null) {
-            throw new NullPointerException("Car doesn`t updated, entered values is null");
-        }
+    public void update(int carId, @NotNull CarDTO updatedCar) {
 
         // search car entity by id from data source
         Car carEntity = this.unitOfWork.getCarRepository().findById(carId)
