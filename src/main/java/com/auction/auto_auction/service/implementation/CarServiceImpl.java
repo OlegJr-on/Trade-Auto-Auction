@@ -7,12 +7,14 @@ import com.auction.auto_auction.exception.ResourceNotFoundException;
 import com.auction.auto_auction.mapper.CarMapper;
 import com.auction.auto_auction.repository.uow.UnitOfWork;
 import com.auction.auto_auction.service.CarService;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class CarServiceImpl implements CarService {
     private final UnitOfWork unitOfWork;
     private final CarMapper carMapper;

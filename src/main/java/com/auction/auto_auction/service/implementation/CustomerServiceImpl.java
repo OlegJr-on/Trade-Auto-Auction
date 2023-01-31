@@ -10,6 +10,7 @@ import com.auction.auto_auction.mapper.CustomerMapper;
 import com.auction.auto_auction.repository.uow.UnitOfWork;
 import com.auction.auto_auction.service.CustomerService;
 import com.auction.auto_auction.utils.ApplicationConstants;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -17,6 +18,7 @@ import java.util.*;
 
 
 @Service
+@Transactional
 public class CustomerServiceImpl implements CustomerService{
     private final UnitOfWork unitOfWork;
     private final CustomerMapper customerMapper;

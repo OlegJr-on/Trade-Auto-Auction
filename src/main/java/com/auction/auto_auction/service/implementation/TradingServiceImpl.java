@@ -9,6 +9,7 @@ import com.auction.auto_auction.exception.TimeLotException;
 import com.auction.auto_auction.mapper.BidMapper;
 import com.auction.auto_auction.repository.uow.UnitOfWork;
 import com.auction.auto_auction.service.TradingService;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class TradingServiceImpl implements TradingService{
     private final UnitOfWork unitOfWork;
     private final BidMapper bidMapper;

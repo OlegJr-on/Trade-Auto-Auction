@@ -8,10 +8,10 @@ import com.auction.auto_auction.entity.OrdersDetails;
 import com.auction.auto_auction.exception.ResourceNotFoundException;
 import com.auction.auto_auction.mapper.CustomerMapper;
 import com.auction.auto_auction.repository.uow.UnitOfWork;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Comparator;
 import java.util.List;
@@ -19,6 +19,7 @@ import java.util.Optional;
 
 
 @Service
+@Transactional
 public class CustomerStatisticServiceImpl implements CustomerStatisticService{
     private final UnitOfWork unitOfWork;
     private final CustomerMapper customerMapper;
