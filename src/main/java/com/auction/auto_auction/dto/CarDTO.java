@@ -26,13 +26,13 @@ public class CarDTO {
     @JsonView(Views.Public.class)
     @NotNull(message = "Mark of car must be not null")
     @Size(min = 2,max = 20,message = "Mark of car must have at least 2 and no more than 20 characters" )
-    @Pattern(regexp = "^[a-zA-Z]*$",message = "Mark of car must have only letters")
+    @Pattern(regexp = "^[A-Za-z ]*$",message = "Mark of car must have only letters")
     private String mark;
 
     @JsonView(Views.Public.class)
     @NotNull(message = "Model of car must be not null")
     @Size(min = 2,max = 30,message = "Model of car must have at least 2 and no more than 30 characters" )
-    @Pattern(regexp = "^[A-Za-z0-9]*$",message = "Model of car can have only letters and numbers")
+    @Pattern(regexp = "^[A-Za-z0-9 ]*$",message = "Model of car can have only letters and numbers")
     private String model;
 
     @JsonView(Views.Public.class)
