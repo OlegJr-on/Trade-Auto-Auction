@@ -10,6 +10,7 @@ import com.auction.auto_auction.mapper.BidMapper;
 import com.auction.auto_auction.repository.uow.UnitOfWork;
 import com.auction.auto_auction.service.TradingService;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -38,39 +39,33 @@ public class TradingServiceImpl implements TradingService{
     @Override
     public List<BidDTO> getByCustomerId(int customerId) {
 
-        Optional<List<Bid>> bidEntities = this.unitOfWork.getBidRepository().findByCustomerId(customerId);
+        List<Bid> bidEntities = this.unitOfWork.getBidRepository()
+                .findByCustomerId(customerId)
+                    .orElseThrow(() ->
+                        new ResourceNotFoundException("Not found bids by customer id: " + customerId));
 
-        if (bidEntities.get().isEmpty()){
-            throw new ResourceNotFoundException("Not found bids by customer id: " + customerId);
-        }
-
-        return bidEntities.get().stream()
-                                .map(this.bidMapper::mapToDTO)
-                                .toList();
+        return bidEntities.stream()
+                          .map(this.bidMapper::mapToDTO)
+                          .toList();
     }
 
     @Override
     public List<BidDTO> getByLotId(int lotId) {
 
-        Optional<List<Bid>> bidEntities = this.unitOfWork.getBidRepository().findByLotId(lotId);
+        List<Bid> bidEntities = this.unitOfWork.getBidRepository()
+                .findByLotId(lotId)
+                    .orElseThrow(() ->
+                        new ResourceNotFoundException("Not found bids by lot id: " + lotId));
 
-        if (bidEntities.get().isEmpty()){
-            throw new ResourceNotFoundException("Not found bids by lot id: " + lotId);
-        }
-
-        return bidEntities.get().stream()
-                                .map(this.bidMapper::mapToDTO)
-                                .toList();
+        return bidEntities.stream()
+                          .map(this.bidMapper::mapToDTO)
+                          .toList();
     }
 
     @Override
     public List<BidDTO> getAll() {
 
         List<Bid> bidsFromSource = this.unitOfWork.getBidRepository().findAll();
-
-        if (bidsFromSource.isEmpty()){
-            throw new ResourceNotFoundException("Data source is empty");
-        }
 
         return bidsFromSource.stream()
                              .map(this.bidMapper::mapToDTO)
@@ -80,51 +75,45 @@ public class TradingServiceImpl implements TradingService{
     @Override
     public List<BidDTO> getByDatePeriod(LocalDateTime start, LocalDateTime end) {
 
-        Optional<List<Bid>> bidEntities = this.unitOfWork.getBidRepository()
-                .findByOperationDateBetween(start,end);
+        List<Bid> bidEntities = this.unitOfWork.getBidRepository()
+                .findByOperationDateBetween(start,end)
+                    .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                String.format("Not found bids in date: from %s to %s",start,end)));
 
-        if (bidEntities.get().isEmpty()){
-            throw new ResourceNotFoundException(
-                    String.format("Not found bids in date: from %s to %s",start,end));
-        }
-
-        return bidEntities.get().stream()
-                                .map(this.bidMapper::mapToDTO)
-                                .toList();
+        return bidEntities.stream()
+                          .map(this.bidMapper::mapToDTO)
+                          .toList();
     }
 
     @Override
     public List<BidDTO> getByDateBefore(LocalDateTime date) {
 
-        Optional<List<Bid>> bidEntities = this.unitOfWork.getBidRepository()
-                .findByOperationDateBefore(date);
+        List<Bid> bidEntities = this.unitOfWork.getBidRepository()
+                .findByOperationDateBefore(date)
+                    .orElseThrow(() ->
+                        new ResourceNotFoundException("Not found bids before date: " + date));
 
-        if (bidEntities.get().isEmpty()){
-            throw new ResourceNotFoundException("Not found bids before date: " + date);
-        }
-
-        return bidEntities.get().stream()
-                                .map(this.bidMapper::mapToDTO)
-                                .toList();
+        return bidEntities.stream()
+                           .map(this.bidMapper::mapToDTO)
+                           .toList();
     }
 
     @Override
     public List<BidDTO> getByDateAfter(LocalDateTime date) {
 
-        Optional<List<Bid>> bidEntities = this.unitOfWork.getBidRepository()
-                .findByOperationDateAfter(date);
+        List<Bid> bidEntities = this.unitOfWork.getBidRepository()
+                .findByOperationDateAfter(date)
+                    .orElseThrow(() ->
+                        new ResourceNotFoundException("Not found bids after date: " + date));
 
-        if (bidEntities.get().isEmpty()){
-            throw new ResourceNotFoundException("Not found bids after date: " + date);
-        }
-
-        return bidEntities.get().stream()
-                                .map(this.bidMapper::mapToDTO)
-                                .toList();
+        return bidEntities.stream()
+                          .map(this.bidMapper::mapToDTO)
+                          .toList();
     }
 
     @Override
-    public void makeBid(int customerId, int lotId, BigDecimal bet) {
+    public void makeBid(int customerId, int lotId, @NotNull BigDecimal bet) {
 
         // get customer by id from source
         Customer customerWhichMakeBid = this.unitOfWork.getCustomerRepository().findById(customerId)
@@ -138,8 +127,8 @@ public class TradingServiceImpl implements TradingService{
 
         // check if lot is trading now
         LocalDateTime timeNow = LocalDateTime.now();
-        if (!(lotToWhichBet.getStartTrading().isBefore(timeNow) &&
-                lotToWhichBet.getEndTrading().isAfter(timeNow))) {
+        if ( !(lotToWhichBet.getStartTrading().isBefore(timeNow) &&
+                        lotToWhichBet.getEndTrading().isAfter(timeNow)) ) {
             throw new TimeLotException("Current lot isn`t trading just now");
         }
 
@@ -169,13 +158,13 @@ public class TradingServiceImpl implements TradingService{
 
         //create bid
         Bid makeBid = Bid
-                .builder()
-                .isActive(true)
-                .bet(moneyBet)
-                .operationDate(LocalDateTime.now())
-                .customer(customerWhichMakeBid)
-                .lot(lotToWhichTrading)
-                .build();
+                        .builder()
+                        .isActive(true)
+                        .bet(moneyBet)
+                        .operationDate(LocalDateTime.now())
+                        .customer(customerWhichMakeBid)
+                        .lot(lotToWhichTrading)
+                        .build();
 
         // create two-ways relative:
         //  1) with customer;
@@ -188,7 +177,7 @@ public class TradingServiceImpl implements TradingService{
     }
 
     private void beatExistingBet(List<Bid> bidsOnLot, BigDecimal moneyBet,
-                                 Customer customerWhichMakeBid, Lot lotToWhichTrading){
+                                    Customer customerWhichMakeBid, Lot lotToWhichTrading){
 
         //get last bid for current lot
         Bid lastBid = bidsOnLot.stream()
@@ -210,13 +199,13 @@ public class TradingServiceImpl implements TradingService{
 
         //create bid
         Bid makeBid = Bid
-                .builder()
-                .isActive(true) // that bet is biggest
-                .bet(moneyBet)
-                .operationDate(LocalDateTime.now())
-                .customer(customerWhichMakeBid)
-                .lot(lotToWhichTrading)
-                .build();
+                        .builder()
+                        .isActive(true) // that bet is biggest
+                        .bet(moneyBet)
+                        .operationDate(LocalDateTime.now())
+                        .customer(customerWhichMakeBid)
+                        .lot(lotToWhichTrading)
+                        .build();
 
         // create two-ways relative:
         //  1) with customer;
@@ -230,11 +219,7 @@ public class TradingServiceImpl implements TradingService{
     }
 
     @Override
-    public void editBid(int bidId, BidDTO editedBid) {
-
-        if (editedBid == null) {
-            throw new NullPointerException("Bid doesn`t edited, entered values is null");
-        }
+    public void editBid(int bidId, @NotNull BidDTO editedBid) {
 
         // search bid entity by id from data source
         Bid bidEntity = this.unitOfWork.getBidRepository().findById(bidId)
