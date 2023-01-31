@@ -28,4 +28,6 @@ public interface LotService {
     void update(int lotId, LotDTO lotDTO);
 
     void deleteById(int lotId);
+
+    void setStatusForLots();
 }
