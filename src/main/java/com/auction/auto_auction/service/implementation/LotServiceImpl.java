@@ -12,14 +12,17 @@ import com.auction.auto_auction.mapper.CarMapper;
 import com.auction.auto_auction.mapper.LotMapper;
 import com.auction.auto_auction.repository.uow.UnitOfWork;
 import com.auction.auto_auction.service.LotService;
-import jakarta.validation.constraints.NotNull;
+import jakarta.transaction.Transactional;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
+@Transactional
 public class LotServiceImpl implements LotService{
     private final UnitOfWork unitOfWork;
     private final LotMapper lotMapper;
@@ -40,9 +43,6 @@ public class LotServiceImpl implements LotService{
             throw new ResourceNotFoundException("Data source is empty");
         }
 
-        // on received lot entities re-set status by special conditions
-        lotsFromSource.forEach(this::setStatusForLot);
-
         return lotsFromSource.stream()
                              .map(this.lotMapper::mapToDTO)
                              .toList();
@@ -55,9 +55,6 @@ public class LotServiceImpl implements LotService{
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Lot","id",String.valueOf(lotId)));
 
-        // on received lot entities re-set status by special conditions
-        this.setStatusForLot(lotEntity);
-
         return this.lotMapper.mapToDTO(lotEntity);
     }
 
@@ -69,9 +66,6 @@ public class LotServiceImpl implements LotService{
                         new ResourceNotFoundException("Car","id",String.valueOf(carId)));
 
         Lot lotEntity = carEntity.getLot();
-
-        // on received lot entities re-set status by special conditions
-        this.setStatusForLot(lotEntity);
 
         return this.lotMapper.mapToDTO(lotEntity);
     }
@@ -86,9 +80,6 @@ public class LotServiceImpl implements LotService{
             throw new ResourceNotFoundException(
                     String.format("Not found lots in date: from %s to %s",start,end));
         }
-
-        // on received lot entities re-set status by special conditions
-        lotEntities.get().forEach(this::setStatusForLot);
 
         return lotEntities.get().stream()
                                 .map(this.lotMapper::mapToDTO)
@@ -105,9 +96,6 @@ public class LotServiceImpl implements LotService{
             throw new ResourceNotFoundException("Not found lots before date: " + date);
         }
 
-        // on received lot entities re-set status by special conditions
-        lotEntities.get().forEach(this::setStatusForLot);
-
         return lotEntities.get().stream()
                                 .map(this.lotMapper::mapToDTO)
                                 .toList();
@@ -122,9 +110,6 @@ public class LotServiceImpl implements LotService{
         if (lotEntities.get().isEmpty()){
             throw new ResourceNotFoundException("Not found lots after date: " + date);
         }
-
-        // on received lot entities re-set status by special conditions
-        lotEntities.get().forEach(this::setStatusForLot);
 
         return lotEntities.get().stream()
                                 .map(this.lotMapper::mapToDTO)
@@ -271,36 +256,47 @@ public class LotServiceImpl implements LotService{
         }
     }
 
-    private void setStatusForLot(@NotNull Lot lotEntity){
+    @Override
+    @Scheduled(fixedRate = 60000*2) // 2 min
+    @Transactional
+    public void setStatusForLots(){
+
+        List<Lot> lotsFromSource = this.unitOfWork.getLotRepository()
+                                                  .findByLotStatusNotIn(Set.of(LotStatus.SOLD_OUT,LotStatus.OVERDUE))
+                                                  .orElseThrow(ResourceNotFoundException::new);
 
         LocalDateTime timeNow = LocalDateTime.now();
-        LocalDateTime startTrading = lotEntity.getStartTrading();
-        LocalDateTime endTrading = lotEntity.getEndTrading();
-        List<Bid> bidsOfGivenLot = this.unitOfWork.getBidRepository()
-                                                        .findByLotId(lotEntity.getId())
-                                                        .get();
 
-        // set status "Trading"
-        if (startTrading.isBefore(timeNow) && endTrading.isAfter(timeNow)){
-            lotEntity.setLotStatus(LotStatus.TRADING);
+        for (Lot lotEntity : lotsFromSource) {
+
+            LocalDateTime startTrading = lotEntity.getStartTrading();
+            LocalDateTime endTrading = lotEntity.getEndTrading();
+            List<Bid> bidsOfGivenLot = this.unitOfWork.getBidRepository()
+                                                      .findByLotId(lotEntity.getId())
+                                                      .orElseThrow(ResourceNotFoundException::new);
+
+            // set status "Trading"
+            if (startTrading.isBefore(timeNow) && endTrading.isAfter(timeNow)) {
+                lotEntity.setLotStatus(LotStatus.TRADING);
+            }
+
+            // set status "Sold out"
+            if (endTrading.isBefore(timeNow) &&
+                    bidsOfGivenLot.stream().anyMatch(Bid::isActive)) {
+                lotEntity.setLotStatus(LotStatus.SOLD_OUT);
+            }
+
+            // set status "Overdue"
+            if (endTrading.isBefore(timeNow) && bidsOfGivenLot.isEmpty()) {
+                lotEntity.setLotStatus(LotStatus.OVERDUE);
+            }
+
+            // set status "Not active"
+            if (startTrading.isAfter(timeNow)) {
+                lotEntity.setLotStatus(LotStatus.NOT_ACTIVE);
+            }
+
+            this.unitOfWork.getLotRepository().save(lotEntity);
         }
-
-        // set status "Sold out"
-        if (endTrading.isBefore(timeNow) &&
-                bidsOfGivenLot.stream().anyMatch(Bid::isActive)){
-            lotEntity.setLotStatus(LotStatus.SOLD_OUT);
-        }
-
-        // set status "Overdue"
-        if (endTrading.isBefore(timeNow) && bidsOfGivenLot.isEmpty()){
-            lotEntity.setLotStatus(LotStatus.OVERDUE);
-        }
-
-        // set status "Not active"
-        if (startTrading.isAfter(timeNow)){
-            lotEntity.setLotStatus(LotStatus.NOT_ACTIVE);
-        }
-
-        this.unitOfWork.getLotRepository().save(lotEntity);
     }
 }
