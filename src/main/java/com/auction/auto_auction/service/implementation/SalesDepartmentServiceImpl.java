@@ -8,6 +8,7 @@ import com.auction.auto_auction.mapper.SalesMapper;
 import com.auction.auto_auction.repository.uow.UnitOfWork;
 import com.auction.auto_auction.service.SalesDepartmentService;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -17,14 +18,10 @@ import java.util.Optional;
 
 @Service
 @Transactional
+@AllArgsConstructor
 public class SalesDepartmentServiceImpl implements SalesDepartmentService {
     private final UnitOfWork unitOfWork;
     private final SalesMapper salesMapper;
-
-    public SalesDepartmentServiceImpl(UnitOfWork unitOfWork, SalesMapper salesMapper) {
-        this.unitOfWork = unitOfWork;
-        this.salesMapper = salesMapper;
-    }
 
     @Override
     public List<SalesDepartmentDTO> getAll() {

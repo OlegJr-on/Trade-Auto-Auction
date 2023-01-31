@@ -9,6 +9,7 @@ import com.auction.auto_auction.exception.ResourceNotFoundException;
 import com.auction.auto_auction.mapper.CustomerMapper;
 import com.auction.auto_auction.repository.uow.UnitOfWork;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -20,14 +21,10 @@ import java.util.Optional;
 
 @Service
 @Transactional
+@AllArgsConstructor
 public class CustomerStatisticServiceImpl implements CustomerStatisticService{
     private final UnitOfWork unitOfWork;
     private final CustomerMapper customerMapper;
-
-    public CustomerStatisticServiceImpl(UnitOfWork unitOfWork, CustomerMapper customerMapper) {
-        this.unitOfWork = unitOfWork;
-        this.customerMapper = customerMapper;
-    }
 
     @Override
     public List<CustomerStatisticDTO> getMostActivityCustomers() {

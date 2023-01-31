@@ -13,6 +13,7 @@ import com.auction.auto_auction.mapper.LotMapper;
 import com.auction.auto_auction.repository.uow.UnitOfWork;
 import com.auction.auto_auction.service.LotService;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -23,16 +24,11 @@ import java.util.Set;
 
 @Service
 @Transactional
+@AllArgsConstructor
 public class LotServiceImpl implements LotService{
     private final UnitOfWork unitOfWork;
     private final LotMapper lotMapper;
     private final CarMapper carMapper;
-
-    public LotServiceImpl(UnitOfWork unitOfWork, LotMapper lotMapper, CarMapper carMapper) {
-        this.unitOfWork = unitOfWork;
-        this.lotMapper = lotMapper;
-        this.carMapper = carMapper;
-    }
 
     @Override
     public List<LotDTO> getAll() {

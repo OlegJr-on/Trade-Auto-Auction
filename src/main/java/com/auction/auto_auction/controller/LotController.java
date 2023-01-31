@@ -4,6 +4,7 @@ import com.auction.auto_auction.dto.LotDTO;
 import com.auction.auto_auction.service.LotService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,13 +14,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api-auction/lots")
+@AllArgsConstructor
 public class LotController {
-
     private final LotService lotService;
-
-    public LotController(LotService lotService) {
-        this.lotService = lotService;
-    }
 
     @GetMapping
     public ResponseEntity<List<LotDTO>> getAllLots() {

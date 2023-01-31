@@ -9,6 +9,7 @@ import com.auction.auto_auction.utils.view.Views;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,13 +19,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api-auction/department/sales")
+@AllArgsConstructor
 public class SaleEventController {
-
     private final SalesDepartmentService salesService;
-
-    public SaleEventController(SalesDepartmentService salesService) {
-        this.salesService = salesService;
-    }
 
     @JsonView(SalesViews.LotsDetails.class)
     @GetMapping

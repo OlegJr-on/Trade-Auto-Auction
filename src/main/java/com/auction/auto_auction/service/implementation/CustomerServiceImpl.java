@@ -11,6 +11,7 @@ import com.auction.auto_auction.repository.uow.UnitOfWork;
 import com.auction.auto_auction.service.CustomerService;
 import com.auction.auto_auction.utils.ApplicationConstants;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -19,14 +20,10 @@ import java.util.*;
 
 @Service
 @Transactional
+@AllArgsConstructor
 public class CustomerServiceImpl implements CustomerService{
     private final UnitOfWork unitOfWork;
     private final CustomerMapper customerMapper;
-
-    public CustomerServiceImpl(UnitOfWork unitOfWork, CustomerMapper customerMapper) {
-        this.unitOfWork = unitOfWork;
-        this.customerMapper = customerMapper;
-    }
 
     @Override
     public List<CustomerDTO> findAll() {

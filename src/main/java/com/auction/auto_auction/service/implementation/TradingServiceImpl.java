@@ -10,6 +10,7 @@ import com.auction.auto_auction.mapper.BidMapper;
 import com.auction.auto_auction.repository.uow.UnitOfWork;
 import com.auction.auto_auction.service.TradingService;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -19,14 +20,10 @@ import java.util.Optional;
 
 @Service
 @Transactional
+@AllArgsConstructor
 public class TradingServiceImpl implements TradingService{
     private final UnitOfWork unitOfWork;
     private final BidMapper bidMapper;
-
-    public TradingServiceImpl(UnitOfWork unitOfWork, BidMapper bidMapper) {
-        this.unitOfWork = unitOfWork;
-        this.bidMapper = bidMapper;
-    }
 
     @Override
     public BidDTO getById(int bidId) {
