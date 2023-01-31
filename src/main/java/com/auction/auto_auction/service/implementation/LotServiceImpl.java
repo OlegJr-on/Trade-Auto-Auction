@@ -13,6 +13,7 @@ import com.auction.auto_auction.mapper.LotMapper;
 import com.auction.auto_auction.repository.uow.UnitOfWork;
 import com.auction.auto_auction.service.LotService;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -34,10 +35,6 @@ public class LotServiceImpl implements LotService{
     public List<LotDTO> getAll() {
 
         List<Lot> lotsFromSource = this.unitOfWork.getLotRepository().findAll();
-
-        if (lotsFromSource.isEmpty()){
-            throw new ResourceNotFoundException("Data source is empty");
-        }
 
         return lotsFromSource.stream()
                              .map(this.lotMapper::mapToDTO)
@@ -69,56 +66,46 @@ public class LotServiceImpl implements LotService{
     @Override
     public List<LotDTO> getByDatePeriod(LocalDateTime start, LocalDateTime end) {
 
-        Optional<List<Lot>> lotEntities = this.unitOfWork.getLotRepository()
-                .findByStartTradingBetween(start,end);
+        List<Lot> lotEntities = this.unitOfWork.getLotRepository()
+                .findByStartTradingBetween(start,end)
+                    .orElseThrow(() ->
+                            new ResourceNotFoundException(
+                                    String.format("Not found lots in date: from %s to %s",start,end)));
 
-        if (lotEntities.get().isEmpty()){
-            throw new ResourceNotFoundException(
-                    String.format("Not found lots in date: from %s to %s",start,end));
-        }
-
-        return lotEntities.get().stream()
-                                .map(this.lotMapper::mapToDTO)
-                                .toList();
+        return lotEntities.stream()
+                          .map(this.lotMapper::mapToDTO)
+                          .toList();
     }
 
     @Override
     public List<LotDTO> getByDateBefore(LocalDateTime date) {
 
-        Optional<List<Lot>> lotEntities = this.unitOfWork.getLotRepository()
-                .findByStartTradingBefore(date);
+        List<Lot> lotEntities = this.unitOfWork.getLotRepository()
+                .findByStartTradingBefore(date)
+                    .orElseThrow(() ->
+                        new ResourceNotFoundException("Not found lots before date: " + date));
 
-        if (lotEntities.get().isEmpty()){
-            throw new ResourceNotFoundException("Not found lots before date: " + date);
-        }
-
-        return lotEntities.get().stream()
-                                .map(this.lotMapper::mapToDTO)
-                                .toList();
+        return lotEntities.stream()
+                          .map(this.lotMapper::mapToDTO)
+                          .toList();
     }
 
     @Override
     public List<LotDTO> getByDateAfter(LocalDateTime date) {
 
-        Optional<List<Lot>> lotEntities = this.unitOfWork.getLotRepository()
-                .findByStartTradingAfter(date);
+        List<Lot> lotEntities = this.unitOfWork.getLotRepository()
+                .findByStartTradingAfter(date)
+                    .orElseThrow(() ->
+                        new ResourceNotFoundException("Not found lots after date: " + date));
 
-        if (lotEntities.get().isEmpty()){
-            throw new ResourceNotFoundException("Not found lots after date: " + date);
-        }
-
-        return lotEntities.get().stream()
-                                .map(this.lotMapper::mapToDTO)
-                                .toList();
+        return lotEntities.stream()
+                          .map(this.lotMapper::mapToDTO)
+                          .toList();
     }
 
 
     @Override
-    public void create(LotDTO createdLot) {
-
-        if (createdLot == null) {
-            throw new NullPointerException("Lot doesn`t created, values is null");
-        }
+    public void create(@NotNull LotDTO createdLot) {
 
         // check trading time of lot, when it`s incorrect - throw exception
         this.checkTradeTimeOfLot(createdLot.getStartTrading(),createdLot.getEndTrading());
@@ -133,9 +120,9 @@ public class LotServiceImpl implements LotService{
         Car carEntity = lotEntity.getCar();
 
         List<AutoPhoto> photos = createdLot.getCar().getPhotosSrc()
-                                                            .stream()
-                                                            .map(AutoPhoto::new)
-                                                            .toList();
+                                                    .stream()
+                                                    .map(AutoPhoto::new)
+                                                    .toList();
 
         // set photos into car entity and in setter act two-ways relation
         carEntity.setPhotos(photos);
@@ -151,11 +138,7 @@ public class LotServiceImpl implements LotService{
     }
 
     @Override
-    public void createByExistCarId(int carId, LotDTO createdLot) {
-
-        if (createdLot == null) {
-            throw new NullPointerException("Lot doesn`t created, values is null");
-        }
+    public void createByExistCarId(int carId, @NotNull LotDTO createdLot) {
 
         // check trading time of lot, when it`s incorrect - throw exception
         this.checkTradeTimeOfLot(createdLot.getStartTrading(),createdLot.getEndTrading());
@@ -182,11 +165,7 @@ public class LotServiceImpl implements LotService{
     }
 
     @Override
-    public void update(int lotId, LotDTO updatedLot) {
-
-        if (updatedLot == null) {
-            throw new NullPointerException("Lot doesn`t updated, entered values is null");
-        }
+    public void update(int lotId, @NotNull LotDTO updatedLot) {
 
         // check trading time of lot, when it`s incorrect - throw exception
         this.checkTradeTimeOfLot(updatedLot.getStartTrading(),updatedLot.getEndTrading());

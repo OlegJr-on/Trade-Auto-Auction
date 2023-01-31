@@ -8,6 +8,7 @@ import com.auction.auto_auction.mapper.SalesMapper;
 import com.auction.auto_auction.repository.uow.UnitOfWork;
 import com.auction.auto_auction.service.SalesDepartmentService;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,17 +29,13 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
 
         List<SalesDepartment> salesFromSource = this.unitOfWork.getSalesDepartmentRepository().findAll();
 
-        if (salesFromSource.isEmpty()){
-            throw new ResourceNotFoundException("Data source is empty");
-        }
-
         List<SalesDepartmentDTO> resultSales = salesFromSource
-                        .stream()
-                        .map(this.salesMapper::mapToDTO)
-                        .peek(saleDto -> saleDto.setTimeLeft(
-                                generateTimeLeftToEvent(saleDto.getSalesDate())
-                        ))
-                        .toList();
+                                                        .stream()
+                                                        .map(this.salesMapper::mapToDTO)
+                                                        .peek(saleDto -> saleDto.setTimeLeft(
+                                                                generateTimeLeftToEvent(saleDto.getSalesDate()))
+                                                        )
+                                                        .toList();
 
         return resultSales;
     }
@@ -48,14 +45,12 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
 
         SalesDepartment saleEntity = this.unitOfWork.getSalesDepartmentRepository()
                 .findById(salesId)
-                .orElseThrow(() ->
+                    .orElseThrow(() ->
                         new ResourceNotFoundException("Sales","id",String.valueOf(salesId)));
 
         SalesDepartmentDTO saleDto = this.salesMapper.mapToDTO(saleEntity);
 
-        saleDto.setTimeLeft(
-                generateTimeLeftToEvent(saleEntity.getSalesDate())
-        );
+        saleDto.setTimeLeft(generateTimeLeftToEvent(saleEntity.getSalesDate()));
 
         return saleDto;
     }
@@ -77,78 +72,68 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
     @Override
     public List<SalesDepartmentDTO> getByDatePeriod(LocalDateTime start, LocalDateTime end) {
 
-        Optional<List<SalesDepartment>> saleEntities = this.unitOfWork.getSalesDepartmentRepository()
-                .findBySalesDateBetween(start,end);
+        List<SalesDepartment> saleEntities = this.unitOfWork.getSalesDepartmentRepository()
+                .findBySalesDateBetween(start,end)
+                    .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                String.format("Not found sales in date: from %s to %s",start,end)));
 
-        if (saleEntities.get().isEmpty()){
-            throw new ResourceNotFoundException(
-                    String.format("Not found sales in date: from %s to %s",start,end));
-        }
-
-        return saleEntities.get().stream()
-                                 .map(this.salesMapper::mapToDTO)
-                                 .peek(saleDto -> saleDto.setTimeLeft(
-                                         generateTimeLeftToEvent(saleDto.getSalesDate())
-                                 ))
-                                 .toList();
+        return saleEntities.stream()
+                           .map(this.salesMapper::mapToDTO)
+                           .peek(saleDto -> saleDto.setTimeLeft(
+                                   generateTimeLeftToEvent(saleDto.getSalesDate()))
+                           )
+                           .toList();
     }
 
     @Override
     public List<SalesDepartmentDTO> getByDateBefore(LocalDateTime date) {
 
-        Optional<List<SalesDepartment>> saleEntities = this.unitOfWork.getSalesDepartmentRepository()
-                .findBySalesDateBefore(date);
+        List<SalesDepartment> saleEntities = this.unitOfWork.getSalesDepartmentRepository()
+                .findBySalesDateBefore(date)
+                    .orElseThrow(() ->
+                        new ResourceNotFoundException("Not found sale events before date: " + date));
 
-        if (saleEntities.get().isEmpty()){
-            throw new ResourceNotFoundException("Not found sale events before date: " + date);
-        }
-
-        return saleEntities.get().stream()
-                                 .map(this.salesMapper::mapToDTO)
-                                 .peek(saleDto -> saleDto.setTimeLeft(
-                                         generateTimeLeftToEvent(saleDto.getSalesDate())
-                                 ))
-                                 .toList();
+        return saleEntities.stream()
+                           .map(this.salesMapper::mapToDTO)
+                           .peek(saleDto -> saleDto.setTimeLeft(
+                                   generateTimeLeftToEvent(saleDto.getSalesDate()))
+                           )
+                           .toList();
     }
 
     @Override
     public List<SalesDepartmentDTO> getByDateAfter(LocalDateTime date) {
 
-        Optional<List<SalesDepartment>> saleEntities = this.unitOfWork.getSalesDepartmentRepository()
-                .findBySalesDateAfter(date);
+        List<SalesDepartment> saleEntities = this.unitOfWork.getSalesDepartmentRepository()
+                .findBySalesDateAfter(date)
+                    .orElseThrow(() ->
+                        new ResourceNotFoundException("Not found sale events after date: " + date));
 
-        if (saleEntities.get().isEmpty()){
-            throw new ResourceNotFoundException("Not found sale events after date: " + date);
-        }
-
-        return saleEntities.get().stream()
-                                 .map(this.salesMapper::mapToDTO)
-                                 .peek(saleDto -> saleDto.setTimeLeft(
-                                         generateTimeLeftToEvent(saleDto.getSalesDate())
-                                 ))
-                                 .toList();
+        return saleEntities.stream()
+                           .map(this.salesMapper::mapToDTO)
+                           .peek(saleDto -> saleDto.setTimeLeft(
+                                   generateTimeLeftToEvent(saleDto.getSalesDate()))
+                           )
+                           .toList();
     }
 
     @Override
     public List<SalesDepartmentDTO> getByLocation(String location) {
 
-        List<SalesDepartment> saleEntities = this.unitOfWork.getSalesDepartmentRepository()
-                .findAll();
-
-        List<SalesDepartment> salesByLocation = saleEntities.stream()
-                .filter(sale -> sale.getLocation().toLowerCase()
-                                        .contains(location.toLowerCase()))
-                .toList();
-
-        if (salesByLocation.isEmpty()){
-            throw new ResourceNotFoundException("Sales","location",location);
-        }
+        List<SalesDepartment> salesByLocation = this.unitOfWork.getSalesDepartmentRepository()
+                                                                    .findAll()
+                                                                    .stream()
+                                                                    .filter(sale -> sale.getLocation().toLowerCase()
+                                                                                                      .contains(location.toLowerCase())
+                                                                    )
+                                                                    .toList();
 
         return salesByLocation.stream()
                               .map(this.salesMapper::mapToDTO)
                               .peek(saleDto -> saleDto.setTimeLeft(
-                                      generateTimeLeftToEvent(saleDto.getSalesDate())
-                              ))
+                                      generateTimeLeftToEvent(saleDto.getSalesDate()))
+                              )
                               .toList();
     }
 
@@ -172,15 +157,11 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
 
     @Override
     public void addLotsToSaleEvent(int saleId, int... lotIds) {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    public void create(SalesDepartmentDTO createdSaleEvent) {
-
-        if (createdSaleEvent == null) {
-            throw new NullPointerException("Sale doesn`t created, values is null");
-        }
+    public void create(@NotNull SalesDepartmentDTO createdSaleEvent) {
 
         SalesDepartment saleEntity = this.salesMapper.mapToEntity(createdSaleEvent);
 
@@ -188,11 +169,7 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
     }
 
     @Override
-    public void update(int saleId, SalesDepartmentDTO updatedSale) {
-
-        if (updatedSale == null) {
-            throw new NullPointerException("Sale doesn`t updated, values is null");
-        }
+    public void update(int saleId, @NotNull SalesDepartmentDTO updatedSale) {
 
         SalesDepartment saleEntity = this.unitOfWork.getSalesDepartmentRepository()
                 .findById(saleId)
@@ -211,7 +188,7 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
 
         SalesDepartment saleEntity = this.unitOfWork.getSalesDepartmentRepository()
                 .findById(saleId)
-                .orElseThrow(() ->
+                    .orElseThrow(() ->
                         new ResourceNotFoundException("Sales","id",String.valueOf(saleId)));
 
         saleEntity.getLots().forEach(lot -> lot.getSalesInfo().remove(saleEntity));
@@ -229,7 +206,7 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
 
         SalesDepartment saleEntity = this.unitOfWork.getSalesDepartmentRepository()
                 .findById(saleId)
-                .orElseThrow(() ->
+                    .orElseThrow(() ->
                         new ResourceNotFoundException("Sales","id",String.valueOf(saleId)));
 
         saleEntity.getLots().remove(lotEntity);

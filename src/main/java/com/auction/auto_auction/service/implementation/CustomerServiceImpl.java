@@ -11,6 +11,7 @@ import com.auction.auto_auction.repository.uow.UnitOfWork;
 import com.auction.auto_auction.service.CustomerService;
 import com.auction.auto_auction.utils.ApplicationConstants;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -30,10 +31,6 @@ public class CustomerServiceImpl implements CustomerService{
 
         List<Customer> customersFromSource = this.unitOfWork.getCustomerRepository().findAll();
 
-        if (customersFromSource.isEmpty()){
-            throw new ResourceNotFoundException("Data source is empty");
-        }
-
         return customersFromSource.stream()
                                   .map(this.customerMapper::mapToDTO)
                                   .toList();
@@ -52,22 +49,22 @@ public class CustomerServiceImpl implements CustomerService{
     @Override
     public List<CustomerDTO> findByFirstName(String firstName) {
 
-        Optional<List<User>> userEntities = this.unitOfWork.getUserRepository().findByFirstName(firstName);
+        List<User> userEntities = this.unitOfWork.getUserRepository()
+                .findByFirstName(firstName)
+                    .orElseThrow(() ->
+                        new ResourceNotFoundException("Customer","firstName",firstName));
 
-        if (userEntities.get().isEmpty()){
-            throw new ResourceNotFoundException("Customer","firstName",firstName);
-        }
-
-        return userEntities.get().stream()
-                                 .map(this.customerMapper::mapToDTO)
-                                 .toList();
+        return userEntities.stream()
+                           .map(this.customerMapper::mapToDTO)
+                           .toList();
     }
 
     @Override
     public CustomerDTO findByFirstNameAndLastName(String firstName, String lastName) {
 
-        User entity = this.unitOfWork.getUserRepository().findByFirstNameAndLastName(firstName,lastName)
-                .orElseThrow(() ->
+        User entity = this.unitOfWork.getUserRepository()
+                .findByFirstNameAndLastName(firstName,lastName)
+                    .orElseThrow(() ->
                         new ResourceNotFoundException("Customer","firstName and lastName",
                                                                 String.format("%s %s",firstName,lastName)));
 
@@ -77,19 +74,16 @@ public class CustomerServiceImpl implements CustomerService{
     @Override
     public CustomerDTO findByEmail(String email) {
 
-        User entity = this.unitOfWork.getUserRepository().findByEmail(email)
-                .orElseThrow(() ->
+        User entity = this.unitOfWork.getUserRepository()
+                .findByEmail(email)
+                    .orElseThrow(() ->
                         new ResourceNotFoundException("Customer","email",email));
 
         return this.customerMapper.mapToDTO(entity);
     }
 
     @Override
-    public void create(CustomerDTO createdCustomer) {
-
-        if (createdCustomer == null) {
-            throw new NullPointerException("Customer don`t created, values is null");
-        }
+    public void create(@NotNull CustomerDTO createdCustomer) {
 
         // take the default role that will be set in new user entity
         Role regUserRole = this.unitOfWork.getRoleRepository().findById(ApplicationConstants.DEFAULT_ROLE_ID)
@@ -115,11 +109,7 @@ public class CustomerServiceImpl implements CustomerService{
     }
 
     @Override
-    public void update(int id, CustomerDTO updatedCustomer) {
-
-        if (updatedCustomer == null) {
-            throw new NullPointerException("Customer don`t updated, entered values is null");
-        }
+    public void update(int id, @NotNull CustomerDTO updatedCustomer) {
 
         // search customer entity by id from data source
         Customer customerEntity = this.unitOfWork.getCustomerRepository().findById(id)
