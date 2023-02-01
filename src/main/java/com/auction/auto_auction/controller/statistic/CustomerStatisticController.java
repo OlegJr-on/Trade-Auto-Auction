@@ -44,4 +44,14 @@ public class CustomerStatisticController {
 
         return ResponseEntity.ok(customers);
     }
+
+    @JsonView(CustomerStatisticViews.AverageGrowthIndicatorForLaunchPrice.class)
+    @GetMapping("/growth-by/launchPrice")
+    public ResponseEntity<List<CustomerStatisticDTO>> getCustomersByAverageGrowthForLaunchPrice(){
+
+        List<CustomerStatisticDTO> customers = this.customerStatisticService
+                .getCustomersByAverageGrowthIndicatorForLaunchPrice();
+
+        return ResponseEntity.ok(customers);
+    }
 }
