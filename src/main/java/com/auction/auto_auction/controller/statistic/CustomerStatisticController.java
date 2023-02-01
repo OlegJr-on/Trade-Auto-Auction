@@ -1,5 +1,6 @@
 package com.auction.auto_auction.controller.statistic;
 
+import com.auction.auto_auction.dto.CustomerDTO;
 import com.auction.auto_auction.dto.statistic.CustomerStatisticDTO;
 import com.auction.auto_auction.service.statistic.CustomerStatisticService;
 import com.auction.auto_auction.utils.view.CustomerStatisticViews;
@@ -32,6 +33,14 @@ public class CustomerStatisticController {
     public ResponseEntity<List<CustomerStatisticDTO>> getCustomersWhoMostSpend(){
 
         List<CustomerStatisticDTO> customers = this.customerStatisticService.getCustomersWhoMostSpend();
+
+        return ResponseEntity.ok(customers);
+    }
+
+    @GetMapping("/richest")
+    public ResponseEntity<List<CustomerDTO>> getRichestCustomers(){
+
+        List<CustomerDTO> customers = this.customerStatisticService.getRichestCustomers();
 
         return ResponseEntity.ok(customers);
     }
