@@ -18,4 +18,12 @@ import java.util.List;
 public class CustomerStatisticController {
     private final CustomerStatisticService customerStatisticService;
 
+    @JsonView(CustomerStatisticViews.MostActivityDetails.class)
+    @GetMapping("/most-active")
+    public ResponseEntity<List<CustomerStatisticDTO>> getMostActiveCustomers(){
+
+        List<CustomerStatisticDTO> customers = this.customerStatisticService.getMostActivityCustomers();
+
+        return ResponseEntity.ok(customers);
+    }
 }
