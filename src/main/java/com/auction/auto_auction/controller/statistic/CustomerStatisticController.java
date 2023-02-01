@@ -26,4 +26,13 @@ public class CustomerStatisticController {
 
         return ResponseEntity.ok(customers);
     }
+
+    @JsonView(CustomerStatisticViews.MostSpendDetails.class)
+    @GetMapping("/most-spend")
+    public ResponseEntity<List<CustomerStatisticDTO>> getCustomersWhoMostSpend(){
+
+        List<CustomerStatisticDTO> customers = this.customerStatisticService.getCustomersWhoMostSpend();
+
+        return ResponseEntity.ok(customers);
+    }
 }
