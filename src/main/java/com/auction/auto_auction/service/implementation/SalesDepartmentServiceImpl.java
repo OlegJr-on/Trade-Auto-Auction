@@ -7,18 +7,16 @@ import com.auction.auto_auction.exception.ResourceNotFoundException;
 import com.auction.auto_auction.mapper.SalesMapper;
 import com.auction.auto_auction.repository.uow.UnitOfWork;
 import com.auction.auto_auction.service.SalesDepartmentService;
-import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
-@Transactional
 @AllArgsConstructor
 public class SalesDepartmentServiceImpl implements SalesDepartmentService {
     private final UnitOfWork unitOfWork;
@@ -138,6 +136,7 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
     }
 
     @Override
+    @Transactional
     public void addLotByIdToSaleEvent(int saleId, int lotId) {
 
         Lot lotEntity = this.unitOfWork.getLotRepository().findById(lotId)
@@ -169,6 +168,7 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
     }
 
     @Override
+    @Transactional
     public void update(int saleId, @NotNull SalesDepartmentDTO updatedSale) {
 
         SalesDepartment saleEntity = this.unitOfWork.getSalesDepartmentRepository()
@@ -184,6 +184,7 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
     }
 
     @Override
+    @Transactional
     public void deleteById(int saleId) {
 
         SalesDepartment saleEntity = this.unitOfWork.getSalesDepartmentRepository()
@@ -198,6 +199,7 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
     }
 
     @Override
+    @Transactional
     public void deleteLotByIdFromSale(int saleId, int lotId) {
 
         Lot lotEntity = this.unitOfWork.getLotRepository().findById(lotId)

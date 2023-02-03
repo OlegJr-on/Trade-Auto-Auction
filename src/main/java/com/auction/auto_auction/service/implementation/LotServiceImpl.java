@@ -12,19 +12,17 @@ import com.auction.auto_auction.mapper.CarMapper;
 import com.auction.auto_auction.mapper.LotMapper;
 import com.auction.auto_auction.repository.uow.UnitOfWork;
 import com.auction.auto_auction.service.LotService;
-import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @Service
-@Transactional
 @AllArgsConstructor
 public class LotServiceImpl implements LotService{
     private final UnitOfWork unitOfWork;
@@ -105,6 +103,7 @@ public class LotServiceImpl implements LotService{
 
 
     @Override
+    @Transactional
     public void create(@NotNull LotDTO createdLot) {
 
         // check trading time of lot, when it`s incorrect - throw exception
@@ -138,6 +137,7 @@ public class LotServiceImpl implements LotService{
     }
 
     @Override
+    @Transactional
     public void createByExistCarId(int carId, @NotNull LotDTO createdLot) {
 
         // check trading time of lot, when it`s incorrect - throw exception
@@ -165,6 +165,7 @@ public class LotServiceImpl implements LotService{
     }
 
     @Override
+    @Transactional
     public void update(int lotId, @NotNull LotDTO updatedLot) {
 
         // check trading time of lot, when it`s incorrect - throw exception
@@ -187,6 +188,7 @@ public class LotServiceImpl implements LotService{
     }
 
     @Override
+    @Transactional
     public void deleteById(int lotId) {
 
         // search lot entity from data source by id

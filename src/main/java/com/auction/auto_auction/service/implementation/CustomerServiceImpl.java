@@ -10,17 +10,16 @@ import com.auction.auto_auction.mapper.CustomerMapper;
 import com.auction.auto_auction.repository.uow.UnitOfWork;
 import com.auction.auto_auction.service.CustomerService;
 import com.auction.auto_auction.utils.ApplicationConstants;
-import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.*;
 
 
 @Service
-@Transactional
 @AllArgsConstructor
 public class CustomerServiceImpl implements CustomerService{
     private final UnitOfWork unitOfWork;
@@ -83,6 +82,7 @@ public class CustomerServiceImpl implements CustomerService{
     }
 
     @Override
+    @Transactional
     public void create(@NotNull CustomerDTO createdCustomer) {
 
         // take the default role that will be set in new user entity
@@ -109,6 +109,7 @@ public class CustomerServiceImpl implements CustomerService{
     }
 
     @Override
+    @Transactional
     public void update(int id, @NotNull CustomerDTO updatedCustomer) {
 
         // search customer entity by id from data source
@@ -132,6 +133,7 @@ public class CustomerServiceImpl implements CustomerService{
     }
 
     @Override
+    @Transactional
     public void deleteById(int customerId) {
 
         // search customer entity from data source by id

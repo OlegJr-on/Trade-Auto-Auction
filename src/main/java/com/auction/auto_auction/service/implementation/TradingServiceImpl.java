@@ -2,17 +2,17 @@ package com.auction.auto_auction.service.implementation;
 
 import com.auction.auto_auction.dto.BidDTO;
 import com.auction.auto_auction.entity.*;
-import com.auction.auto_auction.entity.enums.LotStatus;
 import com.auction.auto_auction.exception.OutOfMoneyException;
 import com.auction.auto_auction.exception.ResourceNotFoundException;
 import com.auction.auto_auction.exception.TimeLotException;
 import com.auction.auto_auction.mapper.BidMapper;
 import com.auction.auto_auction.repository.uow.UnitOfWork;
 import com.auction.auto_auction.service.TradingService;
-import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional
 @AllArgsConstructor
 public class TradingServiceImpl implements TradingService{
     private final UnitOfWork unitOfWork;
@@ -113,6 +112,7 @@ public class TradingServiceImpl implements TradingService{
     }
 
     @Override
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void makeBid(int customerId, int lotId, @NotNull BigDecimal bet) {
 
         // get customer by id from source
@@ -149,7 +149,8 @@ public class TradingServiceImpl implements TradingService{
         }
     }
 
-    private void doFirstBet(BigDecimal moneyBet, Customer customerWhichMakeBid, Lot lotToWhichTrading){
+    @Transactional
+    public void doFirstBet(BigDecimal moneyBet, Customer customerWhichMakeBid, Lot lotToWhichTrading){
 
         // check if bet is bigger than launchPrice on lot
         if (moneyBet.compareTo(lotToWhichTrading.getLaunchPrice()) < 0){
@@ -176,7 +177,8 @@ public class TradingServiceImpl implements TradingService{
         this.unitOfWork.getBidRepository().save(makeBid);
     }
 
-    private void beatExistingBet(List<Bid> bidsOnLot, BigDecimal moneyBet,
+    @Transactional
+    public void beatExistingBet(List<Bid> bidsOnLot, BigDecimal moneyBet,
                                     Customer customerWhichMakeBid, Lot lotToWhichTrading){
 
         //get last bid for current lot
@@ -219,6 +221,7 @@ public class TradingServiceImpl implements TradingService{
     }
 
     @Override
+    @Transactional
     public void editBid(int bidId, @NotNull BidDTO editedBid) {
 
         // search bid entity by id from data source
@@ -235,6 +238,7 @@ public class TradingServiceImpl implements TradingService{
     }
 
     @Override
+    @Transactional
     public void deleteById(int bidId) {
 
         // search bid entity from data source by id
@@ -251,6 +255,7 @@ public class TradingServiceImpl implements TradingService{
     }
 
     @Override
+    @Transactional
     public void deleteByPeriod(LocalDateTime from, LocalDateTime to) {
 
         // search bid entity from data source by date period

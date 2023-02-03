@@ -7,16 +7,15 @@ import com.auction.auto_auction.exception.ResourceNotFoundException;
 import com.auction.auto_auction.mapper.CarMapper;
 import com.auction.auto_auction.repository.uow.UnitOfWork;
 import com.auction.auto_auction.service.CarService;
-import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional
 @AllArgsConstructor
 public class CarServiceImpl implements CarService {
     private final UnitOfWork unitOfWork;
@@ -83,6 +82,7 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
+    @Transactional
     public void update(int carId, @NotNull CarDTO updatedCar) {
 
         // search car entity by id from data source
@@ -109,6 +109,7 @@ public class CarServiceImpl implements CarService {
     }
 
     @Override
+    @Transactional
     public void deleteById(int carId) {
 
         // search car entity from data source by id
