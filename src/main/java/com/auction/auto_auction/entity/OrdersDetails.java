@@ -1,5 +1,6 @@
 package com.auction.auto_auction.entity;
 
+import com.auction.auto_auction.entity.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,6 +28,10 @@ public class OrdersDetails {
 
     @Column(name = "total_price",nullable = false)
     private BigDecimal totalPrice;
+
+    @Column(name = "order_status",nullable = false)
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
 
     @ManyToOne
     @JoinColumn(name = "order_id", referencedColumnName = "id")
