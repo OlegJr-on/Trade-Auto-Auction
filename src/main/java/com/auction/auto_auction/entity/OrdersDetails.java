@@ -22,7 +22,7 @@ public class OrdersDetails {
     private int id;
 
     @Column(name = "auction_rate",nullable = false)
-    private int auctionRate;
+    private double auctionRate;
 
     @Column(name = "total_price",nullable = false)
     private BigDecimal totalPrice;
