@@ -12,6 +12,7 @@ public interface OrderDetailsMapper {
 
     @Mappings({
           //@Mapping(target = "lot", expression = "java(lotMapper.mapToDTO(entity.getOrder().getBid().getLot()))"),
+            @Mapping(source = "entity.auctionRate", target = "auctionRate"),
             @Mapping(source = "entity.orderStatus.label", target = "orderStatus"),
             @Mapping(target = "price", expression = "java(entity.getTotalPrice().setScale(2))")
     })
