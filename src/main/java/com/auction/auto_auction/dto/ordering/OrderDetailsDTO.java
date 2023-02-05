@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 @Builder
 public class OrderDetailsDTO {
     private int id;
-    private int auctionRate;
+    private double auctionRate;
     private BigDecimal price;
     private String orderStatus;
     private @NotNull LotDTO lot;
