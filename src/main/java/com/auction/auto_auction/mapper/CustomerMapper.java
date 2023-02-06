@@ -13,8 +13,6 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring", imports = {Role.class, Collectors.class})
 public interface CustomerMapper {
 
-    CustomerMapper INSTANCE = Mappers.getMapper(CustomerMapper.class);
-
     @Mapping(source = "entity.user.firstName", target = "firstName")
     @Mapping(source = "entity.user.lastName", target = "lastName")
     @Mapping(source = "entity.user.birthDay", target = "birthDay")

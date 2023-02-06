@@ -11,8 +11,6 @@ import org.mapstruct.factory.Mappers;
 @Mapper(componentModel = "spring", imports = {AutoPhoto.class, AutoState.class})
 public interface CarMapper {
 
-    CarMapper INSTANCE = Mappers.getMapper( CarMapper.class );
-
     @Mapping(source = "state.label", target = "autoState")
     @Mapping(target = "lot", expression = "java(null)")
     @Mapping(target = "photosSrc",

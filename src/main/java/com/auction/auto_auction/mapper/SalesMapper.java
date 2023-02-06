@@ -9,8 +9,6 @@ import org.mapstruct.factory.Mappers;
 @Mapper(componentModel = "spring", uses = LotMapper.class)
 public interface SalesMapper {
 
-    SalesMapper INSTANCE = Mappers.getMapper(SalesMapper.class);
-
     SalesDepartmentDTO mapToDTO(SalesDepartment entity);
 
     @Mapping(target = "lots", expression = "java(null)")

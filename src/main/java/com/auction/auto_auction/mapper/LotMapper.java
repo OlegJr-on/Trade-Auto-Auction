@@ -10,8 +10,6 @@ import org.mapstruct.factory.Mappers;
 @Mapper(componentModel = "spring", imports = {LotStatus.class}, uses = CarMapper.class)
 public interface LotMapper {
 
-    LotMapper INSTANCE = Mappers.getMapper(LotMapper.class);
-
     @Mapping(source = "entity.lotStatus.label", target = "lotStatus")
     @Mapping(target = "bids", expression = "java(null)")
     @Mapping(target = "sales", expression = "java(null)")

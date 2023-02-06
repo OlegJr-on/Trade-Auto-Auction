@@ -9,8 +9,6 @@ import org.mapstruct.factory.Mappers;
 @Mapper(componentModel = "spring", uses = {CustomerMapper.class,LotMapper.class})
 public interface BidMapper {
 
-    BidMapper INSTANCE = Mappers.getMapper(BidMapper.class);
-
     @Mapping(source = "entity.active", target = "win")
     BidDTO mapToDTO(Bid entity);
 }
