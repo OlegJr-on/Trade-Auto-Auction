@@ -18,5 +18,5 @@ public class OrderDetailsDTO {
     private double auctionRate;
     private BigDecimal price;
     private String orderStatus;
-    private @NotNull LotDTO lot;
+    private LotDTO lot;
 }
