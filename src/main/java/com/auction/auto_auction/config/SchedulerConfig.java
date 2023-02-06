@@ -1,4 +1,4 @@
-package com.auction.auto_auction.schedule;
+package com.auction.auto_auction.config;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;

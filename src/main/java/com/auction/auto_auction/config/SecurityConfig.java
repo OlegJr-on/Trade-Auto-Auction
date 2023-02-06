@@ -1,4 +1,4 @@
-package com.auction.auto_auction.security;
+package com.auction.auto_auction.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
