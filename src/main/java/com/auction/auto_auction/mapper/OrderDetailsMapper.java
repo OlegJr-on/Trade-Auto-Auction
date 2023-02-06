@@ -7,11 +7,11 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 
 
-@Mapper(componentModel = "spring", uses = LotMapper.class)
+@Mapper(componentModel = "spring", uses = {LotMapper.class})
 public interface OrderDetailsMapper {
 
     @Mappings({
-          //@Mapping(target = "lot", expression = "java(lotMapper.mapToDTO(entity.getOrder().getBid().getLot()))"),
+            @Mapping(target = "lot", source = "entity.order.bid.lot"),
             @Mapping(source = "entity.auctionRate", target = "auctionRate"),
             @Mapping(source = "entity.orderStatus.label", target = "orderStatus"),
             @Mapping(target = "price", expression = "java(entity.getTotalPrice().setScale(2))")
