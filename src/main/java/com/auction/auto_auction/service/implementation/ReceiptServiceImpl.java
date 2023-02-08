@@ -26,8 +26,24 @@ public class ReceiptServiceImpl implements ReceiptService{
     private final OrderDetailsMapper orderDetailsMapper;
 
     @Override
+    @Transactional
     public ReceiptDTO getOrdersByCustomerId(int customerId) {
-        return null;
+
+        List<OrdersDetails> ordersByCustomer = this.unitOfWork.getOrdersDetailsRepository()
+                .findAllOrdersByCustomerId(customerId)
+                    .orElseThrow(() ->
+                        new ResourceNotFoundException("Customer","id",String.valueOf(customerId)));
+
+        return ReceiptDTO.builder()
+                         .orders(ordersByCustomer.stream()
+                                 .map(this.orderDetailsMapper::mapToDTO)
+                                 .toList())
+                         .total(ordersByCustomer.stream()
+                                 .filter(od -> od.getOrderStatus() == OrderStatus.NOT_PAID)
+                                 .map(OrdersDetails::getTotalPrice)
+                                 .reduce(BigDecimal.ZERO,BigDecimal::add)
+                                 .setScale(3, RoundingMode.CEILING))
+                         .build();
     }
 
     @Override
