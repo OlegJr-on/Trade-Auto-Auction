@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface ReceiptService {
 
+    ReceiptDTO getOrdersByCustomerId(int customerId);
+
 }
