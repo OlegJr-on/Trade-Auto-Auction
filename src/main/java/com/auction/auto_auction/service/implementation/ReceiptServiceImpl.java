@@ -47,8 +47,38 @@ public class ReceiptServiceImpl implements ReceiptService{
     }
 
     @Override
+    @Transactional
     public void placeAnOrder(int customerId) {
 
+        List<Bid> bidsWhichNotOrdered = this.unitOfWork.getBidRepository()
+                .findBidsWhoNotOrderedByCustomerId(customerId)
+                    .orElseThrow(() ->
+                        new ResourceNotFoundException("Bids","customer id",String.valueOf(customerId)));
+
+        List<Order> newOrders = bidsWhichNotOrdered.stream()
+                .map(bid ->Order
+                        .builder()
+                        .bid(bid)
+                        .ordersDetails(Collections.singletonList(
+                                OrdersDetails
+                                        .builder()
+                                        .orderStatus(OrderStatus.NOT_PAID)
+                                        .auctionRate(ApplicationConstants.DEFAULT_AUCTION_RATE.doubleValue())
+                                        .totalPrice(
+                                                bid.getBet().add(
+                                                        bid.getBet().multiply(ApplicationConstants.DEFAULT_AUCTION_RATE)
+                                                )
+                                        )
+                                        .build()
+                        ))
+                        .build())
+                .toList();
+
+        // two ways relation
+        newOrders.forEach(order -> order.getOrdersDetails().forEach(od -> od.setOrder(order)));
+
+        // save changes
+        this.unitOfWork.getOrderRepository().saveAll(newOrders);
     }
 
     @Override
