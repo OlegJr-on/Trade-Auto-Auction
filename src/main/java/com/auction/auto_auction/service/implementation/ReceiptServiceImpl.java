@@ -122,8 +122,44 @@ public class ReceiptServiceImpl implements ReceiptService{
     }
 
     @Override
+    @Transactional
     public void payAllCustomerOrders(int customerId) {
 
+        Customer customerWhichPay = this.unitOfWork.getCustomerRepository()
+                .findById(customerId)
+                    .orElseThrow(() ->
+                        new ResourceNotFoundException("Customer","id",String.valueOf(customerId)));
+
+        this.unitOfWork.getOrdersDetailsRepository()
+                .findAllOrdersByCustomerId(customerId)
+                    .ifPresentOrElse(ods -> {
+
+                        BigDecimal generalPay = ods.stream()
+                                .filter(o -> o.getOrderStatus() == OrderStatus.NOT_PAID)
+                                .map(OrdersDetails::getTotalPrice)
+                                .reduce(BigDecimal.ZERO,BigDecimal::add);
+
+                        BankAccount bankAcc = customerWhichPay.getBankAccount();
+
+                        if (generalPay.compareTo(bankAcc.getBalance()) <= 0){
+
+                            bankAcc.setBalance(bankAcc.getBalance().subtract(generalPay)
+                                                                   .setScale(2,RoundingMode.CEILING));
+                            ods.stream()
+                                    .filter(o -> o.getOrderStatus() == OrderStatus.NOT_PAID)
+                                    .forEach(o -> o.setOrderStatus(OrderStatus.PAID));
+
+                        } else {
+                            throw new OutOfMoneyException(
+                                    "The customer doesn't have enough money to pay the orders");
+                        }
+                        this.unitOfWork.getOrdersDetailsRepository().saveAll(ods);
+                        this.unitOfWork.getBankAccountRepository().save(bankAcc);
+                    },
+                    () -> {
+                        throw new ResourceNotFoundException(
+                                "Order details","customer id",String.valueOf(customerId));
+                    });
     }
 
     @Override
