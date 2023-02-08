@@ -6,10 +6,7 @@ import com.auction.auto_auction.utils.view.ReceiptViews;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api-auction/department/ordering")
@@ -17,4 +14,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrderingController {
     private final ReceiptService receiptService;
 
+    @JsonView(ReceiptViews.ReceiptDetails.class)
+    @GetMapping("/customers/{customerId}/receipt")
+    public ResponseEntity<ReceiptDTO> getReceiptByCustomerId(
+            @PathVariable("customerId") int customerId
+    ){
+
+        ReceiptDTO receipt = this.receiptService.getOrdersByCustomerId(customerId);
+
+        return ResponseEntity.ok(receipt);
+    }
 }
