@@ -8,4 +8,6 @@ public interface ReceiptService {
 
     ReceiptDTO getOrdersByCustomerId(int customerId);
 
+    void placeAnOrder(int customerId);
+
 }
