@@ -5,6 +5,7 @@ import com.auction.auto_auction.service.ReceiptService;
 import com.auction.auto_auction.utils.view.ReceiptViews;
 import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,5 +24,14 @@ public class OrderingController {
         ReceiptDTO receipt = this.receiptService.getOrdersByCustomerId(customerId);
 
         return ResponseEntity.ok(receipt);
+    }
+
+    @PostMapping("/customers/{customerId}")
+    public ResponseEntity<String> makeOrderForCustomer(
+            @PathVariable("customerId") int customerId
+    ){
+        this.receiptService.placeAnOrder(customerId);
+
+        return new ResponseEntity<>("The order has been created", HttpStatus.CREATED);
     }
 }
