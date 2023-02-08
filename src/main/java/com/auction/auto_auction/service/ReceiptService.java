@@ -10,4 +10,6 @@ public interface ReceiptService {
 
     void placeAnOrder(int customerId);
 
+    void payOrder(int customerId, int orderId);
+
 }
