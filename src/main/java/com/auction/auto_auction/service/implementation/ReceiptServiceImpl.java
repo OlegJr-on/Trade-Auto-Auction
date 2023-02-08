@@ -21,8 +21,32 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
-public class ReceiptServiceImpl {
+public class ReceiptServiceImpl implements ReceiptService{
     private final UnitOfWork unitOfWork;
     private final OrderDetailsMapper orderDetailsMapper;
 
+    @Override
+    public ReceiptDTO getOrdersByCustomerId(int customerId) {
+        return null;
+    }
+
+    @Override
+    public void placeAnOrder(int customerId) {
+
+    }
+
+    @Override
+    public void payOrder(int customerId, int orderId) {
+
+    }
+
+    @Override
+    public void payAllCustomerOrders(int customerId) {
+
+    }
+
+    @Override
+    public void cancelOrder(int customerId, int orderId) {
+
+    }
 }
