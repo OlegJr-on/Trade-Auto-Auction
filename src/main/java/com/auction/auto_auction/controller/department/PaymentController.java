@@ -24,4 +24,13 @@ public class PaymentController {
 
         return new ResponseEntity<>("Order was paid", HttpStatus.OK);
     }
+
+    @PostMapping("/customers/{customerId}/orders")
+    public ResponseEntity<String> payAllCustomerOrders(
+            @PathVariable("customerId") int customerId
+    ){
+        this.receiptService.payAllCustomerOrders(customerId);
+
+        return new ResponseEntity<>("All orders were paid",HttpStatus.OK);
+    }
 }
