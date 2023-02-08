@@ -163,7 +163,36 @@ public class ReceiptServiceImpl implements ReceiptService{
     }
 
     @Override
+    @Transactional
     public void cancelOrder(int customerId, int orderId) {
 
+        List<OrdersDetails> customerOrderDetails = this.unitOfWork.getOrdersDetailsRepository()
+                .findAllOrdersByCustomerId(customerId)
+                    .orElseThrow(() ->
+                        new ResourceNotFoundException("Order details","customer id",String.valueOf(customerId)));
+
+        customerOrderDetails.stream()
+                .filter(od -> od.getId() == orderId && od.getOrderStatus() == OrderStatus.NOT_PAID)
+                .findAny()
+                .ifPresentOrElse( od -> {
+                    // set status into order details -> CANCELED
+                    od.setOrderStatus(OrderStatus.CANCELED);
+
+                    // get order and lot for cancel bid and set status onto lot
+                    Order cancelOrder = od.getOrder();
+                    Lot lot = cancelOrder.getBid().getLot();
+
+                    // make bid invalid -> not_active
+                    cancelOrder.getBid().setActive(false);
+
+                    // set onto lot status OVERDUE
+                    lot.setLotStatus(LotStatus.OVERDUE);
+
+                    this.unitOfWork.getLotRepository().save(lot);
+                    this.unitOfWork.getOrdersDetailsRepository().save(od);
+                },
+                () -> {
+                    throw new ResourceNotFoundException("No found the matching receipt");
+                });
     }
 }
