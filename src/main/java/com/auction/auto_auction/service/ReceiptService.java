@@ -14,4 +14,5 @@ public interface ReceiptService {
 
     void payAllCustomerOrders(int customerId);
 
+    void cancelOrder(int customerId, int orderId);
 }
