@@ -36,7 +36,7 @@ public class OrderingController {
         return new ResponseEntity<>("The order has been created", HttpStatus.CREATED);
     }
 
-    @PostMapping("/{orderId}/customers/{customerId}/cancel")
+    @PostMapping("/customers/{customerId}/orders/{orderId}/cancel")
     public ResponseEntity<String> cancelOrder(
             @PathVariable("customerId") int customerId,
             @PathVariable("orderId") int orderId
