@@ -82,8 +82,43 @@ public class ReceiptServiceImpl implements ReceiptService{
     }
 
     @Override
+    @Transactional
     public void payOrder(int customerId, int orderId) {
 
+        Customer customerWhichPay = this.unitOfWork.getCustomerRepository()
+                .findById(customerId)
+                    .orElseThrow(() ->
+                        new ResourceNotFoundException("Customer","id",String.valueOf(customerId)));
+
+        this.unitOfWork.getOrdersDetailsRepository()
+                .findAllOrdersByCustomerId(customerId)
+                    .ifPresentOrElse(ods -> {
+
+                        OrdersDetails order = ods.stream()
+                                .filter(o -> o.getId() == orderId && o.getOrderStatus() == OrderStatus.NOT_PAID)
+                                .findAny()
+                                .orElseThrow(() -> new ResourceNotFoundException("No found the matching receipt"));
+
+                        BankAccount bankAcc = customerWhichPay.getBankAccount();
+
+                        if (order.getTotalPrice()
+                                .compareTo(bankAcc.getBalance()) <= 0){
+
+                            bankAcc.setBalance(
+                                    bankAcc.getBalance().subtract(order.getTotalPrice()).setScale(2,RoundingMode.CEILING));
+                            order.setOrderStatus(OrderStatus.PAID);
+
+                        } else {
+                            throw new OutOfMoneyException(
+                                    "The customer doesn't have enough money to pay the order");
+                        }
+                        this.unitOfWork.getOrdersDetailsRepository().save(order);
+                        this.unitOfWork.getBankAccountRepository().save(bankAcc);
+                    },
+                    ()-> {
+                        throw new ResourceNotFoundException(
+                                "Order details","customer id",String.valueOf(customerId));
+                    });
     }
 
     @Override
