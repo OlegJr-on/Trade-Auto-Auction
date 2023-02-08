@@ -30,8 +30,20 @@ public class OrderingController {
     public ResponseEntity<String> makeOrderForCustomer(
             @PathVariable("customerId") int customerId
     ){
+
         this.receiptService.placeAnOrder(customerId);
 
         return new ResponseEntity<>("The order has been created", HttpStatus.CREATED);
+    }
+
+    @PostMapping("/{orderId}/customers/{customerId}/cancel")
+    public ResponseEntity<String> cancelOrder(
+            @PathVariable("customerId") int customerId,
+            @PathVariable("orderId") int orderId
+    ){
+
+        this.receiptService.cancelOrder(customerId,orderId);
+
+        return new ResponseEntity<>("The order has been canceled",HttpStatus.OK);
     }
 }
