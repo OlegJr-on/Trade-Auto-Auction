@@ -113,9 +113,7 @@ public class ReceiptServiceImpl implements ReceiptService{
                         if (generalPay.compareTo(bankAcc.getBalance()) <= 0){
 
                             bankAcc.setBalance( this.subtractAmountFromBalance( bankAcc.getBalance(),generalPay ) );
-                            ods.stream()
-                                    .filter(o -> o.getOrderStatus() == OrderStatus.NOT_PAID)
-                                    .forEach(o -> o.setOrderStatus(OrderStatus.PAID));
+                            this.switchFromNotPaidToPaidStatusOrders(ods);
 
                         } else {
                             throw new OutOfMoneyException(
@@ -184,6 +182,12 @@ public class ReceiptServiceImpl implements ReceiptService{
                             .auctionRate(ApplicationConstants.DEFAULT_AUCTION_RATE.doubleValue())
                             .totalPrice(this.calculateTotalPriceForOrderDetails(bid))
                             .build();
+    }
+
+    private void switchFromNotPaidToPaidStatusOrders(List<OrdersDetails> ordersDetails){
+        ordersDetails.stream()
+                     .filter(o -> o.getOrderStatus() == OrderStatus.NOT_PAID)
+                     .forEach(o -> o.setOrderStatus(OrderStatus.PAID));
     }
 
     private Optional<OrdersDetails> findNotPaidOrderDetailsById(List<OrdersDetails> ods, int orderId){
