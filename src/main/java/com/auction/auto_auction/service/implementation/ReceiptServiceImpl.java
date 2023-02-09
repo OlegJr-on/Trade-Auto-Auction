@@ -106,10 +106,7 @@ public class ReceiptServiceImpl implements ReceiptService{
                 .findAllOrdersByCustomerId(customerId)
                     .ifPresentOrElse(ods -> {
 
-                        BigDecimal generalPay = ods.stream()
-                                .filter(o -> o.getOrderStatus() == OrderStatus.NOT_PAID)
-                                .map(OrdersDetails::getTotalPrice)
-                                .reduce(BigDecimal.ZERO,BigDecimal::add);
+                        BigDecimal generalPay = this.receiptTotalPrice(ods);
 
                         BankAccount bankAcc = customerWhichPay.getBankAccount();
 
