@@ -171,16 +171,12 @@ public class ReceiptServiceImpl implements ReceiptService{
                 });
     }
 
-    private ReceiptDTO buildReceiptDTO(List<OrdersDetails> ordersByCustomer){
+    private ReceiptDTO buildReceiptDTO(List<OrdersDetails> customerOrdersDetails){
         return ReceiptDTO.builder()
-                         .orders(ordersByCustomer.stream()
-                                 .map(this.orderDetailsMapper::mapToDTO)
-                                 .toList())
-                         .total(ordersByCustomer.stream()
-                                 .filter(od -> od.getOrderStatus() == OrderStatus.NOT_PAID)
-                                 .map(OrdersDetails::getTotalPrice)
-                                 .reduce(BigDecimal.ZERO,BigDecimal::add)
-                                 .setScale(3, RoundingMode.CEILING))
+                         .orders(customerOrdersDetails.stream()
+                                                      .map(this.orderDetailsMapper::mapToDTO)
+                                                      .toList())
+                         .total(this.receiptTotalPrice(customerOrdersDetails))
                          .build();
     }
 
@@ -207,5 +203,13 @@ public class ReceiptServiceImpl implements ReceiptService{
         return winBids.stream()
                 .map(this::buildOrderEntity)
                 .toList();
+    }
+
+    private BigDecimal receiptTotalPrice(List<OrdersDetails> customerOrderDetails){
+        return customerOrderDetails.stream()
+                .filter(od -> od.getOrderStatus() == OrderStatus.NOT_PAID)
+                .map(OrdersDetails::getTotalPrice)
+                .reduce(BigDecimal.ZERO,BigDecimal::add)
+                .setScale(3, RoundingMode.CEILING);
     }
 }
