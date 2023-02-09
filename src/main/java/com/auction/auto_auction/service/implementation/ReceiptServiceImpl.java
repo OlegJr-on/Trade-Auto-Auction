@@ -11,6 +11,7 @@ import com.auction.auto_auction.repository.uow.UnitOfWork;
 import com.auction.auto_auction.service.ReceiptService;
 import com.auction.auto_auction.utils.ApplicationConstants;
 import lombok.AllArgsConstructor;
+import org.aspectj.apache.bcel.generic.RET;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,7 +35,7 @@ public class ReceiptServiceImpl implements ReceiptService{
                     .orElseThrow(() ->
                         new ResourceNotFoundException("Customer","id",String.valueOf(customerId)));
 
-        return buildReceiptDTO(ordersByCustomer);
+        return this.buildReceiptDTO(ordersByCustomer);
     }
 
     @Override
@@ -46,24 +47,7 @@ public class ReceiptServiceImpl implements ReceiptService{
                     .orElseThrow(() ->
                         new ResourceNotFoundException("Bids","customer id",String.valueOf(customerId)));
 
-        List<Order> newOrders = bidsWhichNotOrdered.stream()
-                .map(bid ->Order
-                        .builder()
-                        .bid(bid)
-                        .ordersDetails(Collections.singletonList(
-                                OrdersDetails
-                                        .builder()
-                                        .orderStatus(OrderStatus.NOT_PAID)
-                                        .auctionRate(ApplicationConstants.DEFAULT_AUCTION_RATE.doubleValue())
-                                        .totalPrice(
-                                                bid.getBet().add(
-                                                        bid.getBet().multiply(ApplicationConstants.DEFAULT_AUCTION_RATE)
-                                                )
-                                        )
-                                        .build()
-                        ))
-                        .build())
-                .toList();
+        List<Order> newOrders = this.makeOrdersByWinBids(bidsWhichNotOrdered);
 
         // two ways relation
         newOrders.forEach(order -> order.getOrdersDetails().forEach(od -> od.setOrder(order)));
@@ -198,5 +182,26 @@ public class ReceiptServiceImpl implements ReceiptService{
                                  .reduce(BigDecimal.ZERO,BigDecimal::add)
                                  .setScale(3, RoundingMode.CEILING))
                          .build();
+    }
+
+    private List<Order> makeOrdersByWinBids(List<Bid> winBids){
+        return winBids.stream()
+                .map(bid ->Order
+                        .builder()
+                        .bid(bid)
+                        .ordersDetails(Collections.singletonList(
+                                OrdersDetails
+                                        .builder()
+                                        .orderStatus(OrderStatus.NOT_PAID)
+                                        .auctionRate(ApplicationConstants.DEFAULT_AUCTION_RATE.doubleValue())
+                                        .totalPrice(
+                                                bid.getBet().add(
+                                                        bid.getBet().multiply(ApplicationConstants.DEFAULT_AUCTION_RATE)
+                                                )
+                                        )
+                                        .build()
+                        ))
+                        .build())
+                .toList();
     }
 }
