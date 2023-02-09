@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -69,25 +70,22 @@ public class ReceiptServiceImpl implements ReceiptService{
                 .findAllOrdersByCustomerId(customerId)
                     .ifPresentOrElse(ods -> {
 
-                        OrdersDetails order = ods.stream()
-                                .filter(o -> o.getId() == orderId && o.getOrderStatus() == OrderStatus.NOT_PAID)
-                                .findAny()
+                        OrdersDetails orderDetail = this.findNotPaidOrderDetailsById(ods,orderId)
                                 .orElseThrow(() -> new ResourceNotFoundException("No found the matching receipt"));
 
                         BankAccount bankAcc = customerWhichPay.getBankAccount();
 
-                        if (order.getTotalPrice()
-                                .compareTo(bankAcc.getBalance()) <= 0){
+                        if (orderDetail.getTotalPrice().compareTo(bankAcc.getBalance()) <= 0){
 
                             bankAcc.setBalance(
-                                    bankAcc.getBalance().subtract(order.getTotalPrice()).setScale(2,RoundingMode.CEILING));
-                            order.setOrderStatus(OrderStatus.PAID);
+                                    bankAcc.getBalance().subtract(orderDetail.getTotalPrice()).setScale(2,RoundingMode.CEILING));
+                            orderDetail.setOrderStatus(OrderStatus.PAID);
 
                         } else {
                             throw new OutOfMoneyException(
                                     "The customer doesn't have enough money to pay the order");
                         }
-                        this.unitOfWork.getOrdersDetailsRepository().save(order);
+                        this.unitOfWork.getOrdersDetailsRepository().save(orderDetail);
                         this.unitOfWork.getBankAccountRepository().save(bankAcc);
                     },
                     ()-> {
@@ -146,9 +144,7 @@ public class ReceiptServiceImpl implements ReceiptService{
                     .orElseThrow(() ->
                         new ResourceNotFoundException("Order details","customer id",String.valueOf(customerId)));
 
-        customerOrderDetails.stream()
-                .filter(od -> od.getId() == orderId && od.getOrderStatus() == OrderStatus.NOT_PAID)
-                .findAny()
+        this.findNotPaidOrderDetailsById(customerOrderDetails,orderId)
                 .ifPresentOrElse( od -> {
                     // set status into order details -> CANCELED
                     od.setOrderStatus(OrderStatus.CANCELED);
@@ -193,6 +189,12 @@ public class ReceiptServiceImpl implements ReceiptService{
                             .auctionRate(ApplicationConstants.DEFAULT_AUCTION_RATE.doubleValue())
                             .totalPrice(this.calculateTotalPriceForOrderDetails(bid))
                             .build();
+    }
+
+    private Optional<OrdersDetails> findNotPaidOrderDetailsById(List<OrdersDetails> ods, int orderId){
+        return ods.stream()
+                  .filter(o -> o.getId() == orderId && o.getOrderStatus() == OrderStatus.NOT_PAID)
+                  .findAny();
     }
 
     private List<Order> makeOrdersByWinBids(List<Bid> winBids){
