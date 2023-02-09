@@ -24,7 +24,7 @@ public class UpdateLotStatus {
     public void setStatusForLots(){
 
         List<Lot> lotsFromSource = this.unitOfWork.getLotRepository()
-                .findByLotStatusNotIn(Set.of(LotStatus.SOLD_OUT,LotStatus.OVERDUE))
+                .findByLotStatusNotIn(Set.of(LotStatus.OVERDUE))
                     .orElseThrow(ResourceNotFoundException::new);
 
         LocalDateTime timeNow = LocalDateTime.now();
@@ -49,7 +49,8 @@ public class UpdateLotStatus {
             }
 
             // set status "Overdue"
-            if (endTrading.isBefore(timeNow) && bidsOfGivenLot.isEmpty()) {
+            if (endTrading.isBefore(timeNow) &&
+                    bidsOfGivenLot.stream().noneMatch(Bid::isActive)) {
                 lotEntity.setLotStatus(LotStatus.OVERDUE);
             }
 
