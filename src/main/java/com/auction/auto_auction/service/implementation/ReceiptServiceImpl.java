@@ -187,19 +187,20 @@ public class ReceiptServiceImpl implements ReceiptService{
     private Order buildOrderEntity(Bid bid){
         return Order.builder()
                     .bid(bid)
-                    .ordersDetails(Collections.singletonList(
-                            OrdersDetails
-                                    .builder()
-                                    .orderStatus(OrderStatus.NOT_PAID)
-                                    .auctionRate(ApplicationConstants.DEFAULT_AUCTION_RATE.doubleValue())
-                                    .totalPrice(
-                                            bid.getBet().add(
-                                                    bid.getBet().multiply(ApplicationConstants.DEFAULT_AUCTION_RATE)
-                                            )
-                                    )
-                                    .build()
-                    ))
+                    .ordersDetails(Collections.singletonList(this.buildOrderDetailsEntity(bid)))
                     .build();
+    }
+
+    private OrdersDetails buildOrderDetailsEntity(Bid bid){
+        return OrdersDetails.builder()
+                            .orderStatus(OrderStatus.NOT_PAID)
+                            .auctionRate(ApplicationConstants.DEFAULT_AUCTION_RATE.doubleValue())
+                            .totalPrice(
+                                    bid.getBet().add(
+                                            bid.getBet().multiply(ApplicationConstants.DEFAULT_AUCTION_RATE)
+                                    )
+                            )
+                            .build();
     }
 
     private List<Order> makeOrdersByWinBids(List<Bid> winBids){
