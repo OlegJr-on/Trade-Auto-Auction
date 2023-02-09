@@ -77,8 +77,7 @@ public class ReceiptServiceImpl implements ReceiptService{
 
                         if (orderDetail.getTotalPrice().compareTo(bankAcc.getBalance()) <= 0){
 
-                            bankAcc.setBalance(
-                                    bankAcc.getBalance().subtract(orderDetail.getTotalPrice()).setScale(2,RoundingMode.CEILING));
+                            bankAcc.setBalance( this.subtractAmountFromBalance( bankAcc.getBalance(),orderDetail.getTotalPrice() ) );
                             orderDetail.setOrderStatus(OrderStatus.PAID);
 
                         } else {
@@ -116,8 +115,7 @@ public class ReceiptServiceImpl implements ReceiptService{
 
                         if (generalPay.compareTo(bankAcc.getBalance()) <= 0){
 
-                            bankAcc.setBalance(bankAcc.getBalance().subtract(generalPay)
-                                                                   .setScale(2,RoundingMode.CEILING));
+                            bankAcc.setBalance( this.subtractAmountFromBalance( bankAcc.getBalance(),generalPay ) );
                             ods.stream()
                                     .filter(o -> o.getOrderStatus() == OrderStatus.NOT_PAID)
                                     .forEach(o -> o.setOrderStatus(OrderStatus.PAID));
@@ -217,5 +215,10 @@ public class ReceiptServiceImpl implements ReceiptService{
         BigDecimal priceAuctionRate = bet.multiply(ApplicationConstants.DEFAULT_AUCTION_RATE);
 
         return bet.add(priceAuctionRate);
+    }
+
+    private BigDecimal subtractAmountFromBalance(BigDecimal bankAccBalance, BigDecimal amount){
+        return bankAccBalance.subtract(amount)
+                             .setScale(2,RoundingMode.CEILING);
     }
 }
