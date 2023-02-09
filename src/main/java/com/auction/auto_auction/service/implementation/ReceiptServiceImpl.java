@@ -191,11 +191,7 @@ public class ReceiptServiceImpl implements ReceiptService{
         return OrdersDetails.builder()
                             .orderStatus(OrderStatus.NOT_PAID)
                             .auctionRate(ApplicationConstants.DEFAULT_AUCTION_RATE.doubleValue())
-                            .totalPrice(
-                                    bid.getBet().add(
-                                            bid.getBet().multiply(ApplicationConstants.DEFAULT_AUCTION_RATE)
-                                    )
-                            )
+                            .totalPrice(this.calculateTotalPriceForOrderDetails(bid))
                             .build();
     }
 
@@ -211,5 +207,13 @@ public class ReceiptServiceImpl implements ReceiptService{
                 .map(OrdersDetails::getTotalPrice)
                 .reduce(BigDecimal.ZERO,BigDecimal::add)
                 .setScale(3, RoundingMode.CEILING);
+    }
+
+    private BigDecimal calculateTotalPriceForOrderDetails(Bid winBid){
+
+        BigDecimal bet = winBid.getBet();
+        BigDecimal priceAuctionRate = bet.multiply(ApplicationConstants.DEFAULT_AUCTION_RATE);
+
+        return bet.add(priceAuctionRate);
     }
 }
