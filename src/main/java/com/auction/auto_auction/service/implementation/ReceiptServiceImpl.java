@@ -34,16 +34,7 @@ public class ReceiptServiceImpl implements ReceiptService{
                     .orElseThrow(() ->
                         new ResourceNotFoundException("Customer","id",String.valueOf(customerId)));
 
-        return ReceiptDTO.builder()
-                         .orders(ordersByCustomer.stream()
-                                 .map(this.orderDetailsMapper::mapToDTO)
-                                 .toList())
-                         .total(ordersByCustomer.stream()
-                                 .filter(od -> od.getOrderStatus() == OrderStatus.NOT_PAID)
-                                 .map(OrdersDetails::getTotalPrice)
-                                 .reduce(BigDecimal.ZERO,BigDecimal::add)
-                                 .setScale(3, RoundingMode.CEILING))
-                         .build();
+        return buildReceiptDTO(ordersByCustomer);
     }
 
     @Override
@@ -194,5 +185,18 @@ public class ReceiptServiceImpl implements ReceiptService{
                 () -> {
                     throw new ResourceNotFoundException("No found the matching receipt");
                 });
+    }
+
+    private ReceiptDTO buildReceiptDTO(List<OrdersDetails> ordersByCustomer){
+        return ReceiptDTO.builder()
+                         .orders(ordersByCustomer.stream()
+                                 .map(this.orderDetailsMapper::mapToDTO)
+                                 .toList())
+                         .total(ordersByCustomer.stream()
+                                 .filter(od -> od.getOrderStatus() == OrderStatus.NOT_PAID)
+                                 .map(OrdersDetails::getTotalPrice)
+                                 .reduce(BigDecimal.ZERO,BigDecimal::add)
+                                 .setScale(3, RoundingMode.CEILING))
+                         .build();
     }
 }
