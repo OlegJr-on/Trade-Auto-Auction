@@ -103,18 +103,13 @@ public class LotServiceImpl implements LotService{
     @Transactional
     public void create(@NotNull LotDTO createdLot) {
 
-        // check trading time of lot, when it`s incorrect - throw exception
         this.checkTradeTimeOfLot(createdLot.getStartTrading(),createdLot.getEndTrading());
 
         // set default status for just created lot
         createdLot.setLotStatus(LotStatus.NOT_ACTIVE.label);
 
-        // map dto to entity
         Lot lotEntity = this.lotMapper.mapToEntity(createdLot);
-
-        // create relevant entities from given dto
         Car carEntity = lotEntity.getCar();
-
         List<AutoPhoto> photos = createdLot.getCar().getPhotosSrc()
                                                     .stream()
                                                     .map(AutoPhoto::new)
@@ -137,7 +132,6 @@ public class LotServiceImpl implements LotService{
     @Transactional
     public void createByExistCarId(int carId, @NotNull LotDTO createdLot) {
 
-        // check trading time of lot, when it`s incorrect - throw exception
         this.checkTradeTimeOfLot(createdLot.getStartTrading(),createdLot.getEndTrading());
 
         // find car by its id, car should be already exist in data source
@@ -145,19 +139,13 @@ public class LotServiceImpl implements LotService{
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Car","id",String.valueOf(carId)));
 
-        // set in lot dto mapped car, because for map lot to entity, car should be not null
         createdLot.setCar(this.carMapper.mapToDTO(carEntity));
-
-        // set default status for just created lot
         createdLot.setLotStatus(LotStatus.NOT_ACTIVE.label);
 
-        // map just created lot dto to lot entity
         Lot lotEntity = this.lotMapper.mapToEntity(createdLot);
 
-        // set lot into car entity and in setter act two-ways relation
         carEntity.setLot(lotEntity);
 
-        // save new data
         this.unitOfWork.getLotRepository().save(lotEntity);
     }
 
@@ -199,10 +187,7 @@ public class LotServiceImpl implements LotService{
         // get related photos from car entity
         List<AutoPhoto> photoEntities = carEntity.getPhotos();
 
-        // delete data by ids
-        photoEntities.forEach(photo ->
-                this.unitOfWork.getAutoPhotoRepository().deleteById(photo.getId()));
-
+        this.unitOfWork.getAutoPhotoRepository().deleteAll(photoEntities);
         this.unitOfWork.getLotRepository().deleteById(lotEntity.getId());
         this.unitOfWork.getCarRepository().deleteById(carEntity.getId());
     }
