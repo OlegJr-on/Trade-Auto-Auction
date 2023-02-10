@@ -223,10 +223,13 @@ public class LotServiceImpl implements LotService{
                     start, end);
         }
 
-        // error - when time trading of lot is greater than 1 min. and less than 5 min.
-        if (end.minusMinutes(1).isBefore(start) || start.plusMinutes(5).isBefore(end)){
+        if ( !this.isTradingTimeBetweenOneAndFiveMin(start,end) ){
             throw new TimeLotException(
                     "Lot trading time must be greater than 1 min. and less than 5 min.");
         }
+    }
+
+    private boolean isTradingTimeBetweenOneAndFiveMin(LocalDateTime start, LocalDateTime end){
+        return end.minusMinutes(1).isBefore(start) || start.plusMinutes(5).isBefore(end);
     }
 }
