@@ -34,8 +34,7 @@ public class CustomerStatisticServiceImpl implements CustomerStatisticService{
 
         // create a resulting list
 
-        return customersWhoMadeBids
-                .stream()
+        return customersWhoMadeBids.stream()
                 .map(cus -> CustomerStatisticDTO
                                                 .builder()
                                                 .customer(this.customerMapper.mapToDTO(cus))
@@ -75,7 +74,7 @@ public class CustomerStatisticServiceImpl implements CustomerStatisticService{
                                     .customer(this.customerMapper.mapToDTO(cus))
                                     .bidQuantity(cus.getBids().size())
                                     .spendMoney(this.calculateSpendMoneyOfCustomer(cus))
-                                    .quantityWinLot(cus.getBids().stream().filter(Bid::isActive).count())
+                                    .quantityWinLot(this.calculateQuantityWinLotOfCustomer(cus))
                                     .build())
                 .sorted(Comparator.comparing(CustomerStatisticDTO::getSpendMoney).reversed())
                 .toList();
@@ -86,7 +85,7 @@ public class CustomerStatisticServiceImpl implements CustomerStatisticService{
 
         List<Customer> customersWithBids = this.unitOfWork.getCustomerRepository()
                 .findAllByBidsNotNull()
-                .orElseThrow(() ->
+                    .orElseThrow(() ->
                         new ResourceNotFoundException("Not found customers who make bids."));
 
         return customersWithBids.stream()
@@ -94,7 +93,7 @@ public class CustomerStatisticServiceImpl implements CustomerStatisticService{
                                     .builder()
                                     .customer(this.customerMapper.mapToDTO(cus))
                                     .bidQuantity(cus.getBids().size())
-                                    .quantityWinLot(cus.getBids().stream().filter(Bid::isActive).count())
+                                    .quantityWinLot(this.calculateQuantityWinLotOfCustomer(cus))
                                     .averageGrowthIndicatorByLaunchPrice(
                                             cus.getBids().stream()
                                                     .filter(Bid::isActive)
@@ -122,5 +121,11 @@ public class CustomerStatisticServiceImpl implements CustomerStatisticService{
                                  .map(OrdersDetails::getTotalPrice)
                                  .reduce(BigDecimal.ZERO,BigDecimal::add)
                                  .setScale(2,RoundingMode.CEILING);
+    }
+
+    private Long calculateQuantityWinLotOfCustomer(Customer customer){
+        return customer.getBids().stream()
+                                 .filter(Bid::isActive)
+                                 .count();
     }
 }
