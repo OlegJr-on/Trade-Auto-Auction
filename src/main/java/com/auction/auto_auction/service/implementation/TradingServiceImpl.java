@@ -153,8 +153,8 @@ public class TradingServiceImpl implements TradingService{
 
         Bid makeBid = this.buildBidEntity(moneyBet,customerWhichMakeBid,lotToWhichTrading);
 
-        customerWhichMakeBid.getBids().add(makeBid);
-        lotToWhichTrading.getBids().add(makeBid);
+        customerWhichMakeBid.addBid(makeBid);
+        lotToWhichTrading.addBid(makeBid);
 
         //save changes
         this.unitOfWork.getBidRepository().save(makeBid);
@@ -166,7 +166,6 @@ public class TradingServiceImpl implements TradingService{
 
         //get last bid for current lot
         Bid lastWinBid = this.getWinBid(bidsOnLot);
-
 
         //checks if bet is bigger than "lastBid + minRate"
         BigDecimal lastBet = lastWinBid.getBet();
@@ -180,8 +179,8 @@ public class TradingServiceImpl implements TradingService{
 
         Bid makeBid = this.buildBidEntity(moneyBet,customerWhichMakeBid,lotToWhichTrading);
 
-        customerWhichMakeBid.getBids().add(makeBid);
-        lotToWhichTrading.getBids().add(makeBid);
+        customerWhichMakeBid.addBid(makeBid);
+        lotToWhichTrading.addBid(makeBid);
 
         //save changes
         this.unitOfWork.getBidRepository().save(lastWinBid);
@@ -215,8 +214,8 @@ public class TradingServiceImpl implements TradingService{
                         new ResourceNotFoundException("Bid","id",String.valueOf(bidId)));
 
         // remove related data on objects
-        bidEntity.getLot().getBids().remove(bidEntity);
-        bidEntity.getCustomer().getBids().remove(bidEntity);
+        bidEntity.getLot().removeBid(bidEntity);
+        bidEntity.getCustomer().removeBid(bidEntity);
 
         // delete data by id
         this.unitOfWork.getBidRepository().deleteById(bidEntity.getId());
@@ -234,13 +233,10 @@ public class TradingServiceImpl implements TradingService{
                                     String.format("Not found bids in date: from %s to %s",from,to)));
 
         // remove related data on objects
-        bidEntities.forEach(bid -> bid.getCustomer().getBids().remove(bid));
-        bidEntities.forEach(bid -> bid.getLot().getBids().remove(bid));
+        bidEntities.forEach(bid -> bid.getCustomer().removeBid(bid));
+        bidEntities.forEach(bid -> bid.getLot().removeBid(bid));
 
-        // delete data by id
-        bidEntities.forEach(
-                bid -> this.unitOfWork.getBidRepository().deleteById(bid.getId())
-        );
+        this.unitOfWork.getBidRepository().deleteAll(bidEntities);
     }
 
     private Bid buildBidEntity(BigDecimal bet, Customer customer, Lot lot){
