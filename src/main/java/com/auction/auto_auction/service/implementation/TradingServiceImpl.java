@@ -124,10 +124,7 @@ public class TradingServiceImpl implements TradingService{
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Not found Lot with id: " + lotId));
 
-        // check if lot is trading now
-        LocalDateTime timeNow = LocalDateTime.now();
-        if ( !(lotToWhichBet.getStartTrading().isBefore(timeNow) &&
-                        lotToWhichBet.getEndTrading().isAfter(timeNow)) ) {
+        if ( !this.isLotTradingJustNow(lotToWhichBet) ) {
             throw new TimeLotException("Current lot isn`t trading just now");
         }
 
@@ -264,5 +261,14 @@ public class TradingServiceImpl implements TradingService{
         bidEntities.forEach(
                 bid -> this.unitOfWork.getBidRepository().deleteById(bid.getId())
         );
+    }
+
+    private boolean isLotTradingJustNow(Lot lotToWhichBet){
+
+        LocalDateTime timeNow = LocalDateTime.now();
+        LocalDateTime start = lotToWhichBet.getStartTrading();
+        LocalDateTime end = lotToWhichBet.getEndTrading();
+
+        return start.isBefore(timeNow) && end.isAfter(timeNow);
     }
 }
