@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -165,10 +164,7 @@ public class TradingServiceImpl implements TradingService{
                         .lot(lotToWhichTrading)
                         .build();
 
-        // create two-ways relative:
-        //  1) with customer;
         customerWhichMakeBid.getBids().add(makeBid);
-        //  2) with lot
         lotToWhichTrading.getBids().add(makeBid);
 
         //save changes
@@ -207,10 +203,7 @@ public class TradingServiceImpl implements TradingService{
                         .lot(lotToWhichTrading)
                         .build();
 
-        // create two-ways relative:
-        //  1) with customer;
         customerWhichMakeBid.getBids().add(makeBid);
-        //  2) with lot
         lotToWhichTrading.getBids().add(makeBid);
 
         //save changes
@@ -257,20 +250,18 @@ public class TradingServiceImpl implements TradingService{
     public void deleteByPeriod(LocalDateTime from, LocalDateTime to) {
 
         // search bid entity from data source by date period
-        Optional<List<Bid>> bidEntities = this.unitOfWork.getBidRepository()
-                .findByOperationDateBetween(from,to);
-
-        if (bidEntities.get().isEmpty()){
-            throw new ResourceNotFoundException(
-                    String.format("Not found bids in date: from %s to %s",from,to));
-        }
+        List<Bid> bidEntities = this.unitOfWork.getBidRepository()
+                .findByOperationDateBetween(from,to)
+                    .orElseThrow(() ->
+                            new ResourceNotFoundException(
+                                    String.format("Not found bids in date: from %s to %s",from,to)));
 
         // remove related data on objects
-        bidEntities.get().forEach(bid -> bid.getCustomer().getBids().remove(bid));
-        bidEntities.get().forEach(bid -> bid.getLot().getBids().remove(bid));
+        bidEntities.forEach(bid -> bid.getCustomer().getBids().remove(bid));
+        bidEntities.forEach(bid -> bid.getLot().getBids().remove(bid));
 
         // delete data by id
-        bidEntities.get().forEach(
+        bidEntities.forEach(
                 bid -> this.unitOfWork.getBidRepository().deleteById(bid.getId())
         );
     }
