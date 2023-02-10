@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -45,9 +44,9 @@ public class CarServiceImpl implements CarService {
     public List<CarDTO> findByMark(String mark) {
 
         List<Car> carEntities = this.unitOfWork.getCarRepository()
-                                               .findByMark(mark)
-                                               .orElseThrow(() ->
-                                                    new ResourceNotFoundException("Car","mark",mark));
+                .findByMark(mark)
+                    .orElseThrow(() ->
+                            new ResourceNotFoundException("Car","mark",mark));
 
         return carEntities.stream()
                           .map(this.carMapper::mapToDTO)
@@ -120,10 +119,8 @@ public class CarServiceImpl implements CarService {
         // get related photos from car entity
         List<AutoPhoto> photoEntities = carEntity.getPhotos();
 
-        // delete data by ids
-        photoEntities.forEach(photo ->
-                this.unitOfWork.getAutoPhotoRepository().deleteById(photo.getId()));
-
+        // delete data
+        this.unitOfWork.getAutoPhotoRepository().deleteAll(photoEntities);
         this.unitOfWork.getCarRepository().deleteById(carEntity.getId());
     }
 }

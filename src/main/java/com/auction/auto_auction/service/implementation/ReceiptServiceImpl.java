@@ -11,7 +11,6 @@ import com.auction.auto_auction.repository.uow.UnitOfWork;
 import com.auction.auto_auction.service.ReceiptService;
 import com.auction.auto_auction.utils.ApplicationConstants;
 import lombok.AllArgsConstructor;
-import org.aspectj.apache.bcel.generic.RET;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,7 +33,7 @@ public class ReceiptServiceImpl implements ReceiptService{
         List<OrdersDetails> ordersByCustomer = this.unitOfWork.getOrdersDetailsRepository()
                 .findAllOrdersByCustomerId(customerId)
                     .orElseThrow(() ->
-                        new ResourceNotFoundException("Customer","id",String.valueOf(customerId)));
+                        new ResourceNotFoundException(Customer.class.getSimpleName(),"id",String.valueOf(customerId)));
 
         return this.buildReceiptDTO(ordersByCustomer);
     }
@@ -46,7 +45,7 @@ public class ReceiptServiceImpl implements ReceiptService{
         List<Bid> bidsWhichNotOrdered = this.unitOfWork.getBidRepository()
                 .findBidsWhoNotOrderedByCustomerId(customerId)
                     .orElseThrow(() ->
-                        new ResourceNotFoundException("Bids","customer id",String.valueOf(customerId)));
+                        new ResourceNotFoundException("Bids","customer.id",String.valueOf(customerId)));
 
         List<Order> newOrders = this.makeOrdersByWinBids(bidsWhichNotOrdered);
 
@@ -89,7 +88,7 @@ public class ReceiptServiceImpl implements ReceiptService{
                     },
                     ()-> {
                         throw new ResourceNotFoundException(
-                                "Order details","customer id",String.valueOf(customerId));
+                                "Order details","customer.id",String.valueOf(customerId));
                     });
     }
 
@@ -107,12 +106,11 @@ public class ReceiptServiceImpl implements ReceiptService{
                     .ifPresentOrElse(ods -> {
 
                         BigDecimal generalPay = this.receiptTotalPrice(ods);
-
                         BankAccount bankAcc = customerWhichPay.getBankAccount();
 
                         if (generalPay.compareTo(bankAcc.getBalance()) <= 0){
 
-                            bankAcc.setBalance( this.subtractAmountFromBalance( bankAcc.getBalance(),generalPay ) );
+                            bankAcc.setBalance( this.subtractAmountFromBalance( generalPay, bankAcc.getBalance() ) );
                             this.switchFromNotPaidToPaidStatusOrders(ods);
 
                         } else {
@@ -135,13 +133,14 @@ public class ReceiptServiceImpl implements ReceiptService{
         List<OrdersDetails> customerOrderDetails = this.unitOfWork.getOrdersDetailsRepository()
                 .findAllOrdersByCustomerId(customerId)
                     .orElseThrow(() ->
-                        new ResourceNotFoundException("Order details","customer id",String.valueOf(customerId)));
+                        new ResourceNotFoundException(
+                                OrdersDetails.class.getSimpleName(),"customer id",String.valueOf(customerId)));
 
         this.findNotPaidOrderDetailsById(customerOrderDetails,orderId)
                 .ifPresentOrElse( ordersDetail -> {
 
                     Order cancelOrder = ordersDetail.getOrder();
-                    Lot cancelLot = cancelOrder.getBid().getLot();
+                    Lot cancelLot = cancelOrder.getLot();
 
                     ordersDetail.setOrderStatus(OrderStatus.CANCELED);
                     cancelOrder.getBid().setActive(false);
@@ -193,8 +192,8 @@ public class ReceiptServiceImpl implements ReceiptService{
 
     private List<Order> makeOrdersByWinBids(List<Bid> winBids){
         return winBids.stream()
-                .map(this::buildOrderEntity)
-                .toList();
+                      .map(this::buildOrderEntity)
+                      .toList();
     }
 
     private BigDecimal receiptTotalPrice(List<OrdersDetails> customerOrderDetails){
@@ -213,7 +212,7 @@ public class ReceiptServiceImpl implements ReceiptService{
         return bet.add(priceAuctionRate);
     }
 
-    private BigDecimal subtractAmountFromBalance(BigDecimal bankAccBalance, BigDecimal amount){
+    private BigDecimal subtractAmountFromBalance(BigDecimal amount, BigDecimal bankAccBalance){
         return bankAccBalance.subtract(amount)
                              .setScale(2,RoundingMode.CEILING);
     }

@@ -40,7 +40,8 @@ public class CustomerServiceImpl implements CustomerService{
 
         Customer customerEntity = this.unitOfWork.getCustomerRepository().findById(customerId)
                 .orElseThrow(() ->
-                        new ResourceNotFoundException("Customer","id",String.valueOf(customerId)));
+                        new ResourceNotFoundException(
+                                Customer.class.getSimpleName(),"id",String.valueOf(customerId)));
 
         return this.customerMapper.mapToDTO(customerEntity);
     }
@@ -51,7 +52,7 @@ public class CustomerServiceImpl implements CustomerService{
         List<User> userEntities = this.unitOfWork.getUserRepository()
                 .findByFirstName(firstName)
                     .orElseThrow(() ->
-                        new ResourceNotFoundException("Customer","firstName",firstName));
+                        new ResourceNotFoundException(Customer.class.getSimpleName(),"firstName",firstName));
 
         return userEntities.stream()
                            .map(this.customerMapper::mapToDTO)
@@ -64,7 +65,7 @@ public class CustomerServiceImpl implements CustomerService{
         User entity = this.unitOfWork.getUserRepository()
                 .findByFirstNameAndLastName(firstName,lastName)
                     .orElseThrow(() ->
-                        new ResourceNotFoundException("Customer","firstName and lastName",
+                        new ResourceNotFoundException(Customer.class.getSimpleName(),"firstName and lastName",
                                                                 String.format("%s %s",firstName,lastName)));
 
         return this.customerMapper.mapToDTO(entity);
@@ -76,7 +77,7 @@ public class CustomerServiceImpl implements CustomerService{
         User entity = this.unitOfWork.getUserRepository()
                 .findByEmail(email)
                     .orElseThrow(() ->
-                        new ResourceNotFoundException("Customer","email",email));
+                        new ResourceNotFoundException(Customer.class.getSimpleName(),"email",email));
 
         return this.customerMapper.mapToDTO(entity);
     }
@@ -115,7 +116,8 @@ public class CustomerServiceImpl implements CustomerService{
         // search customer entity by id from data source
         Customer customerEntity = this.unitOfWork.getCustomerRepository().findById(id)
                 .orElseThrow(() ->
-                        new ResourceNotFoundException("Customer","id",String.valueOf(id)));
+                        new ResourceNotFoundException(
+                                Customer.class.getSimpleName(),"id",String.valueOf(id)));
 
         //on received customer extract user entity that gonna updated
         User userEntity = customerEntity.getUser();
@@ -139,7 +141,8 @@ public class CustomerServiceImpl implements CustomerService{
         // search customer entity from data source by id
         Customer customerEntity = this.unitOfWork.getCustomerRepository().findById(customerId)
                 .orElseThrow(() ->
-                        new ResourceNotFoundException("Customer","id",String.valueOf(customerId)));
+                        new ResourceNotFoundException(
+                                Customer.class.getSimpleName(),"id",String.valueOf(customerId)));
 
         // get related data with customer entity
         User userEntity = customerEntity.getUser();
