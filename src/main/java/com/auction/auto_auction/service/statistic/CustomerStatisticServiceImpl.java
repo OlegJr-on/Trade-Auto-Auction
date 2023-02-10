@@ -8,6 +8,7 @@ import com.auction.auto_auction.entity.OrdersDetails;
 import com.auction.auto_auction.exception.ResourceNotFoundException;
 import com.auction.auto_auction.mapper.CustomerMapper;
 import com.auction.auto_auction.repository.uow.UnitOfWork;
+import com.auction.auto_auction.utils.ApplicationConstants;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -89,23 +90,14 @@ public class CustomerStatisticServiceImpl implements CustomerStatisticService{
                         new ResourceNotFoundException("Not found customers who make bids."));
 
         return customersWithBids.stream()
-                .map(cus -> CustomerStatisticDTO
-                                    .builder()
+                .map(cus -> CustomerStatisticDTO.builder()
                                     .customer(this.customerMapper.mapToDTO(cus))
                                     .bidQuantity(cus.getBids().size())
                                     .quantityWinLot(this.calculateQuantityWinLotOfCustomer(cus))
                                     .averageGrowthIndicatorByLaunchPrice(
                                             cus.getBids().stream()
                                                     .filter(Bid::isActive)
-                                                    .map(bid -> {
-
-                                                        BigDecimal launchPrice = bid.getLot().getLaunchPrice();
-                                                        BigDecimal finalPrice = bid.getBet();
-
-                                                        return finalPrice.divide(launchPrice, 3,RoundingMode.CEILING)
-                                                                         .multiply(BigDecimal.valueOf(100))
-                                                                         .longValue();
-                                                    })
+                                                    .map(this::getValueOfGrowthBidByLaunchPrice)
                                                     .mapToLong(x -> x)
                                                     .average()
                                                     .orElse(0))
@@ -127,5 +119,15 @@ public class CustomerStatisticServiceImpl implements CustomerStatisticService{
         return customer.getBids().stream()
                                  .filter(Bid::isActive)
                                  .count();
+    }
+
+    private Long getValueOfGrowthBidByLaunchPrice(Bid bid){
+
+        BigDecimal launchPrice = bid.getLot().getLaunchPrice();
+        BigDecimal soldPrice = bid.getBet();
+
+        return soldPrice.divide(launchPrice, 3,RoundingMode.CEILING)
+                        .multiply(ApplicationConstants.ONE_HUNDRED_PERCENT)
+                        .longValue();
     }
 }
