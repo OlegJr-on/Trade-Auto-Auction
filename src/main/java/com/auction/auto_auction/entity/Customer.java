@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,4 +37,8 @@ public class Customer {
 
     @OneToMany(mappedBy = "customer",fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     private List<Bid> bids = new ArrayList<>();
+
+    public BigDecimal getBankBalance(){
+        return this.bankAccount.getBalance();
+    }
 }
