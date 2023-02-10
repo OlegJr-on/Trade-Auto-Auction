@@ -37,4 +37,12 @@ public class SalesDepartment {
             inverseJoinColumns = @JoinColumn(name = "lot_id",referencedColumnName = "id")
     )
     private List<Lot> lots = new ArrayList<>();
+
+    public void addLot(Lot lot){
+        this.lots.add(lot);
+    }
+
+    public void removeLot(Lot lot){
+        this.lots.remove(lot);
+    }
 }

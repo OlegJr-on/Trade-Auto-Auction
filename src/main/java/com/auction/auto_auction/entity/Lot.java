@@ -50,4 +50,12 @@ public class Lot {
 
     @OneToMany(mappedBy = "lot",fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     private List<Bid> bids = new ArrayList<>();
+
+    public void addSale(SalesDepartment sale){
+        this.salesInfo.add(sale);
+    }
+
+    public void removeSale(SalesDepartment sale){
+        this.salesInfo.remove(sale);
+    }
 }
