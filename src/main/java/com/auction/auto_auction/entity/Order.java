@@ -29,4 +29,12 @@ public class Order {
 
     @OneToMany(mappedBy = "order",fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     private List<OrdersDetails> ordersDetails = new ArrayList<>();
+
+    public Lot getLot(){
+        return this.bid.getLot();
+    }
+
+    public Customer getCustomer(){
+        return this.bid.getCustomer();
+    }
 }
