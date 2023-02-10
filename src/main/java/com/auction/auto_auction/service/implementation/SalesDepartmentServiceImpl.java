@@ -27,15 +27,12 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
 
         List<SalesDepartment> salesFromSource = this.unitOfWork.getSalesDepartmentRepository().findAll();
 
-        List<SalesDepartmentDTO> resultSales = salesFromSource
-                                                        .stream()
-                                                        .map(this.salesMapper::mapToDTO)
-                                                        .peek(saleDto -> saleDto.setTimeLeft(
-                                                                generateTimeLeftToEvent(saleDto.getSalesDate()))
-                                                        )
-                                                        .toList();
-
-        return resultSales;
+        return salesFromSource.stream()
+                              .map(this.salesMapper::mapToDTO)
+                              .peek(saleDto -> saleDto.setTimeLeft(
+                                      generateTimeLeftToEvent(saleDto.getSalesDate()))
+                              )
+                              .toList();
     }
 
     @Override
@@ -120,12 +117,10 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
     public List<SalesDepartmentDTO> getByLocation(String location) {
 
         List<SalesDepartment> salesByLocation = this.unitOfWork.getSalesDepartmentRepository()
-                                                                    .findAll()
-                                                                    .stream()
-                                                                    .filter(sale -> sale.getLocation().toLowerCase()
-                                                                                                      .contains(location.toLowerCase())
-                                                                    )
-                                                                    .toList();
+                .findByLocation(location)
+                    .orElseThrow(() ->
+                            new ResourceNotFoundException(SalesDepartment.class.getName(),"location",location));
+
 
         return salesByLocation.stream()
                               .map(this.salesMapper::mapToDTO)
