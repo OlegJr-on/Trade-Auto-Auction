@@ -33,7 +33,8 @@ public class CustomerStatisticServiceImpl implements CustomerStatisticService{
                         new ResourceNotFoundException("Not found customers who make bids."));
 
         // create a resulting list
-        List<CustomerStatisticDTO> mostActiveCustomers = customersWhoMadeBids
+
+        return customersWhoMadeBids
                 .stream()
                 .map(cus -> CustomerStatisticDTO
                                                 .builder()
@@ -42,8 +43,6 @@ public class CustomerStatisticServiceImpl implements CustomerStatisticService{
                                                 .build())
                 .sorted(Comparator.comparingLong(CustomerStatisticDTO::getBidQuantity).reversed())
                 .toList();
-
-        return mostActiveCustomers;
     }
 
     @Override
@@ -70,7 +69,7 @@ public class CustomerStatisticServiceImpl implements CustomerStatisticService{
                     .orElseThrow(() ->
                         new ResourceNotFoundException("Not found customers."));
 
-        List<CustomerStatisticDTO> mostSpendCustomers = customersWhoSpend.stream()
+        return customersWhoSpend.stream()
                 .map(cus -> CustomerStatisticDTO
                                     .builder()
                                     .customer(this.customerMapper.mapToDTO(cus))
@@ -87,8 +86,6 @@ public class CustomerStatisticServiceImpl implements CustomerStatisticService{
                                     .build())
                 .sorted(Comparator.comparing(CustomerStatisticDTO::getSpendMoney).reversed())
                 .toList();
-
-        return mostSpendCustomers;
     }
 
     @Override
@@ -99,7 +96,7 @@ public class CustomerStatisticServiceImpl implements CustomerStatisticService{
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Not found customers who make bids."));
 
-        List<CustomerStatisticDTO> customerStatistic = customersWithBids.stream()
+        return customersWithBids.stream()
                 .map(cus -> CustomerStatisticDTO
                                     .builder()
                                     .customer(this.customerMapper.mapToDTO(cus))
@@ -123,7 +120,5 @@ public class CustomerStatisticServiceImpl implements CustomerStatisticService{
                                     .build())
                 .sorted(Comparator.comparing(CustomerStatisticDTO::getAverageGrowthIndicatorByLaunchPrice).reversed())
                 .toList();
-
-        return customerStatistic;
     }
 }
