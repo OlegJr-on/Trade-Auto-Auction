@@ -34,4 +34,12 @@ public class OrdersDetails {
     @ManyToOne
     @JoinColumn(name = "order_id", referencedColumnName = "id")
     private Order order;
+
+    public Customer getCustomer(){
+        return this.order.getCustomer();
+    }
+
+    public Lot getLot(){
+        return this.order.getLot();
+    }
 }
