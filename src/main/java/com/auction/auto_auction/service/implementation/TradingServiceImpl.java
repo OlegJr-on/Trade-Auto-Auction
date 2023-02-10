@@ -136,17 +136,15 @@ public class TradingServiceImpl implements TradingService{
         if (customerWhichMakeBid.getBankAccount().getBalance().compareTo(bet) < 0)
             throw new OutOfMoneyException("Customer doesn`t have enough money for make bid");
 
-        // get bids with lotId
-        Optional<List<Bid>> bidsOnLot = this.unitOfWork.getBidRepository().findByLotId(lotId);
-
-        //checks if bids for lot is already exist
-        if (!bidsOnLot.get().isEmpty()){
-            beatExistingBet(bidsOnLot.get(),bet,customerWhichMakeBid,lotToWhichBet);
-        }
-        // if bids on lot does not exist, make first bet
-        else {
-            doFirstBet(bet,customerWhichMakeBid,lotToWhichBet);
-        }
+        this.unitOfWork.getBidRepository()
+                .findByLotId(lotId)
+                    .ifPresent(bids -> {
+                        if (bids.isEmpty()){
+                            doFirstBet(bet,customerWhichMakeBid,lotToWhichBet);
+                        } else {
+                            beatExistingBet(bids,bet,customerWhichMakeBid,lotToWhichBet);
+                        }
+                    });
     }
 
     @Transactional
