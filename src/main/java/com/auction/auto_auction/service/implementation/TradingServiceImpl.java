@@ -129,7 +129,7 @@ public class TradingServiceImpl implements TradingService{
         }
 
         // checks if customer have enough money for this bet
-        if (customerWhichMakeBid.getBankAccount().getBalance().compareTo(bet) < 0)
+        if (customerWhichMakeBid.getBankBalance().compareTo(bet) < 0)
             throw new OutOfMoneyException("Customer doesn`t have enough money for make bid");
 
         this.unitOfWork.getBidRepository()
