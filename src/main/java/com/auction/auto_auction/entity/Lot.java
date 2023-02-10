@@ -58,4 +58,12 @@ public class Lot {
     public void removeSale(SalesDepartment sale){
         this.salesInfo.remove(sale);
     }
+
+    public void addBid(Bid bid){
+        this.getBids().add(bid);
+    }
+
+    public void removeBid(Bid bid){
+        this.getBids().remove(bid);
+    }
 }

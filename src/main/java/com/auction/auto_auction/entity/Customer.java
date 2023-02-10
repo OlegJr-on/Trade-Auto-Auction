@@ -41,4 +41,12 @@ public class Customer {
     public BigDecimal getBankBalance(){
         return this.bankAccount.getBalance();
     }
+
+    public void addBid(Bid bid){
+        this.getBids().add(bid);
+    }
+
+    public void removeBid(Bid bid){
+        this.getBids().remove(bid);
+    }
 }
