@@ -27,12 +27,7 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
 
         List<SalesDepartment> salesFromSource = this.unitOfWork.getSalesDepartmentRepository().findAll();
 
-        return salesFromSource.stream()
-                              .map(this.salesMapper::mapToDTO)
-                              .peek(saleDto -> saleDto.setTimeLeft(
-                                      generateTimeLeftToEvent(saleDto.getSalesDate()))
-                              )
-                              .toList();
+        return this.constructSaleDepartmentDTOs(salesFromSource);
     }
 
     @Override
@@ -73,12 +68,7 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
                         new ResourceNotFoundException(
                                 String.format("Not found sales in date: from %s to %s",start,end)));
 
-        return saleEntities.stream()
-                           .map(this.salesMapper::mapToDTO)
-                           .peek(saleDto -> saleDto.setTimeLeft(
-                                   generateTimeLeftToEvent(saleDto.getSalesDate()))
-                           )
-                           .toList();
+        return this.constructSaleDepartmentDTOs(saleEntities);
     }
 
     @Override
@@ -89,12 +79,7 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
                     .orElseThrow(() ->
                         new ResourceNotFoundException("Not found sale events before date: " + date));
 
-        return saleEntities.stream()
-                           .map(this.salesMapper::mapToDTO)
-                           .peek(saleDto -> saleDto.setTimeLeft(
-                                   generateTimeLeftToEvent(saleDto.getSalesDate()))
-                           )
-                           .toList();
+        return this.constructSaleDepartmentDTOs(saleEntities);
     }
 
     @Override
@@ -105,12 +90,7 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
                     .orElseThrow(() ->
                         new ResourceNotFoundException("Not found sale events after date: " + date));
 
-        return saleEntities.stream()
-                           .map(this.salesMapper::mapToDTO)
-                           .peek(saleDto -> saleDto.setTimeLeft(
-                                   generateTimeLeftToEvent(saleDto.getSalesDate()))
-                           )
-                           .toList();
+        return this.constructSaleDepartmentDTOs(saleEntities);
     }
 
     @Override
@@ -122,12 +102,7 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
                             new ResourceNotFoundException(SalesDepartment.class.getName(),"location",location));
 
 
-        return salesByLocation.stream()
-                              .map(this.salesMapper::mapToDTO)
-                              .peek(saleDto -> saleDto.setTimeLeft(
-                                      generateTimeLeftToEvent(saleDto.getSalesDate()))
-                              )
-                              .toList();
+        return this.constructSaleDepartmentDTOs(salesByLocation);
     }
 
     @Override
@@ -210,6 +185,16 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
         lotEntity.getSalesInfo().remove(saleEntity);
 
         this.unitOfWork.getSalesDepartmentRepository().save(saleEntity);
+    }
+
+    private List<SalesDepartmentDTO> constructSaleDepartmentDTOs(List<SalesDepartment> sales){
+        return sales.stream()
+                    .map(sale -> {
+                        SalesDepartmentDTO dto = this.salesMapper.mapToDTO(sale);
+                        dto.setTimeLeft(this.generateTimeLeftToEvent( sale.getSalesDate() ));
+                        return dto;
+                    })
+                    .toList();
     }
 
     private String generateTimeLeftToEvent(LocalDateTime event){
