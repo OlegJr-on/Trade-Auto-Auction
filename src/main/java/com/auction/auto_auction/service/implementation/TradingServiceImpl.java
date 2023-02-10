@@ -165,22 +165,18 @@ public class TradingServiceImpl implements TradingService{
                                     Customer customerWhichMakeBid, Lot lotToWhichTrading){
 
         //get last bid for current lot
-        Bid lastBid = bidsOnLot.stream()
-                               .filter(Bid::isActive)
-                               .findAny()
-                               .orElseThrow(() ->
-                                       new ResourceNotFoundException("Not found last bid on lot."));
+        Bid lastWinBid = this.getWinBid(bidsOnLot);
 
 
         //checks if bet is bigger than "lastBid + minRate"
-        BigDecimal lastBet = lastBid.getBet();
+        BigDecimal lastBet = lastWinBid.getBet();
         BigDecimal currentBetMinusMinRate =  moneyBet.subtract(lotToWhichTrading.getMinRate());
 
         if (lastBet.compareTo(currentBetMinusMinRate) >= 0)
             throw new OutOfMoneyException("The bet isn`t enough money");
 
         //set is_active for last bid - false
-        lastBid.setActive(false);
+        lastWinBid.setActive(false);
 
         Bid makeBid = this.buildBidEntity(moneyBet,customerWhichMakeBid,lotToWhichTrading);
 
@@ -188,7 +184,7 @@ public class TradingServiceImpl implements TradingService{
         lotToWhichTrading.getBids().add(makeBid);
 
         //save changes
-        this.unitOfWork.getBidRepository().save(lastBid);
+        this.unitOfWork.getBidRepository().save(lastWinBid);
         this.unitOfWork.getBidRepository().save(makeBid);
     }
 
@@ -264,5 +260,13 @@ public class TradingServiceImpl implements TradingService{
         LocalDateTime end = lotToWhichBet.getEndTrading();
 
         return start.isBefore(timeNow) && end.isAfter(timeNow);
+    }
+
+    private Bid getWinBid(List<Bid> bids){
+        return bids.stream()
+                   .filter(Bid::isActive)
+                   .findAny()
+                   .orElseThrow(() ->
+                        new ResourceNotFoundException("Not found winning bid."));
     }
 }
