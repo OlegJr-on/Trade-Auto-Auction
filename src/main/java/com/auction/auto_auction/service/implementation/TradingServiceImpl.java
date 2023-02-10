@@ -151,15 +151,7 @@ public class TradingServiceImpl implements TradingService{
             throw new OutOfMoneyException("The bet isn`t enough money");
         }
 
-        //create bid
-        Bid makeBid = Bid
-                        .builder()
-                        .isActive(true)
-                        .bet(moneyBet)
-                        .operationDate(LocalDateTime.now())
-                        .customer(customerWhichMakeBid)
-                        .lot(lotToWhichTrading)
-                        .build();
+        Bid makeBid = this.buildBidEntity(moneyBet,customerWhichMakeBid,lotToWhichTrading);
 
         customerWhichMakeBid.getBids().add(makeBid);
         lotToWhichTrading.getBids().add(makeBid);
@@ -190,15 +182,7 @@ public class TradingServiceImpl implements TradingService{
         //set is_active for last bid - false
         lastBid.setActive(false);
 
-        //create bid
-        Bid makeBid = Bid
-                        .builder()
-                        .isActive(true) // that bet is biggest
-                        .bet(moneyBet)
-                        .operationDate(LocalDateTime.now())
-                        .customer(customerWhichMakeBid)
-                        .lot(lotToWhichTrading)
-                        .build();
+        Bid makeBid = this.buildBidEntity(moneyBet,customerWhichMakeBid,lotToWhichTrading);
 
         customerWhichMakeBid.getBids().add(makeBid);
         lotToWhichTrading.getBids().add(makeBid);
@@ -261,6 +245,16 @@ public class TradingServiceImpl implements TradingService{
         bidEntities.forEach(
                 bid -> this.unitOfWork.getBidRepository().deleteById(bid.getId())
         );
+    }
+
+    private Bid buildBidEntity(BigDecimal bet, Customer customer, Lot lot){
+        return Bid.builder()
+                  .isActive(true)
+                  .bet(bet)
+                  .operationDate(LocalDateTime.now())
+                  .customer(customer)
+                  .lot(lot)
+                  .build();
     }
 
     private boolean isLotTradingJustNow(Lot lotToWhichBet){
