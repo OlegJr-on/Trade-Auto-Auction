@@ -74,14 +74,7 @@ public class CustomerStatisticServiceImpl implements CustomerStatisticService{
                                     .builder()
                                     .customer(this.customerMapper.mapToDTO(cus))
                                     .bidQuantity(cus.getBids().size())
-                                    .spendMoney(
-                                            cus.getBids().stream()
-                                                         .filter(Bid::isActive)
-                                                         .flatMap(bid -> bid.getOrder().getOrdersDetails().stream())
-                                                         .map(OrdersDetails::getTotalPrice)
-                                                         .reduce(BigDecimal.ZERO,BigDecimal::add)
-                                                         .setScale(2)
-                                    )
+                                    .spendMoney(this.calculateSpendMoneyOfCustomer(cus))
                                     .quantityWinLot(cus.getBids().stream().filter(Bid::isActive).count())
                                     .build())
                 .sorted(Comparator.comparing(CustomerStatisticDTO::getSpendMoney).reversed())
@@ -120,5 +113,14 @@ public class CustomerStatisticServiceImpl implements CustomerStatisticService{
                                     .build())
                 .sorted(Comparator.comparing(CustomerStatisticDTO::getAverageGrowthIndicatorByLaunchPrice).reversed())
                 .toList();
+    }
+
+    private BigDecimal calculateSpendMoneyOfCustomer(Customer customer){
+        return customer.getBids().stream()
+                                 .filter(Bid::isActive)
+                                 .flatMap(bid -> bid.getOrder().getOrdersDetails().stream())
+                                 .map(OrdersDetails::getTotalPrice)
+                                 .reduce(BigDecimal.ZERO,BigDecimal::add)
+                                 .setScale(2,RoundingMode.CEILING);
     }
 }
