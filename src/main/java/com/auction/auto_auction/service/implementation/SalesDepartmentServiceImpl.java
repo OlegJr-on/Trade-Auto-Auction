@@ -36,7 +36,8 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
         SalesDepartment saleEntity = this.unitOfWork.getSalesDepartmentRepository()
                 .findById(salesId)
                     .orElseThrow(() ->
-                        new ResourceNotFoundException("Sales","id",String.valueOf(salesId)));
+                        new ResourceNotFoundException(
+                                SalesDepartment.class.getSimpleName(),"id",String.valueOf(salesId)));
 
         SalesDepartmentDTO saleDto = this.salesMapper.mapToDTO(saleEntity);
 
@@ -54,7 +55,8 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
 
         SalesDepartment saleEntity = lotEntity.getSalesInfo().stream().findFirst()
                 .orElseThrow(() ->
-                        new ResourceNotFoundException("Sales","lot.id",String.valueOf(lotId)));
+                        new ResourceNotFoundException(
+                                SalesDepartment.class.getSimpleName(),"lot.id",String.valueOf(lotId)));
 
         return this.salesMapper.mapToDTO(saleEntity);
     }
@@ -99,7 +101,8 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
         List<SalesDepartment> salesByLocation = this.unitOfWork.getSalesDepartmentRepository()
                 .findByLocation(location)
                     .orElseThrow(() ->
-                            new ResourceNotFoundException(SalesDepartment.class.getName(),"location",location));
+                            new ResourceNotFoundException(
+                                    SalesDepartment.class.getSimpleName(),"location",location));
 
 
         return this.constructSaleDepartmentDTOs(salesByLocation);
@@ -116,7 +119,8 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
         SalesDepartment saleEntity = this.unitOfWork.getSalesDepartmentRepository()
                 .findById(saleId)
                     .orElseThrow(() ->
-                            new ResourceNotFoundException("Sales","id",String.valueOf(saleId)));
+                            new ResourceNotFoundException(
+                                    SalesDepartment.class.getSimpleName(),"id",String.valueOf(saleId)));
 
         saleEntity.getLots().add(lotEntity);
         lotEntity.getSalesInfo().add(saleEntity);
@@ -144,7 +148,8 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
         SalesDepartment saleEntity = this.unitOfWork.getSalesDepartmentRepository()
                 .findById(saleId)
                     .orElseThrow(() ->
-                            new ResourceNotFoundException("Sales","id",String.valueOf(saleId)));
+                            new ResourceNotFoundException(
+                                    SalesDepartment.class.getSimpleName(),"id",String.valueOf(saleId)));
 
         saleEntity.setSalesName(updatedSale.getSalesName());
         saleEntity.setSalesDate(updatedSale.getSalesDate());
@@ -160,7 +165,8 @@ public class SalesDepartmentServiceImpl implements SalesDepartmentService {
         SalesDepartment saleEntity = this.unitOfWork.getSalesDepartmentRepository()
                 .findById(saleId)
                     .orElseThrow(() ->
-                        new ResourceNotFoundException("Sales","id",String.valueOf(saleId)));
+                        new ResourceNotFoundException(
+                                SalesDepartment.class.getSimpleName(),"id",String.valueOf(saleId)));
 
         saleEntity.getLots().forEach(lot -> lot.getSalesInfo().remove(saleEntity));
         saleEntity.getLots().clear();
