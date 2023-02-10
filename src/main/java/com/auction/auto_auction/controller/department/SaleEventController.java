@@ -1,11 +1,9 @@
 package com.auction.auto_auction.controller.department;
 
-import com.auction.auto_auction.dto.LotDTO;
 import com.auction.auto_auction.dto.SalesDepartmentDTO;
 import com.auction.auto_auction.service.SalesDepartmentService;
 import com.auction.auto_auction.utils.ApplicationConstants;
 import com.auction.auto_auction.utils.view.SalesViews;
-import com.auction.auto_auction.utils.view.Views;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
