@@ -30,4 +30,12 @@ public interface CustomerRepository extends JpaRepository<Customer,Integer> {
             "JOIN Customer AS cus on cus.id = b.customer.id " +
             "GROUP BY cus.id")
     Optional<List<Customer>> findCustomerWhoHaveAnyOrders();
+
+    @Query("SELECT cus FROM OrdersDetails AS od " +
+            "JOIN Order AS or on or.id = od.order.id " +
+            "JOIN Bid b on b.id = or.bid.id " +
+            "JOIN Customer cus on cus.id = b.customer.id " +
+            "WHERE od.orderStatus = 'PAID' " +
+            "GROUP BY cus.id ")
+    Optional<List<Customer>> findCustomerWithPaidOrders();
 }
