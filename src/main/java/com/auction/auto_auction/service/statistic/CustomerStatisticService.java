@@ -14,4 +14,6 @@ public interface CustomerStatisticService {
     List<CustomerStatisticDTO> getCustomersWhoMostSpend();
 
     List<CustomerStatisticDTO> getCustomersByAverageGrowthIndicatorForLaunchPrice();
+
+    List<CustomerStatisticDTO> getCustomersByAvgIndicatorClosenessToNominalPrice();
 }
