@@ -106,6 +106,30 @@ public class CustomerStatisticServiceImpl implements CustomerStatisticService{
                 .toList();
     }
 
+    @Override
+    public List<CustomerStatisticDTO> getCustomersByAvgIndicatorClosenessToNominalPrice() {
+
+        List<Customer> customersWithPaidOrders = this.unitOfWork.getCustomerRepository()
+                .findCustomerWithPaidOrders()
+                    .orElseThrow(() ->
+                        new ResourceNotFoundException("Not found customers with paid orders."));
+
+        return customersWithPaidOrders.stream()
+                .map(cus -> CustomerStatisticDTO.builder()
+                                .customer(this.customerMapper.mapToDTO(cus))
+                                .bidQuantity(cus.getBids().size())
+                                .avgIndicatorClosenessToNominalPrice(
+                                        cus.getBids().stream()
+                                                .filter(Bid::isActive)
+                                                .map(this::getValueOfBidClosenessToNominalPrice)
+                                                .mapToDouble(x -> x)
+                                                .average()
+                                                .orElse(0))
+                                .build())
+                .sorted(Comparator.comparing(CustomerStatisticDTO::getAvgIndicatorClosenessToNominalPrice).reversed())
+                .toList();
+    }
+
     private BigDecimal calculateSpendMoneyOfCustomer(Customer customer){
         return customer.getBids().stream()
                                  .filter(Bid::isActive)
@@ -129,5 +153,15 @@ public class CustomerStatisticServiceImpl implements CustomerStatisticService{
         return soldPrice.divide(launchPrice, 3,RoundingMode.CEILING)
                         .multiply(ApplicationConstants.ONE_HUNDRED_PERCENT)
                         .longValue();
+    }
+
+    private Double getValueOfBidClosenessToNominalPrice(Bid bid) {
+
+        BigDecimal nominalPriceOfCar = bid.getLot().getCar().getNominalValue();
+        BigDecimal bet = bid.getBet();
+
+        return bet.divide(nominalPriceOfCar,5,RoundingMode.HALF_EVEN)
+                  .multiply(ApplicationConstants.ONE_HUNDRED_PERCENT)
+                  .doubleValue();
     }
 }
