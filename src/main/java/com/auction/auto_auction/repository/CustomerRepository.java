@@ -23,4 +23,11 @@ public interface CustomerRepository extends JpaRepository<Customer,Integer> {
             "JOIN BankAccount AS ba ON cus.id = ba.customer.id " +
                 "WHERE ba.balance > 0")
     Optional<List<Customer>> findCustomersWhoseBalanceMoreThanZero();
+
+    @Query("SELECT cus FROM OrdersDetails AS od " +
+           "JOIN Order AS or on or.id = od.order.id "+
+            "JOIN Bid AS b on b.id = or.bid.id " +
+            "JOIN Customer AS cus on cus.id = b.customer.id " +
+            "GROUP BY cus.id")
+    Optional<List<Customer>> findCustomerWhoHaveAnyOrders();
 }
