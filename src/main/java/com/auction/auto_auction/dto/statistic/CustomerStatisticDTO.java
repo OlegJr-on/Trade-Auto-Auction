@@ -31,4 +31,6 @@ public class CustomerStatisticDTO {
 
     @JsonView(CustomerStatisticViews.AverageGrowthIndicatorForLaunchPrice.class)
     private double averageGrowthIndicatorByLaunchPrice;
+
+    private double avgIndicatorClosenessToNominalPrice;
 }
