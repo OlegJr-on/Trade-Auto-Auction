@@ -54,4 +54,14 @@ public class CustomerStatisticController {
 
         return ResponseEntity.ok(customers);
     }
+
+    @JsonView(CustomerStatisticViews.AverageIndicatorClosenessToNominalPrice.class)
+    @GetMapping("/avg-closeness-nominalPrice")
+    public ResponseEntity<List<CustomerStatisticDTO>> getCustomersByAvgClosenessToNominalPrice(){
+
+        List<CustomerStatisticDTO> customers = this.customerStatisticService
+                .getCustomersByAvgIndicatorClosenessToNominalPrice();
+
+        return ResponseEntity.ok(customers);
+    }
 }
