@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 @AllArgsConstructor
@@ -12,6 +13,6 @@ import java.util.Map;
 @Data
 @Builder
 public class CarStatisticDTO {
-
     private Map<String,Long> mostSellingMark;
+    private Map<String, BigDecimal> marksBringMostIncome;
 }
