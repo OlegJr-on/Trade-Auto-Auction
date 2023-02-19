@@ -1,6 +1,7 @@
 package com.auction.auto_auction.entity;
 
 import com.auction.auto_auction.entity.enums.LotStatus;
+import com.auction.auto_auction.exception.ResourceNotFoundException;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
@@ -9,6 +10,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Getter
 @Setter
@@ -50,6 +52,19 @@ public class Lot {
 
     @OneToMany(mappedBy = "lot",fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     private List<Bid> bids = new ArrayList<>();
+
+    public Bid getWinBid(){
+        return this.bids.stream()
+                        .filter(Bid::isActive)
+                        .findAny()
+                        .orElseThrow(ResourceNotFoundException::new);
+    }
+
+    public Optional<Bid> findWinBid(){
+        return this.bids.stream()
+                        .filter(Bid::isActive)
+                        .findAny();
+    }
 
     public void addSale(SalesDepartment sale){
         this.salesInfo.add(sale);
