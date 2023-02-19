@@ -13,4 +13,5 @@ import java.util.Map;
 @Builder
 public class CarStatisticDTO {
 
+    private Map<String,Long> mostSellingMark;
 }
