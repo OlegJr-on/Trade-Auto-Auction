@@ -14,5 +14,5 @@ import java.util.Map;
 @Builder
 public class CarStatisticDTO {
     private Map<String,Long> mostSellingMark;
-    private Map<String, BigDecimal> marksBringMostIncome;
+    private Map<String, BigDecimal> mostProfitableCarMarks;
 }
