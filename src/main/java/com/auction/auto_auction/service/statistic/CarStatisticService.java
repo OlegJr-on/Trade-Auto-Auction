@@ -6,4 +6,6 @@ import com.auction.auto_auction.dto.statistic.CarStatisticDTO;
 public interface CarStatisticService {
 
     CarStatisticDTO getTop10MostSellingMarkOfCar();
+
+    CarStatisticDTO getTop10MarkBringMostIncome();
 }
