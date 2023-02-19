@@ -32,7 +32,12 @@ public class CarStatisticServiceImpl implements CarStatisticService{
 
     @Override
     public CarStatisticDTO getTop10MostSellingMarkOfCar() {
-        return null;
+
+        Map<String,Long> carMarkAndCountSale =  this.mapCarMarksToCount(this.getPaidCars());
+
+        return CarStatisticDTO.builder()
+                .mostSellingMark(this.getTop10EntriesSortedByLongValue(carMarkAndCountSale))
+                .build();
     }
 
     @Override
@@ -55,6 +60,17 @@ public class CarStatisticServiceImpl implements CarStatisticService{
     private Map<String,Long> reverseSortMapByValue(Map<String, Long> map){
         return map.entrySet().stream()
                 .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (oldValue, newValue) -> oldValue,
+                        LinkedHashMap::new));
+    }
+
+    private Map<String,Long> getTop10EntriesSortedByLongValue(Map<String, Long> map){
+        return map.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .limit(10)
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         Map.Entry::getValue,
