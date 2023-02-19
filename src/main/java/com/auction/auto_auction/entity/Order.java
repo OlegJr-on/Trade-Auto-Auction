@@ -37,4 +37,8 @@ public class Order {
     public Customer getCustomer(){
         return this.bid.getCustomer();
     }
+
+    public OrdersDetails getFirstOrderDetail(){
+        return this.ordersDetails.get(0);
+    }
 }
