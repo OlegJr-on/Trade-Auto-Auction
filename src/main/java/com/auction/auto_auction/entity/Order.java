@@ -41,4 +41,13 @@ public class Order {
     public OrdersDetails getFirstOrderDetail(){
         return this.ordersDetails.get(0);
     }
+
+    public OrdersDetails getLastOrderDetail(){
+        return this.ordersDetails.get(this.getSizeOfOrderDetails() - 1);
+    }
+
+    public Integer getSizeOfOrderDetails(){
+        return this.getOrdersDetails().size();
+    }
+
 }
