@@ -41,7 +41,7 @@ public class CarStatisticServiceImpl implements CarStatisticService{
         Map<String,Long> carMarkAndCountSale =  this.mapCarMarksToCount(this.getPaidCars());
 
         return CarStatisticDTO.builder()
-                .mostSellingMark(this.getTop10EntriesSortedByLongValue(carMarkAndCountSale))
+                .mostSellingMark(this.getTop10EntriesSortedByValue(carMarkAndCountSale))
                 .build();
     }
 
@@ -51,7 +51,7 @@ public class CarStatisticServiceImpl implements CarStatisticService{
         Map<String, BigDecimal> carMarkAndHisIncome =  this.mapCarMarksToIncome(this.getPaidCars());
 
         return CarStatisticDTO.builder()
-                .mostProfitableCarMarks(this.getTop10EntriesSortedByBigDecimalValue(carMarkAndHisIncome))
+                .mostProfitableCarMarks(this.getTop10EntriesSortedByValue(carMarkAndHisIncome))
                 .build();
     }
 
@@ -93,20 +93,10 @@ public class CarStatisticServiceImpl implements CarStatisticService{
                         LinkedHashMap::new));
     }
 
-    private Map<String,Long> getTop10EntriesSortedByLongValue(Map<String, Long> map){
+    private <V extends Number>
+    Map<String,V> getTop10EntriesSortedByValue(Map<String, V> map){
         return map.entrySet().stream()
-                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-                .limit(10)
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        Map.Entry::getValue,
-                        (oldValue, newValue) -> oldValue,
-                        LinkedHashMap::new));
-    }
-
-    private Map<String,BigDecimal> getTop10EntriesSortedByBigDecimalValue(Map<String, BigDecimal> map){
-        return map.entrySet().stream()
-                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .sorted(Map.Entry.comparingByValue((o1, o2) -> Double.compare(o2.doubleValue(),o1.doubleValue())))
                 .limit(10)
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
