@@ -17,7 +17,7 @@ import java.util.Map;
 public class CarStatisticController {
     private final CarStatisticService carStatisticService;
 
-    @GetMapping("/most-income")
+    @GetMapping("/top-10/most-income")
     public ResponseEntity<Map<String, BigDecimal>> getTop10CarBrandsBringMostIncome(){
 
         CarStatisticDTO brandToIncome = this.carStatisticService.getTop10MarkBringMostIncome();
@@ -25,7 +25,7 @@ public class CarStatisticController {
         return ResponseEntity.ok(brandToIncome.getMostProfitableCarMarks());
     }
 
-    @GetMapping("/most-selling")
+    @GetMapping("/top-10/most-selling")
     public ResponseEntity<Map<String,Long>> getTop10MostSellingCarBrands(){
 
         CarStatisticDTO carBrandToQuantitySale = this.carStatisticService.getTop10MostSellingMarkOfCar();
