@@ -16,4 +16,5 @@ public class CarStatisticDTO {
     private Map<String,Long> mostSellingMark;
     private Map<String, BigDecimal> mostProfitableCarMarks;
     private Map<String,Long> mostPopularCarMarksByBidActivity;
+    private Map<String,BigDecimal> highestEarningCarMarksByCommission;
 }
