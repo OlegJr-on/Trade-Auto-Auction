@@ -62,6 +62,17 @@ public class CarStatisticServiceImpl implements CarStatisticService{
                 .build();
     }
 
+    @Override
+    public CarStatisticDTO getTop10CarsMarkByCommissionIncome() {
+
+        Map<String, BigDecimal> carBrandToCommissionIncome =
+                this.mapCarMarksToCommissionIncome(this.getPaidCars());
+
+        return CarStatisticDTO.builder()
+                .highestEarningCarMarksByCommission(this.getTop10EntriesSortedByValue(carBrandToCommissionIncome))
+                .build();
+    }
+
     private List<Car> getPaidCars(){
         return this.unitOfWork.getCarRepository()
                 .findCarByOrderStatus(OrderStatus.PAID)
@@ -76,6 +87,21 @@ public class CarStatisticServiceImpl implements CarStatisticService{
         OrdersDetails order = winBid.getOrder().getLastOrderDetail();
 
         return order.getTotalPrice().setScale(2, RoundingMode.CEILING);
+    }
+
+    private BigDecimal getCarSaleCommissionIncome(Car car){
+
+        Bid winBid = car.getLot().getWinBid();
+        OrdersDetails order = winBid.getOrder().getLastOrderDetail();
+
+        if (order.getOrderStatus() != OrderStatus.PAID)
+            return BigDecimal.ZERO;
+
+        BigDecimal salePrice = order.getTotalPrice();
+        BigDecimal bet = winBid.getBet();
+        BigDecimal saleCommission = salePrice.subtract(bet);
+
+        return saleCommission.setScale(2,RoundingMode.CEILING);
     }
 
     private List<Object[]> getCarMarksAndTheirBidQuantity(){
@@ -93,6 +119,13 @@ public class CarStatisticServiceImpl implements CarStatisticService{
         return cars.stream()
                 .collect(Collectors.groupingBy(Car::getMark,
                         Collectors.mapping(this::getSoldPriceOfCar,
+                                Collectors.reducing(BigDecimal.ZERO, BigDecimal::add))));
+    }
+
+    private Map<String,BigDecimal> mapCarMarksToCommissionIncome(List<Car> cars){
+        return cars.stream()
+                .collect(Collectors.groupingBy(Car::getMark,
+                        Collectors.mapping(this::getCarSaleCommissionIncome,
                                 Collectors.reducing(BigDecimal.ZERO, BigDecimal::add))));
     }
 
