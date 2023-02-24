@@ -25,6 +25,14 @@ public class CarStatisticController {
         return ResponseEntity.ok(brandToIncome.getMostProfitableCarMarks());
     }
 
+    @GetMapping("/top-10/most-commission-income")
+    public ResponseEntity<Map<String,BigDecimal>> getTop10CarBrandsBringMostCommissionIncome(){
+
+        CarStatisticDTO top10Brands = this.carStatisticService.getTop10CarsMarkByCommissionIncome();
+
+        return ResponseEntity.ok(top10Brands.getHighestEarningCarMarksByCommission());
+    }
+
     @GetMapping("/top-10/most-selling")
     public ResponseEntity<Map<String,Long>> getTop10MostSellingCarBrands(){
 
