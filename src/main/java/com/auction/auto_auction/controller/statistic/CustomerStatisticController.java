@@ -40,7 +40,7 @@ public class CustomerStatisticController {
     @GetMapping("/richest")
     public ResponseEntity<List<CustomerDTO>> getRichestCustomers(){
 
-        List<CustomerDTO> customers = this.customerStatisticService.getRichestCustomers();
+        List<CustomerDTO> customers = this.customerStatisticService.getTop5RichestCustomers();
 
         return ResponseEntity.ok(customers);
     }

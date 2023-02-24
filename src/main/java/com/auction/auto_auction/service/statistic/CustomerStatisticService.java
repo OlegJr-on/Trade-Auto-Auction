@@ -9,7 +9,7 @@ public interface CustomerStatisticService {
 
     List<CustomerStatisticDTO> getMostActivityCustomers();
 
-    List<CustomerDTO> getRichestCustomers();
+    List<CustomerDTO> getTop5RichestCustomers();
 
     List<CustomerStatisticDTO> getCustomersWhoMostSpend();
 
