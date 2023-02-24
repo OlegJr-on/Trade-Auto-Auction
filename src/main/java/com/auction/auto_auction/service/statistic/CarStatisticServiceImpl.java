@@ -13,10 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -55,6 +52,16 @@ public class CarStatisticServiceImpl implements CarStatisticService{
                 .build();
     }
 
+    @Override
+    public CarStatisticDTO getTop10MostPopularMarksOfCarByBidActivity() {
+
+        Map<String,Long> cars = this.getTop10EntriesAsMap(this.getCarMarksAndTheirBidQuantity());
+
+        return CarStatisticDTO.builder()
+                .mostPopularCarMarksByBidActivity(cars)
+                .build();
+    }
+
     private List<Car> getPaidCars(){
         return this.unitOfWork.getCarRepository()
                 .findCarByOrderStatus(OrderStatus.PAID)
@@ -69,6 +76,12 @@ public class CarStatisticServiceImpl implements CarStatisticService{
         OrdersDetails order = winBid.getOrder().getLastOrderDetail();
 
         return order.getTotalPrice().setScale(2, RoundingMode.CEILING);
+    }
+
+    private List<Object[]> getCarMarksAndTheirBidQuantity(){
+        return this.unitOfWork.getCarRepository()
+                .getCarsOrderedByBidActivity()
+                    .orElseThrow(ResourceNotFoundException::new);
     }
 
     private Map<String,Long> mapCarMarksToCount(List<Car> cars){
@@ -91,6 +104,16 @@ public class CarStatisticServiceImpl implements CarStatisticService{
                         Map.Entry::getValue,
                         (oldValue, newValue) -> oldValue,
                         LinkedHashMap::new));
+    }
+
+    private Map<String,Long> getTop10EntriesAsMap(List<Object[]> arrObjList){
+        return arrObjList.stream()
+                .limit(10)
+                .collect(Collectors.toMap(
+                    key -> String.valueOf( Arrays.stream(key).findFirst().orElse("-") ),
+                    value -> (Long)List.of(value).get(value.length-1),
+                    (oldValue, newValue) -> oldValue,
+                    LinkedHashMap::new));
     }
 
     private <V extends Number>
