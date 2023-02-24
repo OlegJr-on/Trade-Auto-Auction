@@ -21,4 +21,11 @@ public interface CarRepository extends JpaRepository<Car,Integer> {
             "JOIN Car car on car.id = l.car.id " +
             "WHERE od.orderStatus =  ?1")
     Optional<List<Car>> findCarByOrderStatus(OrderStatus orderStatus);
+
+    @Query("SELECT car.mark, COUNT(b) AS bidCount FROM Bid AS b " +
+            " JOIN Lot AS l on l.id = b.lot.id " +
+            " JOIN Car AS car on car.id = l.car.id " +
+            "GROUP BY car.mark " +
+            "ORDER BY bidCount desc")
+    Optional<List<Object[]>> getCarsOrderedByBidActivity();
 }
