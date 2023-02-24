@@ -14,6 +14,8 @@ public interface CarRepository extends JpaRepository<Car,Integer> {
 
     Optional<List<Car>> findByMarkAndModel(String mark,String model);
 
+    Optional<List<Car>> findAllByLotBidsNotNull();
+
     @Query("SELECT car FROM OrdersDetails AS od " +
             "JOIN Order o on o.id = od.order.id " +
             "JOIN Bid b on b.id = o.bid.id " +
