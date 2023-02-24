@@ -80,7 +80,7 @@ public class CarStatisticServiceImpl implements CarStatisticService{
 
     private List<Object[]> getCarMarksAndTheirBidQuantity(){
         return this.unitOfWork.getCarRepository()
-                .getCarsOrderedByBidActivity()
+                .findCarsOrderedByBidActivity()
                     .orElseThrow(ResourceNotFoundException::new);
     }
 
