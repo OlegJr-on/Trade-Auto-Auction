@@ -10,4 +10,6 @@ public interface CarStatisticService {
     CarStatisticDTO getTop10MostSellingMarkOfCar();
 
     CarStatisticDTO getTop10MarkBringMostIncome();
+
+    CarStatisticDTO getTop10MostPopularMarkOfCarByBidActivity();
 }
