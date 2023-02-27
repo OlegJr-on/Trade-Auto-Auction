@@ -2,6 +2,7 @@ package com.auction.auto_auction.repository;
 
 import com.auction.auto_auction.entity.Car;
 import com.auction.auto_auction.entity.enums.OrderStatus;
+import com.auction.auto_auction.repository.projection.CarBidActivity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -24,10 +25,10 @@ public interface CarRepository extends JpaRepository<Car,Integer> {
             "WHERE od.orderStatus =  ?1")
     Optional<List<Car>> findCarByOrderStatus(OrderStatus orderStatus);
 
-    @Query("SELECT car.mark, COUNT(b) AS bidCount FROM Bid AS b " +
+    @Query("SELECT car.mark AS carMark, COUNT(b) AS countBid FROM Bid AS b " +
             " JOIN Lot AS l on l.id = b.lot.id " +
             " JOIN Car AS car on car.id = l.car.id " +
-            "GROUP BY car.mark " +
-            "ORDER BY bidCount desc")
-    Optional<List<Object[]>> findCarsOrderedByBidActivity();
+            "GROUP BY carMark " +
+            "ORDER BY countBid desc")
+    Optional<List<CarBidActivity>> findCarsOrderedByBidActivity();
 }
