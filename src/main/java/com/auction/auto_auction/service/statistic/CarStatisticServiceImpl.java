@@ -7,6 +7,7 @@ import com.auction.auto_auction.entity.Lot;
 import com.auction.auto_auction.entity.OrdersDetails;
 import com.auction.auto_auction.entity.enums.OrderStatus;
 import com.auction.auto_auction.exception.ResourceNotFoundException;
+import com.auction.auto_auction.repository.projection.CarBidActivity;
 import com.auction.auto_auction.repository.uow.UnitOfWork;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -104,7 +105,7 @@ public class CarStatisticServiceImpl implements CarStatisticService{
         return saleCommission.setScale(2,RoundingMode.CEILING);
     }
 
-    private List<Object[]> getCarMarksAndTheirBidQuantity(){
+    private List<CarBidActivity> getCarMarksAndTheirBidQuantity(){
         return this.unitOfWork.getCarRepository()
                 .findCarsOrderedByBidActivity()
                     .orElseThrow(ResourceNotFoundException::new);
@@ -139,14 +140,14 @@ public class CarStatisticServiceImpl implements CarStatisticService{
                         LinkedHashMap::new));
     }
 
-    private Map<String,Long> getTop10EntriesAsMap(List<Object[]> arrObjList){
+    private Map<String,Long> getTop10EntriesAsMap(List<CarBidActivity> arrObjList){
         return arrObjList.stream()
                 .limit(10)
                 .collect(Collectors.toMap(
-                    key -> String.valueOf( Arrays.stream(key).findFirst().orElse("-") ),
-                    value -> (Long)List.of(value).get(value.length-1),
-                    (oldValue, newValue) -> oldValue,
-                    LinkedHashMap::new));
+                        CarBidActivity::getCarMark,
+                        CarBidActivity::getCountBid,
+                        (oldValue, newValue) -> oldValue,
+                        LinkedHashMap::new));
     }
 
     private <V extends Number>
