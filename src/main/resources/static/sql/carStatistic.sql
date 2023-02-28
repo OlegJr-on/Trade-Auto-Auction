@@ -58,3 +58,11 @@ JOIN lots l on l.id = b.lot_id
 WHERE b.operation_date >= (NOW() - INTERVAL '22 hours')
 GROUP BY car.mark
 ORDER BY bidCount desc;
+
+-- Car which trading for last 24 hours by highest bid
+SELECT car.mark, max(b.bet) as maxBid FROM bids AS b
+JOIN lots l on l.id = b.lot_id
+  JOIN cars car on car.id = l.car_id
+WHERE b.operation_date >= (NOW() - INTERVAL '22 hours')
+GROUP BY car.mark
+ORDER BY maxBid desc
