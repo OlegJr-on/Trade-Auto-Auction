@@ -8,6 +8,7 @@ import com.auction.auto_auction.entity.OrdersDetails;
 import com.auction.auto_auction.entity.enums.OrderStatus;
 import com.auction.auto_auction.exception.ResourceNotFoundException;
 import com.auction.auto_auction.repository.projection.CarBidActivity;
+import com.auction.auto_auction.repository.projection.CarMarkToBid;
 import com.auction.auto_auction.repository.uow.UnitOfWork;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -90,7 +91,16 @@ public class CarStatisticServiceImpl implements CarStatisticService{
 
     @Override
     public CarStatisticDTO getTop10CarMarksByHighestBidLast24Hours() {
-        return null;
+
+        List<CarMarkToBid> carsWithHighestBidPast24Hour = this.unitOfWork.getCarRepository()
+                .findCarMarksOrderedByHighestBidForLast24hours()
+                    .orElseThrow(ResourceNotFoundException::new);
+
+        Map<String,BigDecimal> carsToMap = this.carMarkToBidListAsMap(carsWithHighestBidPast24Hour);
+
+        return CarStatisticDTO.builder()
+                .mostProfitableCarMarks(this.getTop10EntriesSortedByValue(carsToMap))
+                .build();
     }
 
     private List<Car> getPaidCars(){
@@ -165,6 +175,15 @@ public class CarStatisticServiceImpl implements CarStatisticService{
                         CarBidActivity::getCarMark,
                         CarBidActivity::getCountBid,
                         (oldValue, newValue) -> oldValue,
+                        LinkedHashMap::new));
+    }
+
+    private Map<String,BigDecimal> carMarkToBidListAsMap(List<CarMarkToBid> listCarBid){
+        return listCarBid.stream()
+                .collect(Collectors.toMap(
+                        CarMarkToBid::getCarMark,
+                        CarMarkToBid::getBidValue,
+                        (oldValue, newValue) -> newValue,
                         LinkedHashMap::new));
     }
 
