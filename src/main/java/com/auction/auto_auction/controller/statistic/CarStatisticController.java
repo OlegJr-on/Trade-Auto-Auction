@@ -48,4 +48,12 @@ public class CarStatisticController {
 
         return ResponseEntity.ok(top10CarBrands.getMostPopularCarMarksByBidActivity());
     }
+
+    @GetMapping("/24-hours/most-bid-activity")
+    public ResponseEntity<Map<String,Long>> getCarMarksByBidActivityFroLastDay(){
+
+        CarStatisticDTO cars = carStatisticService.getCarMarkBidActivityLast24Hours();
+
+        return ResponseEntity.ok(cars.getMostPopularCarMarksByBidActivity());
+    }
 }
