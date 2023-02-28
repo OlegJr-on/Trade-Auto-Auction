@@ -50,3 +50,11 @@ WHERE od.order_status = 'PAID'
 GROUP BY car.mark
 ORDER BY commission_income desc
 LIMIT 10;
+
+-- Get Cars which trading for last 24 hours ordered by bid activity
+SELECT car.mark, count(b) as bidCount FROM bids AS b
+JOIN lots l on l.id = b.lot_id
+ JOIN cars car on car.id = l.car_id
+WHERE b.operation_date >= (NOW() - INTERVAL '22 hours')
+GROUP BY car.mark
+ORDER BY bidCount desc;
