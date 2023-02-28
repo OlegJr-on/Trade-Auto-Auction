@@ -16,4 +16,6 @@ public interface CarStatisticService {
     CarStatisticDTO getTop10CarsMarkByCommissionIncome();
 
     CarStatisticDTO getCarMarkBidActivityLast24Hours();
+
+    CarStatisticDTO getTop10CarMarksByHighestBidLast24Hours();
 }
