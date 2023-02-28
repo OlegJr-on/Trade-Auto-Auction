@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -215,6 +216,7 @@ public class LotServiceImpl implements LotService{
     }
 
     private boolean isTradingTimeBetweenOneAndFiveMin(LocalDateTime start, LocalDateTime end){
-        return end.minusMinutes(1).isBefore(start) || start.plusMinutes(5).isBefore(end);
+        long timeBetween = ChronoUnit.SECONDS.between(start,end);
+        return timeBetween >= 60 && timeBetween <= 5*60;
     }
 }
