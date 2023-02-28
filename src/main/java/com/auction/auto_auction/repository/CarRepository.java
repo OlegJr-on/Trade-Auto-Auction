@@ -31,4 +31,13 @@ public interface CarRepository extends JpaRepository<Car,Integer> {
             "GROUP BY carMark " +
             "ORDER BY countBid desc")
     Optional<List<CarBidActivity>> findCarsOrderedByBidActivity();
+
+    @Query(nativeQuery = true, value =
+           "SELECT car.mark AS carMark, count(b) AS countBid FROM bids AS b " +
+                   "JOIN lots l ON l.id = b.lot_id " +
+                   " JOIN cars car ON car.id = l.car_id " +
+           "WHERE b.operation_date >= (NOW() - INTERVAL '22 hours') " +
+           "GROUP BY carMark " +
+           "ORDER BY countBid DESC")
+    Optional<List<CarBidActivity>> findCarMarksOrderedByBidActivityForLast24Hours();
 }
