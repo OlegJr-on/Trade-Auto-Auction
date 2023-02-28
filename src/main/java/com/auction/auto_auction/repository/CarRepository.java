@@ -3,6 +3,7 @@ package com.auction.auto_auction.repository;
 import com.auction.auto_auction.entity.Car;
 import com.auction.auto_auction.entity.enums.OrderStatus;
 import com.auction.auto_auction.repository.projection.CarBidActivity;
+import com.auction.auto_auction.repository.projection.CarMarkToBid;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -40,4 +41,13 @@ public interface CarRepository extends JpaRepository<Car,Integer> {
            "GROUP BY carMark " +
            "ORDER BY countBid DESC")
     Optional<List<CarBidActivity>> findCarMarksOrderedByBidActivityForLast24Hours();
+
+    @Query(nativeQuery = true, value =
+           "SELECT car.mark AS carMark, max(b.bet) AS bidValue FROM bids AS b " +
+                   "JOIN lots l ON l.id = b.lot_id " +
+                   "  JOIN cars car ON car.id = l.car_id " +
+           "WHERE b.operation_date >= (NOW() - INTERVAL '22 hours') " +
+           "GROUP BY carMark " +
+           "ORDER BY bidValue desc")
+    Optional<List<CarMarkToBid>> findCarMarksOrderedByHighestBidForLast24hours();
 }
