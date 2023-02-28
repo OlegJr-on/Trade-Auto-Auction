@@ -74,6 +74,16 @@ public class CarStatisticServiceImpl implements CarStatisticService{
                 .build();
     }
 
+    @Override
+    public CarStatisticDTO getCarMarkBidActivityLast24Hours() {
+        return null;
+    }
+
+    @Override
+    public CarStatisticDTO getTop10CarMarksByHighestBidLast24Hours() {
+        return null;
+    }
+
     private List<Car> getPaidCars(){
         return this.unitOfWork.getCarRepository()
                 .findCarByOrderStatus(OrderStatus.PAID)
@@ -136,6 +146,15 @@ public class CarStatisticServiceImpl implements CarStatisticService{
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         Map.Entry::getValue,
+                        (oldValue, newValue) -> oldValue,
+                        LinkedHashMap::new));
+    }
+
+    private Map<String,Long> mapCarBidActivityList(List<CarBidActivity> listCarBid){
+        return listCarBid.stream()
+                .collect(Collectors.toMap(
+                        CarBidActivity::getCarMark,
+                        CarBidActivity::getCountBid,
                         (oldValue, newValue) -> oldValue,
                         LinkedHashMap::new));
     }
