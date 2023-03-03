@@ -19,7 +19,7 @@ import java.util.Set;
 public class UpdateLotStatus {
     private final UnitOfWork unitOfWork;
 
-    @Scheduled(fixedRate = 60000*2) // 2 min
+    @Scheduled(fixedRate = 60000*5) // 5 min
     @Transactional
     public void setStatusForLots(){
 
