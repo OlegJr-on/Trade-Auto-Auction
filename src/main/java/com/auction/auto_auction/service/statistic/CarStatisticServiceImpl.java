@@ -90,6 +90,20 @@ public class CarStatisticServiceImpl implements CarStatisticService{
     }
 
     @Override
+    public CarStatisticDTO getTop10CarMarksByBidActivityLast24Hours() {
+
+        List<CarBidActivity> carsByBidActivityFor24Hours = this.unitOfWork.getCarRepository()
+                .findCarMarksOrderedByBidActivityForLast24Hours()
+                    .orElseThrow(ResourceNotFoundException::new);
+
+        Map<String,Long> carsByBidActivity = this.mapCarBidActivityList(carsByBidActivityFor24Hours);
+
+        return CarStatisticDTO.builder()
+                .mostPopularCarMarksByBidActivity(this.getTop10EntriesSortedByValue(carsByBidActivity))
+                .build();
+    }
+
+    @Override
     public CarStatisticDTO getTop10CarMarksByHighestBidLast24Hours() {
 
         List<CarMarkToBid> carsWithHighestBidPast24Hour = this.unitOfWork.getCarRepository()
