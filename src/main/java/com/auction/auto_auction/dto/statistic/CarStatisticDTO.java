@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 @AllArgsConstructor
@@ -13,6 +14,7 @@ import java.util.Map;
 @Data
 @Builder
 public class CarStatisticDTO {
+    private LocalDateTime dateTime;
     private Map<String,Long> mostSellingMark;
     private Map<String, BigDecimal> mostProfitableCarMarks;
     private Map<String,Long> mostPopularCarMarksByBidActivity;
